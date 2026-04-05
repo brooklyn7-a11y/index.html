@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIM-SIMMA · Financial OS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg:#080810; --surface:#0e0e1a; --card:#12121e; --card2:#161624;
+  --border:#1e1e32; --border2:#252540;
+  --gold:#f0c040; --gold2:#c89a20;
+  --green:#00e5a0; --green2:#00b87a;
+  --red:#ff5555; --blue:#40c4ff;
+  --purple:#b388ff; --orange:#ffab40;
+  --text:#e8e8f8; --text2:#a0a0c0;
+  --muted:#505070; --dim:#181828;
+  /* shift colors */
+  --shift-reg:rgba(64,196,255,0.85);
+  --shift-extra:rgba(240,192,64,0.85);
+  --shift-holiday:rgba(179,136,255,0.85);
+  --shift-short:rgba(0,229,160,0.85);
+  --shift-off:transparent;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 100% 0%,rgba(240,192,64,0.07) 0%,transparent 55%),radial-gradient(ellipse 60% 40% at 0% 100%,rgba(0,229,160,0.05) 0%,transparent 50%);pointer-events:none;z-index:0;}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(8,8,16,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;height:54px;gap:4px;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.08em;color:var(--gold);margin-right:12px;white-space:nowrap;}
+.nav-brand span{color:var(--text2);font-size:12px;font-family:'DM Mono',monospace;letter-spacing:0.15em;margin-left:5px;}
+.nav-tabs{display:flex;gap:2px;overflow-x:auto;flex:1;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.ntab{padding:6px 10px;border-radius:6px;font-size:10px;font-family:'DM Mono',monospace;cursor:pointer;color:var(--muted);transition:all 0.15s;white-space:nowrap;letter-spacing:0.05em;text-transform:uppercase;border:none;background:none;}
+.ntab:hover{color:var(--text);background:rgba(255,255,255,0.05);}
+.ntab.active{color:var(--gold);background:rgba(240,192,64,0.1);}
+
+.main{padding:66px 14px 80px;max-width:780px;margin:0 auto;position:relative;z-index:1;}
+.page{display:none;} .page.active{display:block;}
+
+/* HERO */
+.hero{padding:20px 0 16px;border-bottom:1px solid var(--border);margin-bottom:18px;}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:5px;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,7vw,52px);line-height:0.92;color:var(--text);}
+.hero h1 em{color:var(--gold);font-style:normal;}
+.hero-sub{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:7px;line-height:1.6;}
+
+.sec{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin:18px 0 10px;}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:14px;}
+.stat-grid.three{grid-template-columns:repeat(3,1fr);}
+.scard{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px;position:relative;overflow:hidden;}
+.scard::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.scard.gold::after{background:var(--gold);} .scard.green::after{background:var(--green);}
+.scard.blue::after{background:var(--blue);} .scard.purple::after{background:var(--purple);}
+.scard.red::after{background:var(--red);} .scard.orange::after{background:var(--orange);}
+.sc-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
+.sc-val{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;}
+.scard.gold .sc-val{color:var(--gold);} .scard.green .sc-val{color:var(--green);}
+.scard.blue .sc-val{color:var(--blue);} .scard.purple .sc-val{color:var(--purple);}
+.scard.red .sc-val{color:var(--red);} .scard.orange .sc-val{color:var(--orange);}
+.sc-sub{font-size:10px;color:var(--muted);margin-top:3px;}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:12px;}
+.card-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;}
+
+/* ===== CALENDAR ===== */
+.cal-wrapper{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+
+.cal-header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);}
+.cal-title{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gold);letter-spacing:0.05em;}
+.cal-nav{display:flex;gap:8px;}
+.cal-nav-btn{background:var(--dim);border:1px solid var(--border2);border-radius:6px;color:var(--text2);padding:5px 10px;cursor:pointer;font-size:13px;transition:all 0.15s;}
+.cal-nav-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+.cal-pay-strip{display:grid;grid-template-columns:repeat(7,1fr);background:var(--dim);border-bottom:1px solid var(--border);}
+.cal-pay-cell{padding:4px 6px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.06em;text-align:center;color:var(--muted);border-right:1px solid var(--border);}
+.cal-pay-cell:last-child{border-right:none;}
+
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border);}
+.cal-day-header{padding:8px 0;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-cell{min-height:72px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 5px;cursor:pointer;transition:background 0.15s;position:relative;}
+.cal-cell:nth-child(7n){border-right:none;}
+.cal-cell:hover{background:rgba(255,255,255,0.03);}
+.cal-cell.other-month{opacity:0.3;}
+.cal-cell.today{background:rgba(240,192,64,0.05);}
+.cal-cell.today .cal-date{color:var(--gold);font-weight:700;}
+.cal-cell.sunday{background:rgba(0,229,160,0.03);}
+
+.cal-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--text2);margin-bottom:4px;}
+.cal-shift-block{border-radius:4px;padding:3px 5px;margin-bottom:2px;font-size:9px;font-family:'DM Mono',monospace;line-height:1.3;font-weight:500;}
+.cal-shift-block.reg{background:rgba(64,196,255,0.25);color:var(--blue);border-left:2px solid var(--blue);}
+.cal-shift-block.extra{background:rgba(240,192,64,0.2);color:var(--gold);border-left:2px solid var(--gold);}
+.cal-shift-block.holiday{background:rgba(179,136,255,0.2);color:var(--purple);border-left:2px solid var(--purple);}
+.cal-shift-block.short{background:rgba(0,229,160,0.2);color:var(--green);border-left:2px solid var(--green);}
+.cal-shift-block.off{background:rgba(255,85,85,0.1);color:var(--red);border-left:2px solid var(--red);}
+.cal-shift-block.swap{background:rgba(255,171,64,0.15);color:var(--orange);border-left:2px solid var(--orange);}
+
+.cal-pp-badge{position:absolute;top:3px;right:3px;font-family:'DM Mono',monospace;font-size:7px;padding:1px 4px;border-radius:3px;letter-spacing:0.05em;}
+.pp1{background:rgba(240,192,64,0.15);color:var(--gold);}
+.pp2{background:rgba(64,196,255,0.15);color:var(--blue);}
+.pp3{background:rgba(0,229,160,0.15);color:var(--green);}
+.pp4{background:rgba(179,136,255,0.15);color:var(--purple);}
+
+/* PAY PERIOD SUMMARY STRIP */
+.pp-strip{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:14px;}
+.pp-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;position:relative;overflow:hidden;}
+.pp-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;}
+.pp-card.pp1::before{background:var(--gold);}
+.pp-card.pp2::before{background:var(--blue);}
+.pp-card.pp3::before{background:var(--green);}
+.pp-card.pp4::before{background:var(--purple);}
+.pp-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.pp-dates{font-size:11px;color:var(--text2);margin-bottom:6px;}
+.pp-check{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:8px;}
+.pp-hrs{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);line-height:1;}
+.pp-pay{font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;}
+.pp-card.pp1 .pp-pay{color:var(--gold);}
+.pp-card.pp2 .pp-pay{color:var(--blue);}
+.pp-card.pp3 .pp-pay{color:var(--green);}
+.pp-card.pp4 .pp-pay{color:var(--purple);}
+
+/* SHIFT MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:none;align-items:flex-end;justify-content:center;padding:0;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:480px;}
+.modal-date{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);margin-bottom:14px;}
+.shift-types{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
+.shift-btn{padding:12px 10px;border-radius:10px;border:1px solid var(--border2);background:var(--dim);cursor:pointer;text-align:center;transition:all 0.15s;}
+.shift-btn:hover{border-color:var(--text2);}
+.shift-btn.selected{border-width:2px;}
+.shift-btn.reg-btn.selected{border-color:var(--blue);background:rgba(64,196,255,0.1);}
+.shift-btn.extra-btn.selected{border-color:var(--gold);background:rgba(240,192,64,0.1);}
+.shift-btn.holiday-btn.selected{border-color:var(--purple);background:rgba(179,136,255,0.1);}
+.shift-btn.short-btn.selected{border-color:var(--green);background:rgba(0,229,160,0.1);}
+.shift-btn.swap-btn.selected{border-color:var(--orange);background:rgba(255,171,64,0.1);}
+.shift-btn.off-btn.selected{border-color:var(--red);background:rgba(255,85,85,0.1);}
+.shift-btn .sb-icon{font-size:20px;margin-bottom:4px;}
+.shift-btn .sb-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;}
+.shift-btn.reg-btn .sb-label{color:var(--blue);}
+.shift-btn.extra-btn .sb-label{color:var(--gold);}
+.shift-btn.holiday-btn .sb-label{color:var(--purple);}
+.shift-btn.short-btn .sb-label{color:var(--green);}
+.shift-btn.swap-btn .sb-label{color:var(--orange);}
+.shift-btn.off-btn .sb-label{color:var(--red);}
+.shift-btn .sb-hrs{font-size:10px;color:var(--muted);margin-top:2px;}
+.modal-time-row{display:flex;gap:8px;margin-bottom:14px;}
+.modal-time-group{flex:1;}
+.modal-time-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
+.modal-inp{background:var(--dim);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;color:var(--text);font-size:13px;font-family:'Outfit',sans-serif;width:100%;outline:none;}
+.modal-inp:focus{border-color:var(--gold);}
+.modal-note{background:var(--dim);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;color:var(--text);font-size:12px;font-family:'Outfit',sans-serif;width:100%;outline:none;resize:none;height:60px;margin-bottom:14px;}
+.modal-note:focus{border-color:var(--gold);}
+.modal-btns{display:flex;gap:8px;}
+.btn{padding:10px 18px;border-radius:8px;border:none;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.08em;cursor:pointer;transition:all 0.15s;text-transform:uppercase;}
+.btn-gold{background:var(--gold);color:#000;font-weight:700;}
+.btn-gold:hover{background:var(--gold2);}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.btn-red{background:rgba(255,85,85,0.15);color:var(--red);border:1px solid rgba(255,85,85,0.3);}
+.btn-sm{padding:5px 10px;font-size:9px;}
+
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.leg{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;color:var(--text2);}
+.leg-dot{width:10px;height:10px;border-radius:2px;}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl-row{border-bottom:1px solid rgba(255,255,255,0.03);}
+.tbl-row:last-child{border-bottom:none;}
+.tbl-row td{padding:9px 11px;font-size:12px;vertical-align:middle;}
+.tbl-row.hdr td{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;background:var(--dim);padding:7px 11px;}
+.tbl-row.sub td{background:rgba(255,255,255,0.02);font-weight:600;}
+.tbl-row.surplus td{background:rgba(0,229,160,0.06);}
+.dot{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:6px;vertical-align:middle;}
+
+/* WF */
+.wf{display:flex;flex-direction:column;gap:5px;}
+.wf-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:8px;font-size:12px;}
+.wf-row .wl{display:flex;align-items:center;gap:8px;}
+.wf-row .wl-icon{font-size:13px;}
+.wf-row .wl-label{color:var(--text);}
+.wf-row .wl-note{font-size:10px;color:var(--muted);display:block;}
+.wf-row .wa{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;}
+.wf-gross{background:rgba(240,192,64,0.08);} .wf-gross .wa{color:var(--gold);}
+.wf-tax{background:rgba(255,171,64,0.07);} .wf-tax .wa{color:var(--orange);}
+.wf-ded{background:rgba(255,85,85,0.07);} .wf-ded .wa{color:var(--red);}
+.wf-net{background:rgba(0,229,160,0.09);border:1px solid rgba(0,229,160,0.2);} .wf-net .wa{color:var(--green);font-size:14px;}
+.wf-alloc{background:rgba(64,196,255,0.07);} .wf-alloc .wa{color:var(--blue);}
+.wf-remain{background:rgba(179,136,255,0.08);border:1px solid rgba(179,136,255,0.2);} .wf-remain .wa{color:var(--purple);font-size:14px;}
+
+/* PROG */
+.prog-bg{background:var(--dim);border-radius:4px;height:6px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:4px;transition:width 0.6s ease;}
+
+/* NOTICE */
+.notice{border-radius:10px;padding:11px 13px;margin-bottom:10px;font-size:12px;line-height:1.7;}
+.notice.warn{background:rgba(255,171,64,0.08);border:1px solid rgba(255,171,64,0.25);color:#c8a060;}
+.notice.good{background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.2);color:#60c898;}
+.notice.info{background:rgba(64,196,255,0.07);border:1px solid rgba(64,196,255,0.2);color:#60a8c8;}
+.notice strong{color:var(--text);}
+
+/* DEBT */
+.debt-item{padding:13px;border-bottom:1px solid var(--border);}
+.debt-item:last-child{border-bottom:none;}
+.debt-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;}
+.debt-name{font-size:13px;font-weight:600;color:var(--text);}
+.debt-bal{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--text);line-height:1;}
+.debt-meta{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:3px;}
+.debt-footer{display:flex;justify-content:space-between;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);margin-top:5px;}
+
+/* BILL */
+.bill-item{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;border-radius:8px;margin-bottom:5px;background:var(--dim);border:1px solid var(--border);transition:border-color 0.15s;}
+.bill-item:hover{border-color:var(--border2);}
+.bill-left{display:flex;align-items:center;gap:9px;}
+.bill-icon{font-size:15px;}
+.bill-name{font-size:12px;color:var(--text);}
+.bill-due{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;}
+.bill-right{display:flex;align-items:center;gap:8px;}
+.bill-amt{font-family:'DM Mono',monospace;font-size:11px;color:var(--text);}
+.bill-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:3px;}
+.bill-del:hover{color:var(--red);}
+
+/* INPUT */
+.input-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.input-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;}
+.inp{background:var(--dim);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;color:var(--text);font-size:13px;font-family:'Outfit',sans-serif;width:100%;outline:none;transition:border-color 0.15s;}
+.inp:focus{border-color:var(--gold);}
+.inp-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+
+/* BADGE */
+.badge{display:inline-block;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.08em;text-transform:uppercase;}
+.b-gold{background:rgba(240,192,64,0.15);color:var(--gold);}
+.b-green{background:rgba(0,229,160,0.12);color:var(--green);}
+.b-red{background:rgba(255,85,85,0.12);color:var(--red);}
+.b-blue{background:rgba(64,196,255,0.12);color:var(--blue);}
+.b-purple{background:rgba(179,136,255,0.12);color:var(--purple);}
+.b-orange{background:rgba(255,171,64,0.12);color:var(--orange);}
+
+/* VAC */
+.vac-big{background:linear-gradient(135deg,rgba(240,192,64,0.12),rgba(0,229,160,0.06));border:1px solid rgba(240,192,64,0.3);border-radius:14px;padding:18px;margin-bottom:12px;}
+.vac-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.vac-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--gold);text-transform:uppercase;margin-bottom:4px;}
+.vac-amt{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--gold);line-height:1;}
+.vac-days{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--text);line-height:1;}
+.vac-days-label{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;}
+.check-row{display:flex;gap:5px;flex-wrap:wrap;}
+.chk{flex:1;min-width:68px;max-width:95px;background:rgba(0,0,0,0.3);border:1px solid rgba(240,192,64,0.15);border-radius:7px;padding:6px 4px;text-align:center;}
+.chk.done{border-color:var(--gold);background:rgba(240,192,64,0.1);}
+.chk.now{border-color:var(--green);background:rgba(0,229,160,0.1);animation:glow 2s infinite;}
+.chk-date{font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);margin-bottom:2px;}
+.chk.done .chk-date{color:var(--gold);} .chk.now .chk-date{color:var(--green);}
+.chk-amt{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--muted);}
+.chk.done .chk-amt{color:var(--gold);} .chk.now .chk-amt{color:var(--green);}
+
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(0,229,160,0.3);}50%{box-shadow:0 0 0 5px rgba(0,229,160,0);}}
+
+/* CREDIT */
+.cc-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:10px;}
+.cc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.cc-name{font-size:13px;font-weight:600;}
+.cc-bal{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--text);}
+.cc-detail{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px;}
+.cc-box{background:var(--dim);border-radius:7px;padding:8px;}
+.cc-box-label{font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;}
+.cc-box-val{font-size:12px;font-weight:600;}
+
+/* SR */
+.sr-row{display:flex;align-items:flex-start;gap:11px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:7px;}
+.sr-num{font-family:'Bebas Neue',sans-serif;font-size:20px;min-width:40px;}
+.sr-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.sr-desc{font-size:11px;color:var(--muted);line-height:1.5;}
+
+/* FRAG */
+.frag-result{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+.fr-box{background:var(--dim);border-radius:8px;padding:9px 7px;text-align:center;}
+.fr-label{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;margin-bottom:3px;}
+.fr-val{font-family:'Bebas Neue',sans-serif;font-size:18px;}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:18px;}
+.timeline::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:2px;background:var(--border);}
+.tl-item{position:relative;margin-bottom:14px;}
+.tl-item::before{content:'';position:absolute;left:-16px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--border);background:var(--bg);}
+.tl-item.done::before{background:var(--green);border-color:var(--green);}
+.tl-item.now::before{background:var(--gold);border-color:var(--gold);animation:glow 2s infinite;}
+.tl-item.future::before{background:var(--dim);}
+.tl-date{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:2px;letter-spacing:0.08em;}
+.tl-title{font-size:12px;font-weight:600;color:var(--text);}
+.tl-desc{font-size:10px;color:var(--muted);margin-top:2px;}
+
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">SIM-SIMMA <span>OS</span></div>
+  <div class="nav-tabs">
+    <button class="ntab active" onclick="showPage('dashboard',this)">Dashboard</button>
+    <button class="ntab" onclick="showPage('schedule',this)">📅 Schedule</button>
+    <button class="ntab" onclick="showPage('paycheck',this)">Pay Calc</button>
+    <button class="ntab" onclick="showPage('budget',this)">Budget</button>
+    <button class="ntab" onclick="showPage('debts',this)">Debts</button>
+    <button class="ntab" onclick="showPage('vacation',this)">✈️ Vacation</button>
+    <button class="ntab" onclick="showPage('credit',this)">Credit</button>
+    <button class="ntab" onclick="showPage('fragrance',this)">Fragrance</button>
+  </div>
+</nav>
+
+<div class="main">
+
+<!-- ===== DASHBOARD ===== -->
+<div id="page-dashboard" class="page active">
+  <div class="hero">
+    <div class="hero-eyebrow">SIM-SIMMA Financial OS · Earl Simmons</div>
+    <h1>YOUR<br>MONEY.<br><em>YOUR RULES.</em></h1>
+    <div class="hero-sub">Delta Air Lines · Aircraft Move Agent · JFK-Z3RAMP · $40.50/hr</div>
+  </div>
+  <div class="sec">Live Snapshot</div>
+  <div class="stat-grid">
+    <div class="scard gold"><div class="sc-label">Grind Check (Est.)</div><div class="sc-val" id="dash-check">$1,827</div><div class="sc-sub">After all deductions</div></div>
+    <div class="scard green"><div class="sc-label">Monthly Surplus</div><div class="sc-val">~$4,231</div><div class="sc-sub">Delta + Fragrance</div></div>
+  </div>
+  <div class="stat-grid three">
+    <div class="scard blue"><div class="sc-label">Vacation Fund</div><div class="sc-val" id="dash-vac">$250</div><div class="sc-sub" id="dash-days">-- days left</div></div>
+    <div class="scard purple"><div class="sc-label">Total Debt</div><div class="sc-val">$42.1K</div><div class="sc-sub">6 obligations</div></div>
+    <div class="scard orange"><div class="sc-label">Credit Score</div><div class="sc-val">625</div><div class="sc-sub">Target: 720+</div></div>
+  </div>
+  <div class="sec">🚨 Urgent This Month</div>
+  <div class="notice warn">⚠️ <strong>Capital One closes April 21</strong> — Keep under $180. Currently $0. Don't use before the 21st.</div>
+  <div class="notice warn">⚠️ <strong>Affirm due April 21</strong> — $114.14 autopay. Confirm Navy Federal has funds.</div>
+  <div class="notice good">✅ <strong>Apple Card closes April 30</strong> — $0 balance. Clean.</div>
+  <div class="notice good">✅ <strong>Navy Federal Visa closes 23rd</strong> — $0 balance. Perfect.</div>
+  <div class="sec">Freedom Timeline</div>
+  <div class="timeline">
+    <div class="tl-item now"><div class="tl-date">NOW · APRIL 2026</div><div class="tl-title">April Grind Mode 💪</div><div class="tl-desc">Picking up Wed/Thu shifts · Vacation fund building · Fragrance daily</div></div>
+    <div class="tl-item future"><div class="tl-date">JUNE 2026</div><div class="tl-title">Delta Loan 1 GONE ✂️</div><div class="tl-desc">+$485/mo freed · Take-home jumps to ~$2,069</div></div>
+    <div class="tl-item future"><div class="tl-date">JULY 1, 2026</div><div class="tl-title">VACATION BOARDS ✈️</div><div class="tl-desc">$1,750+ locked · Destination: SVD Caribbean</div></div>
+    <div class="tl-item future"><div class="tl-date">JULY 21, 2026</div><div class="tl-title">Affirm Done</div><div class="tl-desc">$114.14/mo freed</div></div>
+    <div class="tl-item future"><div class="tl-date">AUG 2026</div><div class="tl-title">NFCU Pledge Loan A Done</div><div class="tl-desc">+$59.92/mo freed</div></div>
+    <div class="tl-item future"><div class="tl-date">OCT 2029</div><div class="tl-title">Delta Loan 2 GONE 🔥</div><div class="tl-desc">+$729/mo freed · Biggest jump</div></div>
+    <div class="tl-item future"><div class="tl-date">MAR 2030</div><div class="tl-title">ALL LOANS DEAD 🏆</div><div class="tl-desc">+$1,412/mo total freed</div></div>
+  </div>
+</div>
+
+<!-- ===== SCHEDULE ===== -->
+<div id="page-schedule" class="page">
+  <div class="sec">MyDeltaDay · Shift Planner</div>
+
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:var(--blue)"></div>Regular (8h)</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--gold)"></div>Pickup Extra (6h)</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--purple)"></div>Holiday</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--green)"></div>Short Shift</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--orange)"></div>Swap</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--red)"></div>Give Away</div>
+  </div>
+
+  <!-- Calendar -->
+  <div class="cal-wrapper">
+    <div class="cal-header">
+      <div class="cal-title" id="cal-month-title">April 2026</div>
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="changeMonth(-1)">◀</button>
+        <button class="cal-nav-btn" onclick="changeMonth(1)">▶</button>
+      </div>
+    </div>
+    <div class="cal-days-header">
+      <div class="cal-day-header">Sun</div>
+      <div class="cal-day-header">Mon</div>
+      <div class="cal-day-header">Tue</div>
+      <div class="cal-day-header">Wed</div>
+      <div class="cal-day-header">Thu</div>
+      <div class="cal-day-header">Fri</div>
+      <div class="cal-day-header">Sat</div>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+
+  <!-- Pay Period Summary -->
+  <div class="sec">Pay Period Breakdown · <span id="pp-month-label">April 2026</span></div>
+  <div class="pp-strip" id="pp-strip"></div>
+
+  <!-- Monthly Hours Summary -->
+  <div class="card">
+    <div class="card-title">Month Summary</div>
+    <table class="tbl">
+      <tr class="tbl-row hdr"><td>Shift Type</td><td style="text-align:right">Days</td><td style="text-align:right">Hours</td><td style="text-align:right">Est. Gross</td></tr>
+      <tr class="tbl-row"><td><span class="dot" style="background:var(--blue)"></span>Regular</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-reg-days">0</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-reg-hrs">0</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--blue)" id="sum-reg-pay">$0</td></tr>
+      <tr class="tbl-row"><td><span class="dot" style="background:var(--gold)"></span>Pickup/Extra</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-extra-days">0</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-extra-hrs">0</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--gold)" id="sum-extra-pay">$0</td></tr>
+      <tr class="tbl-row"><td><span class="dot" style="background:var(--purple)"></span>Holiday</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-hol-days">0</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-hol-hrs">0</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--purple)" id="sum-hol-pay">$0</td></tr>
+      <tr class="tbl-row sub"><td>Total</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-total-days">0</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-total-hrs">0</td><td style="text-align:right;font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold)" id="sum-total-pay">$0</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== PAY CALC ===== -->
+<div id="page-paycheck" class="page">
+  <div class="sec">Pay Calculator</div>
+  <div class="card">
+    <div class="card-title">Build Your Check</div>
+    <div class="inp-row">
+      <div class="input-group"><div class="input-label">Regular Hours</div><input class="inp" type="number" id="reg-hrs" value="64" oninput="calcPay()"></div>
+      <div class="input-group"><div class="input-label">Extra Shift Hours</div><input class="inp" type="number" id="extra-hrs" value="24" oninput="calcPay()"></div>
+    </div>
+    <div class="inp-row">
+      <div class="input-group"><div class="input-label">Holiday Hours</div><input class="inp" type="number" id="hol-hrs" value="0" oninput="calcPay()"></div>
+      <div class="input-group"><div class="input-label">OT 1.5x Hours</div><input class="inp" type="number" id="ot-hrs" value="0" oninput="calcPay()"></div>
+    </div>
+    <div class="inp-row">
+      <div class="input-group"><div class="input-label">Night Premium Hours</div><input class="inp" type="number" id="night-hrs" value="88" oninput="calcPay()"></div>
+      <div class="input-group"><div class="input-label">Bonus / Shared Rewards</div><input class="inp" type="number" id="bonus-amt" value="0" oninput="calcPay()"></div>
+    </div>
+  </div>
+  <div class="sec">Check Breakdown</div>
+  <div class="wf" id="pay-wf"></div>
+  <div class="sec" style="margin-top:16px;">Quick Scenarios</div>
+  <div style="display:flex;gap:7px;flex-wrap:wrap;">
+    <button class="btn btn-outline" onclick="setScenario(64,0,0,0,64,0)">Base (64h)</button>
+    <button class="btn btn-outline" onclick="setScenario(64,24,0,0,88,0)">Full Grind (88h)</button>
+    <button class="btn btn-outline" onclick="setScenario(64,24,8,0,88,75)">Grind+Holiday+Bonus</button>
+    <button class="btn btn-gold" onclick="setScenario(64,24,0,0,88,0); showJuneNote()">After June (Loan1 Gone)</button>
+  </div>
+  <div id="june-note" style="display:none;margin-top:10px;" class="notice good">🎉 After June: Loan 1 gone → <strong>+$242.78/check</strong> freed automatically.</div>
+</div>
+
+<!-- ===== BUDGET ===== -->
+<div id="page-budget" class="page">
+  <div class="sec">Monthly Income</div>
+  <div class="stat-grid">
+    <div class="scard gold"><div class="sc-label">Delta (2 grind checks)</div><div class="sc-val">$3,654</div><div class="sc-sub">$1,827 × 2</div></div>
+    <div class="scard green"><div class="sc-label">Fragrance (est.)</div><div class="sc-val" id="budget-frag-val">$4,000</div><div class="sc-sub">Daily + delivery</div></div>
+  </div>
+  <div class="sec">Bills</div>
+  <div id="fixed-bills"></div>
+  <div class="sec">Add a Bill</div>
+  <div class="card">
+    <div class="inp-row">
+      <div class="input-group"><div class="input-label">Bill Name</div><input class="inp" type="text" id="new-bill-name" placeholder="e.g. Netflix"></div>
+      <div class="input-group"><div class="input-label">Monthly Amount</div><input class="inp" type="number" id="new-bill-amt" placeholder="0.00"></div>
+    </div>
+    <div class="inp-row">
+      <div class="input-group"><div class="input-label">Due Date (day)</div><input class="inp" type="number" id="new-bill-due" placeholder="1-31" min="1" max="31"></div>
+      <div class="input-group"><div class="input-label">Category</div>
+        <select class="inp" id="new-bill-cat">
+          <option value="fixed">Fixed Bill</option>
+          <option value="subscription">Subscription</option>
+          <option value="debt">Debt Payment</option>
+          <option value="savings">Savings</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-gold" onclick="addBill()" style="width:100%;margin-top:4px;">+ Add Bill</button>
+  </div>
+  <div class="sec">Summary</div>
+  <div class="card">
+    <table class="tbl">
+      <tr class="tbl-row hdr"><td>Category</td><td style="text-align:right">Monthly</td></tr>
+      <tr class="tbl-row"><td><span class="dot" style="background:var(--red)"></span>Total Bills</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--red)" id="sum-fixed">$0</td></tr>
+      <tr class="tbl-row"><td><span class="dot" style="background:var(--green)"></span>Vacation Fund</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--green)">$500</td></tr>
+      <tr class="tbl-row sub"><td>Total Out</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-out">$0</td></tr>
+      <tr class="tbl-row surplus"><td style="color:var(--green);font-weight:700">Delta Surplus</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--green)" id="sum-surplus">$0</td></tr>
+      <tr class="tbl-row" style="background:rgba(0,229,160,0.04)"><td style="color:var(--green)">+ Fragrance</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--green)" id="sum-frag">+$4,000</td></tr>
+      <tr class="tbl-row" style="background:rgba(0,229,160,0.1);border-top:1px solid rgba(0,229,160,0.3)"><td style="font-weight:700;color:var(--green)">Total Monthly Surplus</td><td style="text-align:right;font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--green)" id="sum-grand">$0</td></tr>
+    </table>
+  </div>
+  <div class="sec">Fragrance Estimate</div>
+  <div class="card">
+    <div class="inp-row">
+      <div class="input-group"><div class="input-label">Avg Daily Revenue</div><input class="inp" type="number" id="frag-daily" value="325" oninput="updateFragEst()"></div>
+      <div class="input-group"><div class="input-label">Sampling Days/Week</div><input class="inp" type="number" id="frag-days" value="4" min="0" max="6" oninput="updateFragEst()"></div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-top:6px;">Estimated monthly: <span id="frag-est" style="color:var(--green);font-weight:600;">$5,200</span></div>
+  </div>
+</div>
+
+<!-- ===== DEBTS ===== -->
+<div id="page-debts" class="page">
+  <div class="sec">Delta Savings Plan Loans</div>
+  <div class="card">
+    <div class="debt-item">
+      <div class="debt-top"><div><div class="debt-name">Loan 1 · Dec 2019 <span class="badge b-red">FINISHING</span></div><div class="debt-meta">$242.78/check · 6 left</div></div></div>
+      <div class="debt-bal">$1,412.09</div>
+      <div class="prog-bg" style="margin:7px 0 4px;"><div class="prog-fill" style="width:96%;background:var(--red)"></div></div>
+      <div class="debt-footer"><span>96% done</span><span style="color:var(--green)">✓ GONE JUNE 2026 · +$485/mo</span></div>
+    </div>
+    <div class="debt-item">
+      <div class="debt-top"><div><div class="debt-name">Loan 2 · Sep 2024 <span class="badge b-purple">ACTIVE</span></div><div class="debt-meta">$364.80/check · 85 payments</div></div></div>
+      <div class="debt-bal">$25,847.80</div>
+      <div class="prog-bg" style="margin:7px 0 4px;"><div class="prog-fill" style="width:18%;background:var(--purple)"></div></div>
+      <div class="debt-footer"><span>18% done</span><span>Oct 2029</span></div>
+    </div>
+    <div class="debt-item">
+      <div class="debt-top"><div><div class="debt-name">Loan 3 · Nov 2025 <span class="badge b-blue">ACTIVE</span></div><div class="debt-meta">$99.03/check · 112 payments</div></div></div>
+      <div class="debt-bal">$8,993.88</div>
+      <div class="prog-bg" style="margin:7px 0 4px;"><div class="prog-fill" style="width:8%;background:var(--blue)"></div></div>
+      <div class="debt-footer"><span>8% done</span><span>Mar 2030</span></div>
+    </div>
+  </div>
+  <div class="sec">Navy Federal Pledge Loans</div>
+  <div class="card">
+    <div class="debt-item">
+      <div class="debt-top"><div><div class="debt-name">Pledge A · 2.25% <span class="badge b-green">CREDIT BUILDER</span></div><div class="debt-meta">$59.92/mo · Due Aug 15, 2026</div></div></div>
+      <div class="debt-bal">$6,549.18</div>
+      <div class="prog-bg" style="margin:7px 0 4px;"><div class="prog-fill" style="width:55%;background:var(--green)"></div></div>
+      <div class="debt-footer"><span>55% done</span><span style="color:var(--green)">Done Aug 2026</span></div>
+    </div>
+    <div class="debt-item">
+      <div class="debt-top"><div><div class="debt-name">Pledge B · 2.25% <span class="badge b-green">CREDIT BUILDER</span></div><div class="debt-meta">$30.30/mo · Due Oct 15, 2028</div></div></div>
+      <div class="debt-bal">$895.42</div>
+      <div class="prog-bg" style="margin:7px 0 4px;"><div class="prog-fill" style="width:44%;background:var(--green)"></div></div>
+      <div class="debt-footer"><span>44% done</span><span>Oct 2028</span></div>
+    </div>
+  </div>
+  <div class="sec">Affirm</div>
+  <div class="card">
+    <div class="debt-item">
+      <div class="debt-top"><div><div class="debt-name">Chase Scents Oils <span class="badge b-orange">4 PAYMENTS LEFT</span></div><div class="debt-meta">$114.14/mo · Apr/May/Jun/Jul 21 · AutoPay</div></div></div>
+      <div class="debt-bal">$454.96</div>
+      <div class="prog-bg" style="margin:7px 0 4px;"><div class="prog-fill" style="width:33%;background:var(--orange)"></div></div>
+      <div class="debt-footer"><span>33% done</span><span style="color:var(--gold)">DONE JULY 21 ✓</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VACATION ===== -->
+<div id="page-vacation" class="page">
+  <div class="sec">Vacation Vault · July 1, 2026</div>
+  <div class="vac-big">
+    <div class="vac-top">
+      <div><div class="vac-label">✈️ Locked Until Boarding</div><div class="vac-amt" id="vac-total">$250</div><div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:3px;">$250 × 7 checks from Delta</div></div>
+      <div style="text-align:right;"><div class="vac-days" id="vac-days">--</div><div class="vac-days-label">days to<br>board</div></div>
+    </div>
+    <div class="prog-bg" style="margin-bottom:11px;"><div class="prog-fill" id="vac-bar" style="width:0%;background:linear-gradient(90deg,var(--gold),var(--green));"></div></div>
+    <div class="check-row" id="vac-checks"></div>
+  </div>
+  <div class="sec">Add Extra</div>
+  <div class="card">
+    <div class="inp-row">
+      <div class="input-group"><div class="input-label">Extra Amount</div><input class="inp" type="number" id="vac-extra" placeholder="0.00"></div>
+      <div class="input-group"><div class="input-label">Source</div><select class="inp" id="vac-src"><option>Fragrance Sales</option><option>Delta Bonus</option><option>Other</option></select></div>
+    </div>
+    <button class="btn btn-gold" onclick="addVacExtra()" style="width:100%;margin-top:4px;">+ Add to Vault</button>
+  </div>
+  <div class="notice info" style="margin-top:8px;">🔒 <strong>Rule:</strong> Vacation money boards the plane with you. Not for bills. Not for restocking. Period.</div>
+</div>
+
+<!-- ===== CREDIT ===== -->
+<div id="page-credit" class="page">
+  <div class="sec">Credit Score</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+    <div><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px;">Current Range</div><div style="font-family:'Bebas Neue',sans-serif;font-size:60px;color:var(--orange);line-height:1;">625</div><div style="font-size:10px;color:var(--muted);">600–649 · Fair</div></div>
+    <div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Target Dec 2026</div><div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--green);">720+</div><div style="font-size:10px;color:var(--muted);">Good → Very Good</div></div>
+  </div>
+  <div class="sec">3 Cards · All Zero ✅</div>
+  <div class="cc-card">
+    <div class="cc-top"><div><div class="cc-name">Capital One Savor · World Elite</div><div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">Closes: April 21 · APR: 28.99% · Limit: $1,800</div></div><div style="text-align:right;"><div class="cc-bal">$0.00</div><span class="badge b-green">0% UTIL</span></div></div>
+    <div class="prog-bg"><div class="prog-fill" style="width:0%;background:var(--green)"></div></div>
+    <div class="cc-detail">
+      <div class="cc-box"><div class="cc-box-label">Max before close</div><div class="cc-box-val" style="color:var(--gold);">$180</div></div>
+      <div class="cc-box"><div class="cc-box-label">Pay before</div><div class="cc-box-val" style="color:var(--red);">Apr 21 8PM ET</div></div>
+    </div>
+    <div class="notice warn" style="margin-top:8px;font-size:11px;">⚠️ Change AutoPay to <strong>full balance</strong>. Currently minimum only — costing $38/mo in avoidable interest.</div>
+  </div>
+  <div class="cc-card">
+    <div class="cc-top"><div><div class="cc-name">Apple Card · Goldman Sachs</div><div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">Closes: Last day of month · APR: 25.49%</div></div><div style="text-align:right;"><div class="cc-bal">$0.00</div><span class="badge b-green">CLEAN ✓</span></div></div>
+    <div class="notice good" style="margin-top:8px;font-size:11px;">✅ Using perfectly — small recurring charges paid in full monthly. Keep this exact pattern.</div>
+  </div>
+  <div class="cc-card">
+    <div class="cc-top"><div><div class="cc-name">Navy Federal CashRewards Visa ··6424</div><div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">Closes: 23rd of month · APR: 18% · Limit: $2,000</div></div><div style="text-align:right;"><div class="cc-bal">$0.00</div><span class="badge b-green">CLEAN ✓</span></div></div>
+    <div class="cc-detail">
+      <div class="cc-box"><div class="cc-box-label">Max before close</div><div class="cc-box-val" style="color:var(--gold);">$200</div></div>
+      <div class="cc-box"><div class="cc-box-label">Best card APR</div><div class="cc-box-val" style="color:var(--green);">18% lowest</div></div>
+    </div>
+  </div>
+  <div class="sec">Roadmap · 625 → 720+</div>
+  <div class="sr-row"><div class="sr-num" style="color:var(--green)">01</div><div><div class="sr-title">Keep all 3 cards at 0–10% on close date</div><div class="sr-desc">Already doing this. Every month this holds your score climbs. This is the #1 lever.</div></div></div>
+  <div class="sr-row"><div class="sr-num" style="color:var(--green)">02</div><div><div class="sr-title">Change Capital One AutoPay to full balance</div><div class="sr-desc">At 28.99% APR you're paying ~$38/mo in avoidable interest. Full balance autopay saves $456/year.</div></div></div>
+  <div class="sr-row"><div class="sr-num" style="color:var(--gold)">03</div><div><div class="sr-title">Capital One 98% clears after April 21</div><div class="sr-desc">March statement reported $1,767 = 98% util. Next close April 21 at $0. Score recovers 30–60pts.</div></div></div>
+  <div class="sr-row"><div class="sr-num" style="color:var(--gold)">04</div><div><div class="sr-title">Pledge loans + Affirm — never miss a payment</div><div class="sr-desc">35% of score is payment history. You've been perfect. Keep that streak.</div></div></div>
+  <div class="sr-row"><div class="sr-num" style="color:var(--blue)">05</div><div><div class="sr-title">No new credit until 680+</div><div class="sr-desc">Every hard pull = -5 to -10 pts. Let your current mix age and grow.</div></div></div>
+  <div class="sr-row"><div class="sr-num" style="color:var(--purple)">06</div><div><div class="sr-title">Request CLI on Navy Federal Visa at 680</div><div class="sr-desc">Higher limit + same low balance = lower utilization % = score boost. Don't spend the new limit.</div></div></div>
+</div>
+
+<!-- ===== FRAGRANCE ===== -->
+<div id="page-fragrance" class="page">
+  <div class="sec">Cost & Margin Calculator</div>
+  <div class="card">
+    <div class="inp-row">
+      <div class="input-group"><div class="input-label">Oil Cost (8oz)</div><input class="inp" type="number" id="oil-cost" value="56" oninput="calcMargins()"></div>
+      <div class="input-group"><div class="input-label">Concentration % <span id="conc-disp" style="color:var(--gold);">20%</span></div><input class="inp" type="range" min="10" max="30" value="20" id="conc-range" oninput="calcMargins();document.getElementById('conc-disp').textContent=this.value+'%'"></div>
+    </div>
+  </div>
+  <div class="sec">Yield Per 8oz Oil</div>
+  <div class="stat-grid three">
+    <div class="scard blue"><div class="sc-label">10ml bottles</div><div class="sc-val" id="y10">118</div><div class="sc-sub">per 8oz</div></div>
+    <div class="scard green"><div class="sc-label">30ml bottles</div><div class="sc-val" id="y30">39</div><div class="sc-sub">per 8oz</div></div>
+    <div class="scard purple"><div class="sc-label">60ml bottles</div><div class="sc-val" id="y60">19</div><div class="sc-sub">per 8oz</div></div>
+  </div>
+  <div class="sec">Profit Per Bottle</div>
+  <div class="card" style="margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+      <div><div style="font-family:'Bebas Neue',sans-serif;font-size:24px;">10ml <span class="badge b-gold">TOP SELLER</span></div><div style="font-size:10px;color:var(--muted);">Sells $14.99</div></div>
+      <div style="text-align:right;"><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green);" id="p10">$12.84</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--green);" id="m10">85.7%</div></div>
+    </div>
+    <div class="prog-bg"><div class="prog-fill" id="pb10" style="width:85.7%;background:var(--green);"></div></div>
+  </div>
+  <div class="card" style="margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+      <div><div style="font-family:'Bebas Neue',sans-serif;font-size:24px;">30ml <span class="badge b-gold">TOP SELLER</span></div><div style="font-size:10px;color:var(--muted);">Sells $27.99</div></div>
+      <div style="text-align:right;"><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green);" id="p30">$24.37</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--green);" id="m30">87.1%</div></div>
+    </div>
+    <div class="prog-bg"><div class="prog-fill" id="pb30" style="width:87.1%;background:var(--green);"></div></div>
+  </div>
+  <div class="card" style="margin-bottom:10px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+      <div><div style="font-family:'Bebas Neue',sans-serif;font-size:24px;">60ml</div><div style="font-size:10px;color:var(--muted);">Sells $47.99</div></div>
+      <div style="text-align:right;"><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green);" id="p60">$43.25</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--green);" id="m60">90.1%</div></div>
+    </div>
+    <div class="prog-bg"><div class="prog-fill" id="pb60" style="width:90.1%;background:var(--green);"></div></div>
+  </div>
+  <div class="sec">Daily Simulator</div>
+  <div class="card">
+    <div class="inp-row">
+      <div class="input-group"><div class="input-label">People Reached <span id="pd-disp" style="color:var(--blue);">15</span></div><input class="inp" type="range" min="5" max="30" value="15" id="people-range" oninput="calcDaily();document.getElementById('pd-disp').textContent=this.value"></div>
+      <div class="input-group"><div class="input-label">Close Rate <span id="cr-disp" style="color:var(--blue);">1:5</span></div><input class="inp" type="range" min="3" max="10" value="5" id="close-range" oninput="calcDaily();document.getElementById('cr-disp').textContent='1:'+this.value"></div>
+    </div>
+    <div class="frag-result">
+      <div class="fr-box"><div class="fr-label">Sales/Day</div><div class="fr-val" id="fd-sales" style="color:var(--purple);">3</div></div>
+      <div class="fr-box"><div class="fr-label">Day Revenue</div><div class="fr-val" id="fd-rev" style="color:var(--green);">$420</div></div>
+      <div class="fr-box"><div class="fr-label">Monthly Est.</div><div class="fr-val" id="fd-mo" style="color:var(--gold);">$9,240</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<!-- SHIFT MODAL -->
+<div class="modal-overlay" id="shift-modal">
+  <div class="modal">
+    <div class="modal-date" id="modal-date">Monday, Apr 6</div>
+    <div class="shift-types">
+      <div class="shift-btn reg-btn" onclick="selectShiftType('reg')"><div class="sb-icon">🔵</div><div class="sb-label">Regular</div><div class="sb-hrs">03:00–11:30 · 8h</div></div>
+      <div class="shift-btn extra-btn" onclick="selectShiftType('extra')"><div class="sb-icon">⭐</div><div class="sb-label">Pickup Extra</div><div class="sb-hrs">6h extra shift</div></div>
+      <div class="shift-btn holiday-btn" onclick="selectShiftType('holiday')"><div class="sb-icon">🟣</div><div class="sb-label">Holiday</div><div class="sb-hrs">Holiday pay rate</div></div>
+      <div class="shift-btn short-btn" onclick="selectShiftType('short')"><div class="sb-icon">🟢</div><div class="sb-label">Short Shift</div><div class="sb-hrs">Custom hours</div></div>
+      <div class="shift-btn swap-btn" onclick="selectShiftType('swap')"><div class="sb-icon">🔄</div><div class="sb-label">Swap</div><div class="sb-hrs">Traded shift</div></div>
+      <div class="shift-btn off-btn" onclick="selectShiftType('off')"><div class="sb-icon">❌</div><div class="sb-label">Give Away</div><div class="sb-hrs">Giving up shift</div></div>
+    </div>
+    <div class="modal-time-row">
+      <div class="modal-time-group"><div class="modal-time-label">Start Time</div><input class="modal-inp" type="time" id="modal-start" value="03:00"></div>
+      <div class="modal-time-group"><div class="modal-time-label">End Time</div><input class="modal-inp" type="time" id="modal-end" value="11:30"></div>
+    </div>
+    <textarea class="modal-note" id="modal-note" placeholder="Notes (optional — e.g. 'picked up from Marcus')"></textarea>
+    <div class="modal-btns">
+      <button class="btn btn-gold" onclick="saveShift()" style="flex:1;">Save Shift</button>
+      <button class="btn btn-red" onclick="clearShift()">Clear Day</button>
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ CONSTANTS ============
+const RATE = 40.50, NIGHT_PREM = 0.59, TAX_RATE = 0.22, DEDUCTIONS = 1458.37;
+const OIL_ML = 8*29.5735;
+const SELL = {10:14.99,30:27.99,60:47.99};
+const BOTTLE = {10:0.37,30:0.24,60:0.28};
+const SPRAYER = {10:0,30:0.34,60:0.34};
+const PACK = {10:0.74,30:0.74,60:0.74};
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+// Pay periods for 2026 (period start, period end, check date)
+const PAY_PERIODS_2026 = [
+  {start:'2026-03-14',end:'2026-03-27',check:'2026-04-03',label:'PP1',cls:'pp1'},
+  {start:'2026-03-28',end:'2026-04-10',check:'2026-04-17',label:'PP2',cls:'pp2'},
+  {start:'2026-04-11',end:'2026-04-24',check:'2026-05-01',label:'PP3',cls:'pp3'},
+  {start:'2026-04-25',end:'2026-05-08',check:'2026-05-15',label:'PP4',cls:'pp4'},
+  {start:'2026-05-09',end:'2026-05-22',check:'2026-05-29',label:'PP5',cls:'pp1'},
+  {start:'2026-05-23',end:'2026-06-05',check:'2026-06-12',label:'PP6',cls:'pp2'},
+  {start:'2026-06-06',end:'2026-06-19',check:'2026-06-26',label:'PP7',cls:'pp3'},
+];
+
+// Pre-loaded April schedule from WFM screenshot
+const PRELOADED_SHIFTS = {
+  '2026-03-30':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-03-31':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-02':{type:'extra',start:'05:00',end:'11:30',note:'WFM shown 5AM start'},
+  '2026-04-03':{type:'holiday',start:'03:00',end:'11:30',note:'Good Friday'},
+  '2026-04-04':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-06':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-07':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-10':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-11':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-13':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-14':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-17':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-18':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-19':{type:'reg',start:'03:00',end:'11:30',note:'Sunday — worked per WFM'},
+  '2026-04-20':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-21':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-23':{type:'short',start:'03:00',end:'09:30',note:'Short shift 6.5h'},
+  '2026-04-24':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-25':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-27':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-28':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-05-01':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-05-02':{type:'reg',start:'03:00',end:'11:30',note:''},
+};
+
+// ============ STATE ============
+let shifts = JSON.parse(localStorage.getItem('ss-shifts') || 'null');
+if(!shifts) { shifts = {...PRELOADED_SHIFTS}; localStorage.setItem('ss-shifts', JSON.stringify(shifts)); }
+
+let calYear = 2026, calMonth = 3; // April 2026 (0-indexed)
+let selectedDate = null, selectedShiftType = null;
+
+const DEFAULT_BILLS = [
+  {id:1,name:'Rent',amt:825,due:1,cat:'fixed',icon:'🏠',locked:true},
+  {id:2,name:'Car Payment (Bridgecrest)',amt:825,due:17,cat:'fixed',icon:'🚗',locked:true},
+  {id:3,name:'State Farm Insurance',amt:330.07,due:1,cat:'fixed',icon:'🛡️',locked:true},
+  {id:4,name:'Verizon WiFi',amt:65,due:3,cat:'fixed',icon:'📶',locked:true},
+  {id:5,name:'Apple Family',amt:26.99,due:2,cat:'subscription',icon:'🍎',locked:true},
+  {id:6,name:'Gas / Tolls',amt:200,due:0,cat:'fixed',icon:'⛽',locked:true},
+  {id:7,name:'Credit Card Minimums',amt:150,due:16,cat:'debt',icon:'💳',locked:true},
+  {id:8,name:'AT&T (4 lines)',amt:180,due:15,cat:'fixed',icon:'📱',locked:true},
+  {id:9,name:'NFCU Pledge Loans',amt:90.22,due:15,cat:'debt',icon:'🏦',locked:true},
+  {id:10,name:'Affirm (til July)',amt:114.14,due:21,cat:'debt',icon:'⏱️',locked:false},
+];
+let bills = JSON.parse(localStorage.getItem('ss-bills') || 'null') || DEFAULT_BILLS;
+let nextBillId = bills.length ? Math.max(...bills.map(b=>b.id))+1 : 11;
+let vacExtra = parseFloat(localStorage.getItem('ss-vac-extra')||'0');
+
+// ============ INIT ============
+window.onload = () => {
+  updateDays();
+  renderCalendar();
+  calcPay();
+  calcMargins();
+  calcDaily();
+  renderBills();
+  renderVacChecks();
+};
+
+// ============ NAV ============
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0,0);
+  if(name==='schedule') renderCalendar();
+}
+
+function updateDays() {
+  const today = new Date();
+  const july1 = new Date('2026-07-01');
+  const diff = Math.ceil((july1-today)/(1000*60*60*24));
+  document.getElementById('dash-days').textContent = diff+' days left';
+  document.getElementById('vac-days').textContent = diff;
+}
+
+// ============ CALENDAR ============
+function dateKey(y,m,d) {
+  return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+
+function getPPForDate(dateStr) {
+  for(let pp of PAY_PERIODS_2026) {
+    if(dateStr>=pp.start && dateStr<=pp.end) return pp;
+  }
+  return null;
+}
+
+function getShiftHours(shift) {
+  if(!shift || shift.type==='off') return 0;
+  const [sh,sm] = shift.start.split(':').map(Number);
+  const [eh,em] = shift.end.split(':').map(Number);
+  let hrs = (eh*60+em - sh*60-sm)/60;
+  if(hrs<0) hrs+=24;
+  return Math.max(0, hrs - 0.5); // minus 30min lunch
+}
+
+function renderCalendar() {
+  const title = `${MONTHS[calMonth]} ${calYear}`;
+  document.getElementById('cal-month-title').textContent = title;
+  document.getElementById('pp-month-label').textContent = title;
+
+  const today = new Date();
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const daysInPrev = new Date(calYear, calMonth, 0).getDate();
+
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  // Track stats
+  let regDays=0, regHrs=0, extraDays=0, extraHrs=0, holDays=0, holHrs=0;
+
+  for(let i=0; i<42; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell';
+
+    let day, month, year, isOther=false;
+    if(i < firstDay) {
+      day = daysInPrev - firstDay + i + 1;
+      month = calMonth - 1; year = calYear;
+      if(month<0){month=11;year--;}
+      isOther = true;
+    } else if(i >= firstDay + daysInMonth) {
+      day = i - firstDay - daysInMonth + 1;
+      month = calMonth + 1; year = calYear;
+      if(month>11){month=0;year++;}
+      isOther = true;
+    } else {
+      day = i - firstDay + 1;
+      month = calMonth; year = calYear;
+    }
+
+    const dk = dateKey(year, month, day);
+    const isToday = (year===today.getFullYear() && month===today.getMonth() && day===today.getDate());
+    const isSunday = (i%7===0);
+
+    if(isOther) cell.classList.add('other-month');
+    if(isToday) cell.classList.add('today');
+    if(isSunday && !isOther) cell.classList.add('sunday');
+
+    // Pay period badge
+    const pp = getPPForDate(dk);
+    if(pp && !isOther) {
+      const badge = document.createElement('div');
+      badge.className = `cal-pp-badge ${pp.cls}`;
+      badge.textContent = pp.label;
+      cell.appendChild(badge);
+    }
+
+    // Date number
+    const dateDiv = document.createElement('div');
+    dateDiv.className = 'cal-date';
+    dateDiv.textContent = day;
+    cell.appendChild(dateDiv);
+
+    // Shift block
+    const shift = shifts[dk];
+    if(shift) {
+      const block = document.createElement('div');
+      block.className = `cal-shift-block ${shift.type}`;
+      const hrs = getShiftHours(shift);
+      const typeLabels = {reg:'REG',extra:'PICKUP',holiday:'HOL',short:'SHORT',swap:'SWAP',off:'GIVE'};
+      block.textContent = `${typeLabels[shift.type]||shift.type} ${shift.start}–${shift.end}`;
+      if(hrs>0) block.textContent += ` (${hrs}h)`;
+      cell.appendChild(block);
+
+      // Accumulate stats (current month only)
+      if(!isOther) {
+        if(shift.type==='reg') { regDays++; regHrs+=hrs; }
+        else if(shift.type==='extra') { extraDays++; extraHrs+=hrs; }
+        else if(shift.type==='holiday') { holDays++; holHrs+=hrs; }
+      }
+    }
+
+    cell.onclick = () => openModal(dk, year, month, day);
+    grid.appendChild(cell);
+  }
+
+  // Update summary table
+  document.getElementById('sum-reg-days').textContent = regDays;
+  document.getElementById('sum-reg-hrs').textContent = regHrs.toFixed(1);
+  document.getElementById('sum-reg-pay').textContent = '$'+(regHrs*RATE).toFixed(0);
+  document.getElementById('sum-extra-days').textContent = extraDays;
+  document.getElementById('sum-extra-hrs').textContent = extraHrs.toFixed(1);
+  document.getElementById('sum-extra-pay').textContent = '$'+(extraHrs*RATE).toFixed(0);
+  document.getElementById('sum-hol-days').textContent = holDays;
+  document.getElementById('sum-hol-hrs').textContent = holHrs.toFixed(1);
+  document.getElementById('sum-hol-pay').textContent = '$'+(holHrs*RATE).toFixed(0);
+  const totalHrs = regHrs+extraHrs+holHrs;
+  const totalPay = totalHrs*RATE;
+  document.getElementById('sum-total-days').textContent = regDays+extraDays+holDays;
+  document.getElementById('sum-total-hrs').textContent = totalHrs.toFixed(1);
+  document.getElementById('sum-total-pay').textContent = '$'+totalPay.toFixed(0);
+
+  // Render pay period cards
+  renderPPStrip();
+}
+
+function renderPPStrip() {
+  const strip = document.getElementById('pp-strip');
+  strip.innerHTML = '';
+  const relevantPPs = PAY_PERIODS_2026.filter(pp => {
+    const ppStart = new Date(pp.start);
+    const ppEnd = new Date(pp.end);
+    return ppStart.getMonth()===calMonth||ppEnd.getMonth()===calMonth;
+  }).slice(0,4);
+
+  relevantPPs.forEach(pp => {
+    let ppHrs = 0;
+    const start = new Date(pp.start), end = new Date(pp.end);
+    for(let d=new Date(start); d<=end; d.setDate(d.getDate()+1)) {
+      const dk = d.toISOString().split('T')[0];
+      const shift = shifts[dk];
+      if(shift) ppHrs += getShiftHours(shift);
+    }
+    const gross = ppHrs * RATE;
+    const takehome = Math.max(0, gross*(1-TAX_RATE) - DEDUCTIONS);
+    const checkDate = new Date(pp.check).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const startFmt = new Date(pp.start).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const endFmt = new Date(pp.end).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+
+    const card = document.createElement('div');
+    card.className = `pp-card ${pp.cls}`;
+    card.innerHTML = `
+      <div class="pp-label">${pp.label} · Pay Period</div>
+      <div class="pp-dates">${startFmt} – ${endFmt}</div>
+      <div class="pp-check">💰 Check: ${checkDate}</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+        <div><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">HRS</div><div class="pp-hrs">${ppHrs.toFixed(1)}</div></div>
+        <div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">TAKE-HOME</div><div class="pp-pay">$${takehome.toFixed(0)}</div></div>
+      </div>
+    `;
+    strip.appendChild(card);
+  });
+}
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if(calMonth>11){calMonth=0;calYear++;}
+  if(calMonth<0){calMonth=11;calYear--;}
+  renderCalendar();
+}
+
+// ============ MODAL ============
+function openModal(dk, year, month, day) {
+  selectedDate = dk;
+  selectedShiftType = null;
+  const dayName = DAYS[new Date(year,month,day).getDay()];
+  document.getElementById('modal-date').textContent = `${dayName}, ${MONTHS[month]} ${day}`;
+
+  // Pre-fill if shift exists
+  const existing = shifts[dk];
+  document.querySelectorAll('.shift-btn').forEach(b=>b.classList.remove('selected'));
+  if(existing) {
+    selectedShiftType = existing.type;
+    document.querySelector(`.${existing.type}-btn`)?.classList.add('selected');
+    document.getElementById('modal-start').value = existing.start;
+    document.getElementById('modal-end').value = existing.end;
+    document.getElementById('modal-note').value = existing.note||'';
+  } else {
+    document.getElementById('modal-start').value = '03:00';
+    document.getElementById('modal-end').value = '11:30';
+    document.getElementById('modal-note').value = '';
+  }
+
+  document.getElementById('shift-modal').classList.add('open');
+}
+
+function selectShiftType(type) {
+  selectedShiftType = type;
+  document.querySelectorAll('.shift-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelector(`.${type}-btn`).classList.add('selected');
+  // Auto-set times
+  const times = {reg:['03:00','11:30'],extra:['03:00','09:00'],holiday:['03:00','11:30'],short:['03:00','09:30'],swap:['03:00','11:30'],off:['03:00','11:30']};
+  if(times[type]) { document.getElementById('modal-start').value=times[type][0]; document.getElementById('modal-end').value=times[type][1]; }
+}
+
+function saveShift() {
+  if(!selectedShiftType||!selectedDate) return;
+  shifts[selectedDate] = {
+    type: selectedShiftType,
+    start: document.getElementById('modal-start').value,
+    end: document.getElementById('modal-end').value,
+    note: document.getElementById('modal-note').value
+  };
+  localStorage.setItem('ss-shifts', JSON.stringify(shifts));
+  closeModal();
+  renderCalendar();
+}
+
+function clearShift() {
+  if(selectedDate) { delete shifts[selectedDate]; localStorage.setItem('ss-shifts',JSON.stringify(shifts)); }
+  closeModal(); renderCalendar();
+}
+
+function closeModal() { document.getElementById('shift-modal').classList.remove('open'); }
+
+// ============ PAY CALC ============
+function calcPay() {
+  const reg=parseFloat(document.getElementById('reg-hrs').value)||0;
+  const extra=parseFloat(document.getElementById('extra-hrs').value)||0;
+  const hol=parseFloat(document.getElementById('hol-hrs').value)||0;
+  const ot=parseFloat(document.getElementById('ot-hrs').value)||0;
+  const night=parseFloat(document.getElementById('night-hrs').value)||0;
+  const bonus=parseFloat(document.getElementById('bonus-amt').value)||0;
+  const gross=(reg+extra+hol)*RATE + ot*RATE*0.5 + night*NIGHT_PREM + bonus;
+  const taxes=gross*TAX_RATE;
+  const takehome=gross-taxes-DEDUCTIONS;
+  const afterVac=takehome-250;
+  document.getElementById('dash-check').textContent='$'+Math.max(0,takehome).toFixed(0);
+  document.getElementById('pay-wf').innerHTML=`
+    <div class="wf-row wf-gross"><div class="wl"><span class="wl-icon">💵</span><div><span class="wl-label">Gross Earnings</span><span class="wl-note">${reg+extra+hol} hrs × $${RATE} + OT + Night + Bonus</span></div></div><div class="wa">+$${gross.toFixed(2)}</div></div>
+    <div class="wf-row wf-tax"><div class="wl"><span class="wl-icon">🏛</span><div><span class="wl-label">Taxes (Fed+NY+NYC)</span><span class="wl-note">~22% effective rate</span></div></div><div class="wa">-$${taxes.toFixed(2)}</div></div>
+    <div class="wf-row wf-ded"><div class="wl"><span class="wl-icon">📋</span><div><span class="wl-label">All Deductions</span><span class="wl-note">Loans + 401k + Benefits + Stock</span></div></div><div class="wa">-$${DEDUCTIONS.toFixed(2)}</div></div>
+    <div class="wf-row wf-net"><div class="wl"><span class="wl-icon">✅</span><div><span class="wl-label"><strong>Take-Home Pay</strong></span></div></div><div class="wa">$${Math.max(0,takehome).toFixed(2)}</div></div>
+    <div class="wf-row wf-alloc"><div class="wl"><span class="wl-icon">✈️</span><div><span class="wl-label">Vacation Fund</span><span class="wl-note">Locked until July 1</span></div></div><div class="wa">-$250.00</div></div>
+    <div class="wf-row wf-remain"><div class="wl"><span class="wl-icon">🏦</span><div><span class="wl-label"><strong>Available for Bills</strong></span></div></div><div class="wa">$${Math.max(0,afterVac).toFixed(2)}</div></div>
+  `;
+}
+
+function setScenario(reg,extra,hol,ot,night,bonus) {
+  document.getElementById('reg-hrs').value=reg;
+  document.getElementById('extra-hrs').value=extra;
+  document.getElementById('hol-hrs').value=hol;
+  document.getElementById('ot-hrs').value=ot;
+  document.getElementById('night-hrs').value=night;
+  document.getElementById('bonus-amt').value=bonus;
+  calcPay();
+}
+function showJuneNote(){ document.getElementById('june-note').style.display='block'; }
+
+// ============ BILLS ============
+function renderBills() {
+  const container=document.getElementById('fixed-bills');
+  const today=new Date().getDate();
+  container.innerHTML='';
+  bills.sort((a,b)=>(a.due||0)-(b.due||0)).forEach(bill=>{
+    const urgent=bill.due>0&&bill.due>=today&&bill.due<=today+5;
+    const div=document.createElement('div');
+    div.className='bill-item';
+    if(urgent)div.style.borderColor='rgba(255,171,64,0.4)';
+    div.innerHTML=`<div class="bill-left"><span class="bill-icon">${bill.icon||'💸'}</span><div><div class="bill-name">${bill.name}${urgent?' <span class="badge b-orange">DUE SOON</span>':''}</div><div class="bill-due">${bill.due?'Due: '+bill.due+'th of month':'Variable'}</div></div></div><div class="bill-right"><span class="bill-amt">$${parseFloat(bill.amt).toFixed(2)}/mo</span>${!bill.locked?`<button class="bill-del" onclick="deleteBill(${bill.id})">✕</button>`:''}</div>`;
+    container.appendChild(div);
+  });
+  updateBudgetSummary();
+  localStorage.setItem('ss-bills',JSON.stringify(bills));
+}
+
+function addBill(){
+  const name=document.getElementById('new-bill-name').value.trim();
+  const amt=parseFloat(document.getElementById('new-bill-amt').value);
+  const due=parseInt(document.getElementById('new-bill-due').value)||0;
+  const cat=document.getElementById('new-bill-cat').value;
+  if(!name||!amt)return;
+  const icons={fixed:'💸',subscription:'📱',debt:'💳',savings:'🏦',other:'📌'};
+  bills.push({id:nextBillId++,name,amt,due,cat,icon:icons[cat]||'💸',locked:false});
+  document.getElementById('new-bill-name').value='';
+  document.getElementById('new-bill-amt').value='';
+  document.getElementById('new-bill-due').value='';
+  renderBills();
+}
+
+function deleteBill(id){bills=bills.filter(b=>b.id!==id);renderBills();}
+
+function updateBudgetSummary(){
+  const totalFixed=bills.reduce((s,b)=>s+parseFloat(b.amt||0),0);
+  const totalOut=totalFixed+500;
+  const deltaMonthly=1827*2;
+  const surplus=deltaMonthly-totalOut;
+  const fragEst=parseFloat(document.getElementById('frag-daily')?.value||325)*parseFloat(document.getElementById('frag-days')?.value||4)*4.33;
+  document.getElementById('sum-fixed').textContent='$'+totalFixed.toFixed(2);
+  document.getElementById('sum-out').textContent='$'+totalOut.toFixed(2);
+  document.getElementById('sum-surplus').textContent=(surplus>=0?'+':'')+surplus.toFixed(2);
+  document.getElementById('sum-surplus').style.color=surplus>=0?'var(--green)':'var(--red)';
+  document.getElementById('sum-grand').textContent='~$'+Math.max(0,surplus+fragEst).toFixed(0);
+}
+
+function updateFragEst(){
+  const daily=parseFloat(document.getElementById('frag-daily').value)||0;
+  const days=parseFloat(document.getElementById('frag-days').value)||0;
+  const monthly=(daily*days*4.33).toFixed(0);
+  if(document.getElementById('frag-est'))document.getElementById('frag-est').textContent='$'+parseInt(monthly).toLocaleString();
+  if(document.getElementById('budget-frag-val'))document.getElementById('budget-frag-val').textContent='$'+parseInt(monthly).toLocaleString();
+  if(document.getElementById('sum-frag'))document.getElementById('sum-frag').textContent='+$'+parseInt(monthly).toLocaleString();
+  updateBudgetSummary();
+}
+
+// ============ VACATION ============
+const VAC_DATA=[{date:'APR 4'},{date:'APR 18'},{date:'MAY 2'},{date:'MAY 16'},{date:'MAY 30'},{date:'JUN 13'},{date:'JUN 27'}];
+const VAC_CHECK_DATES=[new Date('2026-04-04'),new Date('2026-04-18'),new Date('2026-05-02'),new Date('2026-05-16'),new Date('2026-05-30'),new Date('2026-06-13'),new Date('2026-06-27')];
+
+function renderVacChecks(){
+  const today=new Date();
+  let done=0,current=-1;
+  VAC_CHECK_DATES.forEach((d,i)=>{if(today>d)done=i+1;else if(current===-1)current=i;});
+  const total=done*250+vacExtra;
+  document.getElementById('vac-total').textContent='$'+total.toLocaleString();
+  document.getElementById('dash-vac').textContent='$'+total.toLocaleString();
+  const pct=Math.min(100,(total/1750)*100);
+  document.getElementById('vac-bar').style.width=pct+'%';
+  const container=document.getElementById('vac-checks');
+  container.innerHTML='';
+  VAC_DATA.forEach((c,i)=>{
+    const isDone=i<done,isNow=i===current;
+    const div=document.createElement('div');
+    div.className='chk'+(isDone?' done':'')+(isNow?' now':'');
+    div.innerHTML=`<div class="chk-date">${c.date}</div><div class="chk-amt">$250</div>`;
+    container.appendChild(div);
+  });
+}
+
+function addVacExtra(){
+  const amt=parseFloat(document.getElementById('vac-extra').value)||0;
+  if(!amt)return;
+  vacExtra+=amt;
+  localStorage.setItem('ss-vac-extra',vacExtra);
+  document.getElementById('vac-extra').value='';
+  renderVacChecks();
+}
+
+// ============ FRAGRANCE ============
+function calcMargins(){
+  const oilCost=parseFloat(document.getElementById('oil-cost').value)||56;
+  const conc=parseInt(document.getElementById('conc-range').value)/100;
+  const oilPerMl=oilCost/OIL_ML;
+  [10,30,60].forEach(size=>{
+    const oilC=size*conc*oilPerMl;
+    const totalC=oilC+BOTTLE[size]+SPRAYER[size]+PACK[size];
+    const profit=SELL[size]-totalC;
+    const margin=(profit/SELL[size]*100);
+    const color=margin>=80?'var(--green)':margin>=65?'var(--gold)':'var(--orange)';
+    if(document.getElementById('p'+size)){
+      document.getElementById('p'+size).textContent='$'+profit.toFixed(2);
+      document.getElementById('p'+size).style.color=color;
+      document.getElementById('m'+size).textContent=margin.toFixed(1)+'%';
+      document.getElementById('pb'+size).style.width=margin.toFixed(1)+'%';
+      document.getElementById('pb'+size).style.background=color;
+    }
+    if(document.getElementById('y'+size))document.getElementById('y'+size).textContent=Math.floor(OIL_ML/(size*conc));
+  });
+}
+
+function calcDaily(){
+  const people=parseInt(document.getElementById('people-range')?.value||15);
+  const rate=parseInt(document.getElementById('close-range')?.value||5);
+  const sales=Math.floor(people/rate);
+  const rev=(Math.round(sales*0.6)*27.99)+(Math.round(sales*0.4)*14.99);
+  if(document.getElementById('fd-sales')){
+    document.getElementById('fd-sales').textContent=sales;
+    document.getElementById('fd-rev').textContent='$'+rev.toFixed(0);
+    document.getElementById('fd-mo').textContent='$'+(rev*22).toFixed(0);
+  }
+}
+
+// Close modal on overlay click
+document.getElementById('shift-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+</script>
+</body>
+</html>
