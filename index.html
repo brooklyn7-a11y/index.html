@@ -6,568 +6,622 @@
 <title>SIM-SIMMA · Financial OS</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap');
-:root {
-  --bg:#080810; --surface:#0e0e1a; --card:#12121e; --card2:#161624;
-  --border:#1e1e32; --border2:#252540;
-  --gold:#f0c040; --gold2:#c89a20;
-  --green:#00e5a0; --green2:#00b87a;
-  --red:#ff5555; --blue:#40c4ff;
-  --purple:#b388ff; --orange:#ffab40;
-  --text:#e8e8f8; --text2:#a0a0c0;
-  --muted:#505070; --dim:#181828;
+
+[data-theme="dark"]{
+  --bg:#080810;--surface:#0e0e1a;--card:#12121e;
+  --border:#1e1e32;--border2:#252540;
+  --text:#e8e8f8;--text2:#a0a0c0;--muted:#505070;--dim:#181828;
+  --gold:#f0c040;--green:#00e5a0;--red:#ff5555;
+  --blue:#40c4ff;--purple:#b388ff;--orange:#ffab40;
+  --nw-bg:rgba(255,171,64,0.08);--nw-br:rgba(255,171,64,0.25);--nw-c:#c8a060;
+  --ng-bg:rgba(0,229,160,0.07);--ng-br:rgba(0,229,160,0.2);--ng-c:#60c898;
+  --ni-bg:rgba(64,196,255,0.07);--ni-br:rgba(64,196,255,0.2);--ni-c:#60a8c8;
+  --wg:rgba(240,192,64,0.08);--wt:rgba(255,171,64,0.07);
+  --wd:rgba(255,85,85,0.07);--wn:rgba(0,229,160,0.09);
+  --wa:rgba(64,196,255,0.07);--wr:rgba(179,136,255,0.08);
+  --tbh:var(--dim);--blbg:var(--dim);--ibg:var(--dim);
 }
+[data-theme="light"]{
+  --bg:#f4f3ef;--surface:#ffffff;--card:#ffffff;
+  --border:#e0ddd6;--border2:#ccc9c0;
+  --text:#1a1814;--text2:#4a4640;--muted:#8a8578;--dim:#f0ede6;
+  --gold:#b87a00;--green:#1a7a4a;--red:#c0392b;
+  --blue:#1a5c9a;--purple:#5a2d82;--orange:#c05800;
+  --nw-bg:#fef8ee;--nw-br:#f0d090;--nw-c:#7a5200;
+  --ng-bg:#e8f5ee;--ng-br:#a8d8bb;--ng-c:#0f4a2a;
+  --ni-bg:#e8f0f8;--ni-br:#a8c4e0;--ni-c:#0a3a6a;
+  --wg:#fef8dc;--wt:#fff4ee;--wd:#fdecea;--wn:#e8f5ee;
+  --wa:#e8f0f8;--wr:#f0e8f8;
+  --tbh:#f0ede6;--blbg:#f8f7f4;--ibg:#f8f7f4;
+}
+
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 50% at 100% 0%,rgba(240,192,64,0.07) 0%,transparent 55%),radial-gradient(ellipse 60% 40% at 0% 100%,rgba(0,229,160,0.05) 0%,transparent 50%);pointer-events:none;z-index:0;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden;transition:background 0.3s,color 0.3s;}
 
-/* SYNC STATUS */
-#sync-bar{position:fixed;top:0;left:0;right:0;height:3px;background:transparent;z-index:200;}
-#sync-bar.syncing{background:linear-gradient(90deg,var(--gold),var(--green));animation:syncpulse 1s infinite;}
-#sync-bar.synced{background:var(--green);transition:opacity 1s;opacity:0;}
-@keyframes syncpulse{0%,100%{opacity:0.4;}50%{opacity:1;}}
+#sync-bar{position:fixed;top:0;left:0;right:0;height:3px;z-index:300;}
+#sync-bar.syncing{background:linear-gradient(90deg,var(--gold),var(--green));animation:sp 1s infinite;}
+#sync-bar.synced{background:var(--green);opacity:0;transition:opacity 1s;}
+@keyframes sp{0%,100%{opacity:0.4;}50%{opacity:1;}}
 
-/* NAV */
-.nav{position:fixed;top:3px;left:0;right:0;z-index:100;background:rgba(8,8,16,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;height:54px;gap:4px;}
-.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.08em;color:var(--gold);margin-right:12px;white-space:nowrap;}
-.nav-brand span{color:var(--text2);font-size:10px;font-family:'DM Mono',monospace;letter-spacing:0.15em;margin-left:5px;}
+.nav{position:fixed;top:3px;left:0;right:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 10px;height:54px;gap:3px;transition:background 0.3s;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.08em;color:var(--gold);margin-right:6px;white-space:nowrap;}
+.nav-brand span{color:var(--muted);font-size:8px;font-family:'DM Mono',monospace;letter-spacing:0.15em;margin-left:3px;}
 .nav-tabs{display:flex;gap:2px;overflow-x:auto;flex:1;}
 .nav-tabs::-webkit-scrollbar{display:none;}
-.ntab{padding:6px 10px;border-radius:6px;font-size:10px;font-family:'DM Mono',monospace;cursor:pointer;color:var(--muted);transition:all 0.15s;white-space:nowrap;letter-spacing:0.05em;text-transform:uppercase;border:none;background:none;}
-.ntab:hover{color:var(--text);background:rgba(255,255,255,0.05);}
-.ntab.active{color:var(--gold);background:rgba(240,192,64,0.1);}
+.ntab{padding:5px 8px;border-radius:5px;font-size:9px;font-family:'DM Mono',monospace;cursor:pointer;color:var(--muted);transition:all 0.15s;white-space:nowrap;letter-spacing:0.04em;text-transform:uppercase;border:none;background:none;}
+.ntab:hover{color:var(--text);background:var(--dim);}
+.ntab.active{color:var(--gold);background:var(--dim);border:1px solid var(--border2);}
+.theme-btn{background:var(--dim);border:1px solid var(--border2);border-radius:18px;padding:4px 9px;cursor:pointer;font-size:13px;flex-shrink:0;}
 
-.main{padding:72px 14px 80px;max-width:780px;margin:0 auto;position:relative;z-index:1;}
+.main{padding:70px 13px 80px;max-width:780px;margin:0 auto;}
 .page{display:none;}.page.active{display:block;}
 
-/* HERO */
-.hero{padding:20px 0 16px;border-bottom:1px solid var(--border);margin-bottom:18px;}
-.hero-eyebrow{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;margin-bottom:5px;}
-.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,7vw,52px);line-height:0.92;color:var(--text);}
+.sec{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.18em;color:var(--muted);text-transform:uppercase;margin:16px 0 9px;display:flex;align-items:center;gap:7px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:11px;transition:background 0.3s,border 0.3s;}
+.card-title{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.14em;color:var(--muted);text-transform:uppercase;margin-bottom:11px;}
+
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+.sg.t{grid-template-columns:repeat(3,1fr);}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;position:relative;overflow:hidden;transition:all 0.3s;}
+.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.sc.g::after{background:var(--gold);}.sc.gr::after{background:var(--green);}
+.sc.b::after{background:var(--blue);}.sc.p::after{background:var(--purple);}
+.sc.r::after{background:var(--red);}.sc.o::after{background:var(--orange);}
+.sl{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.sv{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;}
+.sc.g .sv{color:var(--gold);}.sc.gr .sv{color:var(--green);}
+.sc.b .sv{color:var(--blue);}.sc.p .sv{color:var(--purple);}
+.sc.r .sv{color:var(--red);}.sc.o .sv{color:var(--orange);}
+.ss{font-size:10px;color:var(--muted);margin-top:3px;}
+
+.hero{padding:18px 0 14px;border-bottom:2px solid var(--gold);margin-bottom:16px;}
+.hero-ey{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.18em;color:var(--gold);text-transform:uppercase;margin-bottom:4px;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,7vw,50px);line-height:0.92;color:var(--text);}
 .hero h1 em{color:var(--gold);font-style:normal;}
-.hero-sub{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:7px;line-height:1.6;}
-.sec{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;margin:18px 0 10px;}
-
-/* STAT GRID */
-.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:14px;}
-.stat-grid.three{grid-template-columns:repeat(3,1fr);}
-.scard{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px;position:relative;overflow:hidden;}
-.scard::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.scard.gold::after{background:var(--gold);}.scard.green::after{background:var(--green);}
-.scard.blue::after{background:var(--blue);}.scard.purple::after{background:var(--purple);}
-.scard.red::after{background:var(--red);}.scard.orange::after{background:var(--orange);}
-.sc-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
-.sc-val{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;}
-.scard.gold .sc-val{color:var(--gold);}.scard.green .sc-val{color:var(--green);}
-.scard.blue .sc-val{color:var(--blue);}.scard.purple .sc-val{color:var(--purple);}
-.scard.red .sc-val{color:var(--red);}.scard.orange .sc-val{color:var(--orange);}
-.sc-sub{font-size:10px;color:var(--muted);margin-top:3px;}
-
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:12px;}
-.card-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;}
+.hero-sub{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:6px;line-height:1.5;}
 
 /* CALENDAR */
-.cal-wrapper{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;}
-.cal-header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);}
-.cal-title{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gold);letter-spacing:0.05em;}
-.cal-nav{display:flex;gap:8px;}
-.cal-nav-btn{background:var(--dim);border:1px solid var(--border2);border-radius:6px;color:var(--text2);padding:5px 10px;cursor:pointer;font-size:13px;transition:all 0.15s;}
-.cal-nav-btn:hover{border-color:var(--gold);color:var(--gold);}
-.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border);}
-.cal-day-header{padding:8px 0;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;}
+.cal-wrap{background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-bottom:12px;}
+.cal-hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);}
+.cal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);}
+.cal-nav{display:flex;gap:6px;}
+.cal-nb{background:var(--dim);border:1px solid var(--border2);border-radius:5px;color:var(--text2);padding:4px 9px;cursor:pointer;font-size:12px;transition:all 0.15s;}
+.cal-nb:hover{border-color:var(--gold);color:var(--gold);}
+.cal-dh{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border);}
+.cal-dh div{padding:7px 0;text-align:center;font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);}
-.cal-cell{min-height:72px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 5px;cursor:pointer;transition:background 0.15s;position:relative;}
+.cal-cell{min-height:66px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:5px;cursor:pointer;transition:background 0.12s;position:relative;}
 .cal-cell:nth-child(7n){border-right:none;}
-.cal-cell:hover{background:rgba(255,255,255,0.03);}
-.cal-cell.other-month{opacity:0.3;}
-.cal-cell.today{background:rgba(240,192,64,0.05);}
-.cal-cell.today .cal-date{color:var(--gold);font-weight:700;}
-.cal-cell.sunday{background:rgba(0,229,160,0.03);}
-.cal-date{font-family:'DM Mono',monospace;font-size:10px;color:var(--text2);margin-bottom:4px;}
-.cal-shift-block{border-radius:4px;padding:3px 5px;margin-bottom:2px;font-size:9px;font-family:'DM Mono',monospace;line-height:1.3;font-weight:500;}
-.cal-shift-block.reg{background:rgba(64,196,255,0.25);color:var(--blue);border-left:2px solid var(--blue);}
-.cal-shift-block.extra{background:rgba(240,192,64,0.2);color:var(--gold);border-left:2px solid var(--gold);}
-.cal-shift-block.holiday{background:rgba(179,136,255,0.2);color:var(--purple);border-left:2px solid var(--purple);}
-.cal-shift-block.short{background:rgba(0,229,160,0.2);color:var(--green);border-left:2px solid var(--green);}
-.cal-shift-block.off{background:rgba(255,85,85,0.1);color:var(--red);border-left:2px solid var(--red);}
-.cal-shift-block.swap{background:rgba(255,171,64,0.15);color:var(--orange);border-left:2px solid var(--orange);}
-.cal-shift-block.vacb{background:rgba(179,136,255,0.3);color:var(--purple);border-left:2px solid var(--purple);}
-.cal-pp-badge{position:absolute;top:3px;right:3px;font-family:'DM Mono',monospace;font-size:7px;padding:1px 4px;border-radius:3px;letter-spacing:0.05em;}
+.cal-cell:hover{background:var(--dim);}
+.cal-cell.om{opacity:0.25;}
+.cal-cell.today .cd{color:var(--gold);font-weight:700;}
+.cd{font-family:'DM Mono',monospace;font-size:9px;color:var(--text2);margin-bottom:3px;}
+.csb{border-radius:3px;padding:2px 4px;margin-bottom:2px;font-size:7px;font-family:'DM Mono',monospace;font-weight:600;line-height:1.2;}
+.csb.reg{background:rgba(64,196,255,0.2);color:var(--blue);border-left:2px solid var(--blue);}
+.csb.extra{background:rgba(240,192,64,0.15);color:var(--gold);border-left:2px solid var(--gold);}
+.csb.holiday{background:rgba(179,136,255,0.2);color:var(--purple);border-left:2px solid var(--purple);}
+.csb.short{background:rgba(0,229,160,0.15);color:var(--green);border-left:2px solid var(--green);}
+.csb.off{background:rgba(255,85,85,0.1);color:var(--red);border-left:2px solid var(--red);}
+.csb.swap{background:rgba(255,171,64,0.12);color:var(--orange);border-left:2px solid var(--orange);}
+.csb.vacb{background:rgba(179,136,255,0.25);color:var(--purple);border-left:2px solid var(--purple);}
+.ppb{position:absolute;top:2px;right:2px;font-family:'DM Mono',monospace;font-size:6px;padding:1px 3px;border-radius:2px;}
 .pp1{background:rgba(240,192,64,0.15);color:var(--gold);}
 .pp2{background:rgba(64,196,255,0.15);color:var(--blue);}
 .pp3{background:rgba(0,229,160,0.15);color:var(--green);}
 .pp4{background:rgba(179,136,255,0.15);color:var(--purple);}
 
-/* PP STRIP */
-.pp-strip{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:14px;}
-.pp-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;position:relative;overflow:hidden;}
-.pp-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;}
-.pp-card.pp1::before{background:var(--gold);}
-.pp-card.pp2::before{background:var(--blue);}
-.pp-card.pp3::before{background:var(--green);}
-.pp-card.pp4::before{background:var(--purple);}
-.pp-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
-.pp-dates{font-size:11px;color:var(--text2);margin-bottom:6px;}
-.pp-check{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:8px;}
-.pp-hrs{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);line-height:1;}
-.pp-pay{font-family:'Bebas Neue',sans-serif;font-size:28px;line-height:1;}
-.pp-card.pp1 .pp-pay{color:var(--gold);}
-.pp-card.pp2 .pp-pay{color:var(--blue);}
-.pp-card.pp3 .pp-pay{color:var(--green);}
-.pp-card.pp4 .pp-pay{color:var(--purple);}
+.pp-strip{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+.ppc{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:11px;position:relative;overflow:hidden;}
+.ppc::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;}
+.ppc.pp1::before{background:var(--gold);}
+.ppc.pp2::before{background:var(--blue);}
+.ppc.pp3::before{background:var(--green);}
+.ppc.pp4::before{background:var(--purple);}
+.ppl{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:3px;}
+.ppd{font-size:10px;color:var(--text2);margin-bottom:3px;}
+.pph{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text);line-height:1;}
+.pppay{font-family:'Bebas Neue',sans-serif;font-size:24px;line-height:1;}
+.ppc.pp1 .pppay{color:var(--gold);}
+.ppc.pp2 .pppay{color:var(--blue);}
+.ppc.pp3 .pppay{color:var(--green);}
+.ppc.pp4 .pppay{color:var(--purple);}
 
 /* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:none;align-items:flex-end;justify-content:center;padding:0;}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:480px;}
-.modal-date{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);margin-bottom:14px;}
-.shift-types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
-.shift-btn{padding:10px 8px;border-radius:10px;border:1px solid var(--border2);background:var(--dim);cursor:pointer;text-align:center;transition:all 0.15s;}
-.shift-btn:hover{border-color:var(--text2);}
-.shift-btn.selected{border-width:2px;}
-.shift-btn.reg-btn.selected{border-color:var(--blue);background:rgba(64,196,255,0.1);}
-.shift-btn.extra-btn.selected{border-color:var(--gold);background:rgba(240,192,64,0.1);}
-.shift-btn.holiday-btn.selected{border-color:var(--purple);background:rgba(179,136,255,0.1);}
-.shift-btn.short-btn.selected{border-color:var(--green);background:rgba(0,229,160,0.1);}
-.shift-btn.swap-btn.selected{border-color:var(--orange);background:rgba(255,171,64,0.1);}
-.shift-btn.off-btn.selected{border-color:var(--red);background:rgba(255,85,85,0.1);}
-.shift-btn.vacb-btn.selected{border-color:var(--purple);background:rgba(179,136,255,0.15);}
-.shift-btn .sb-icon{font-size:18px;margin-bottom:3px;}
-.shift-btn .sb-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.06em;text-transform:uppercase;}
-.shift-btn.reg-btn .sb-label{color:var(--blue);}
-.shift-btn.extra-btn .sb-label{color:var(--gold);}
-.shift-btn.holiday-btn .sb-label{color:var(--purple);}
-.shift-btn.short-btn .sb-label{color:var(--green);}
-.shift-btn.swap-btn .sb-label{color:var(--orange);}
-.shift-btn.off-btn .sb-label{color:var(--red);}
-.shift-btn.vacb-btn .sb-label{color:var(--purple);}
-.modal-time-row{display:flex;gap:8px;margin-bottom:14px;}
-.modal-time-group{flex:1;}
-.modal-time-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
-.modal-inp{background:var(--dim);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;color:var(--text);font-size:13px;font-family:'Outfit',sans-serif;width:100%;outline:none;}
-.modal-inp:focus{border-color:var(--gold);}
-.modal-note{background:var(--dim);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;color:var(--text);font-size:12px;font-family:'Outfit',sans-serif;width:100%;outline:none;resize:none;height:50px;margin-bottom:14px;}
-.modal-note:focus{border-color:var(--gold);}
-.modal-btns{display:flex;gap:8px;}
-.btn{padding:10px 18px;border-radius:8px;border:none;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.08em;cursor:pointer;transition:all 0.15s;text-transform:uppercase;}
-.btn-gold{background:var(--gold);color:#000;font-weight:700;}
-.btn-gold:hover{background:var(--gold2);}
-.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text2);}
-.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
-.btn-red{background:rgba(255,85,85,0.15);color:var(--red);border:1px solid rgba(255,85,85,0.3);}
-.btn-sm{padding:5px 10px;font-size:9px;}
-.btn-blue{background:rgba(64,196,255,0.15);color:var(--blue);border:1px solid rgba(64,196,255,0.3);}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:none;align-items:flex-end;justify-content:center;}
+.mo.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:14px 14px 0 0;padding:18px;width:100%;max-width:480px;}
+.md{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gold);margin-bottom:12px;}
+.sts{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:11px;}
+.sb{padding:9px 5px;border-radius:7px;border:1px solid var(--border2);background:var(--dim);cursor:pointer;text-align:center;transition:all 0.15s;}
+.sb.sel{border-width:2px;}
+.sb.reg.sel{border-color:var(--blue);}
+.sb.extra.sel{border-color:var(--gold);}
+.sb.holiday.sel{border-color:var(--purple);}
+.sb.short.sel{border-color:var(--green);}
+.sb.swap.sel{border-color:var(--orange);}
+.sb.off.sel{border-color:var(--red);}
+.sb.vacb.sel{border-color:var(--purple);}
+.sb .si{font-size:15px;margin-bottom:2px;}
+.sb .sl2{font-family:'DM Mono',monospace;font-size:7px;text-transform:uppercase;}
+.sb.reg .sl2{color:var(--blue);}.sb.extra .sl2{color:var(--gold);}
+.sb.holiday .sl2{color:var(--purple);}.sb.short .sl2{color:var(--green);}
+.sb.swap .sl2{color:var(--orange);}.sb.off .sl2{color:var(--red);}
+.sb.vacb .sl2{color:var(--purple);}
+.mtr{display:flex;gap:7px;margin-bottom:11px;}
+.mtg{flex:1;}
+.mtl{font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.mi{background:var(--dim);border:1px solid var(--border2);border-radius:7px;padding:8px 10px;color:var(--text);font-size:12px;width:100%;outline:none;}
+.mi:focus{border-color:var(--gold);}
+.mn{background:var(--dim);border:1px solid var(--border2);border-radius:7px;padding:8px 10px;color:var(--text);font-size:11px;width:100%;outline:none;resize:none;height:40px;margin-bottom:11px;}
+.mn:focus{border-color:var(--gold);}
+.mbs{display:flex;gap:7px;}
 
-/* LEGEND */
-.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
-.leg{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;color:var(--text2);}
-.leg-dot{width:10px;height:10px;border-radius:2px;}
+.btn{padding:9px 14px;border-radius:7px;border:none;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.07em;cursor:pointer;transition:all 0.15s;text-transform:uppercase;}
+.btn-g{background:var(--gold);color:#000;font-weight:700;}
+.btn-o{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.btn-o:hover{border-color:var(--gold);color:var(--gold);}
+.btn-r{background:rgba(255,85,85,0.15);color:var(--red);border:1px solid rgba(255,85,85,0.3);}
+.btn-sm{padding:4px 9px;font-size:8px;}
+.btn-gr{background:rgba(0,229,160,0.12);color:var(--green);border:1px solid rgba(0,229,160,0.25);}
 
-/* TABLES */
+.leg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.lgi{display:flex;align-items:center;gap:4px;font-family:'DM Mono',monospace;font-size:8px;color:var(--text2);}
+.lgd{width:8px;height:8px;border-radius:2px;}
+
 .tbl{width:100%;border-collapse:collapse;}
-.tbl-row{border-bottom:1px solid rgba(255,255,255,0.03);}
+.tbl-row{border-bottom:1px solid var(--border);}
 .tbl-row:last-child{border-bottom:none;}
-.tbl-row td{padding:9px 11px;font-size:12px;vertical-align:middle;}
-.tbl-row.hdr td{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;background:var(--dim);padding:7px 11px;}
-.tbl-row.sub td{background:rgba(255,255,255,0.02);font-weight:600;}
-.tbl-row.surplus td{background:rgba(0,229,160,0.06);}
-.dot{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:6px;vertical-align:middle;}
+.tbl-row td{padding:8px 10px;font-size:11px;vertical-align:middle;}
+.tbl-row.hdr td{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;background:var(--tbh);padding:6px 10px;}
+.tbl-row.sub td{font-weight:600;}
+.tbl-row.sur td{background:rgba(0,229,160,0.05);}
+.dot{display:inline-block;width:6px;height:6px;border-radius:2px;margin-right:5px;vertical-align:middle;}
 
-/* WF */
-.wf{display:flex;flex-direction:column;gap:5px;}
-.wf-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:8px;font-size:12px;}
-.wf-row .wl{display:flex;align-items:center;gap:8px;}
-.wf-row .wl-icon{font-size:13px;}
-.wf-row .wl-label{color:var(--text);}
-.wf-row .wl-note{font-size:10px;color:var(--muted);display:block;}
-.wf-row .wa{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;}
-.wf-gross{background:rgba(240,192,64,0.08);}.wf-gross .wa{color:var(--gold);}
-.wf-tax{background:rgba(255,171,64,0.07);}.wf-tax .wa{color:var(--orange);}
-.wf-ded{background:rgba(255,85,85,0.07);}.wf-ded .wa{color:var(--red);}
-.wf-net{background:rgba(0,229,160,0.09);border:1px solid rgba(0,229,160,0.2);}.wf-net .wa{color:var(--green);font-size:14px;}
-.wf-alloc{background:rgba(64,196,255,0.07);}.wf-alloc .wa{color:var(--blue);}
-.wf-remain{background:rgba(179,136,255,0.08);border:1px solid rgba(179,136,255,0.2);}.wf-remain .wa{color:var(--purple);font-size:14px;}
+.wf{display:flex;flex-direction:column;gap:4px;}
+.wfr{display:flex;justify-content:space-between;align-items:center;padding:8px 11px;border-radius:7px;font-size:11px;}
+.wfr .wl{display:flex;align-items:center;gap:7px;}
+.wfr .wi{font-size:12px;}
+.wfr .wlt{color:var(--text);}
+.wfr .wln{font-size:9px;color:var(--muted);display:block;}
+.wfr .wa{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;}
+.wg-r{background:var(--wg);}.wg-r .wa{color:var(--gold);}
+.wt-r{background:var(--wt);}.wt-r .wa{color:var(--orange);}
+.wd-r{background:var(--wd);}.wd-r .wa{color:var(--red);}
+.wn-r{background:var(--wn);border:1px solid rgba(0,229,160,0.2);}.wn-r .wa{color:var(--green);font-size:13px;}
+.wa-r{background:var(--wa);}.wa-r .wa{color:var(--blue);}
+.wr-r{background:var(--wr);border:1px solid rgba(179,136,255,0.2);}.wr-r .wa{color:var(--purple);font-size:13px;}
 
-/* PROG */
-.prog-bg{background:var(--dim);border-radius:4px;height:6px;overflow:hidden;}
-.prog-fill{height:100%;border-radius:4px;transition:width 0.6s ease;}
+.pb{background:var(--dim);border-radius:3px;height:5px;overflow:hidden;}
+.pf{height:100%;border-radius:3px;transition:width 0.5s ease;}
 
-/* NOTICE */
-.notice{border-radius:10px;padding:11px 13px;margin-bottom:10px;font-size:12px;line-height:1.7;display:flex;gap:8px;align-items:flex-start;}
-.notice-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
-.notice.warn{background:rgba(255,171,64,0.08);border:1px solid rgba(255,171,64,0.25);color:#c8a060;}
-.notice.good{background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.2);color:#60c898;}
-.notice.info{background:rgba(64,196,255,0.07);border:1px solid rgba(64,196,255,0.2);color:#60a8c8;}
+.notice{border-radius:9px;padding:10px 12px;margin-bottom:9px;font-size:11px;line-height:1.6;display:flex;gap:7px;align-items:flex-start;}
+.ni2{font-size:13px;flex-shrink:0;margin-top:1px;}
+.notice.warn{background:var(--nw-bg);border:1px solid var(--nw-br);color:var(--nw-c);}
+.notice.good{background:var(--ng-bg);border:1px solid var(--ng-br);color:var(--ng-c);}
+.notice.info{background:var(--ni-bg);border:1px solid var(--ni-br);color:var(--ni-c);}
 .notice strong{color:var(--text);}
 
-/* URGENT CHECKLIST */
-.urgent-item{display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:10px;margin-bottom:8px;cursor:pointer;transition:all 0.2s;border:1px solid transparent;}
-.urgent-item.warn-item{background:rgba(255,171,64,0.08);border-color:rgba(255,171,64,0.25);}
-.urgent-item.good-item{background:rgba(0,229,160,0.07);border-color:rgba(0,229,160,0.2);}
-.urgent-item.done-item{background:rgba(255,255,255,0.02);border-color:var(--border);opacity:0.5;}
-.urgent-check{width:18px;height:18px;border-radius:4px;border:2px solid var(--muted);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
-.urgent-item.done-item .urgent-check{background:var(--green);border-color:var(--green);}
-.urgent-check-inner{color:#000;font-size:11px;font-weight:900;display:none;}
-.urgent-item.done-item .urgent-check-inner{display:block;}
-.urgent-text{font-size:12px;line-height:1.5;flex:1;}
-.urgent-item.done-item .urgent-text{text-decoration:line-through;color:var(--muted);}
+.ui{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;margin-bottom:6px;cursor:pointer;transition:all 0.18s;border:1px solid transparent;}
+.ui.warn-i{background:var(--nw-bg);border-color:var(--nw-br);}
+.ui.good-i{background:var(--ng-bg);border-color:var(--ng-br);}
+.ui.done-i{background:var(--dim);border-color:var(--border);opacity:0.45;}
+.uc{width:17px;height:17px;border-radius:4px;border:2px solid var(--muted);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.ui.done-i .uc{background:var(--green);border-color:var(--green);}
+.uci{color:#000;font-size:10px;font-weight:900;display:none;}
+.ui.done-i .uci{display:block;}
+.ut{font-size:11px;line-height:1.4;flex:1;color:var(--text);}
+.ui.done-i .ut{text-decoration:line-through;color:var(--muted);}
 
-/* DEBT */
-.debt-item{padding:13px;border-bottom:1px solid var(--border);}
-.debt-item:last-child{border-bottom:none;}
-.debt-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;}
-.debt-name{font-size:13px;font-weight:600;color:var(--text);}
-.debt-bal{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--text);line-height:1;}
-.debt-meta{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:3px;}
-.debt-footer{display:flex;justify-content:space-between;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);}
+/* BILLS */
+.bill{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;border-radius:9px;margin-bottom:5px;background:var(--blbg);border:2px solid var(--border);transition:all 0.25s;}
+.bill.ur{border-color:#ff5555;background:rgba(255,85,85,0.05);}
+.bill.uo{border-color:#ffab40;background:rgba(255,171,64,0.05);}
+.bill.uy{border-color:#f0c040;background:rgba(240,192,64,0.04);}
+.bill.upd{border-color:var(--green);background:rgba(0,229,160,0.04);opacity:0.65;}
+.bill.far{border-color:var(--border);}
+.bl{display:flex;align-items:center;gap:8px;}
+.bi{font-size:15px;}
+.bn{font-size:11px;color:var(--text);font-weight:500;}
+.bdl{font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;}
+.br2{display:flex;align-items:center;gap:6px;}
+.ba{font-family:'DM Mono',monospace;font-size:11px;color:var(--text);}
+.bpb{background:none;border:1px solid var(--border2);border-radius:4px;color:var(--muted);cursor:pointer;font-size:8px;padding:3px 6px;font-family:'DM Mono',monospace;}
+.bpb:hover{border-color:var(--green);color:var(--green);}
+.bdel{background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;padding:2px 4px;}
+.bdel:hover{color:var(--red);}
 
-/* BILL */
-.bill-item{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;border-radius:8px;margin-bottom:6px;background:var(--dim);border:1px solid var(--border);}
-.bill-item:hover{border-color:var(--border2);}
-.bill-left{display:flex;align-items:center;gap:9px;}
-.bill-icon{font-size:15px;}
-.bill-name{font-size:12px;color:var(--text);}
-.bill-due{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;}
-.bill-right{display:flex;align-items:center;gap:8px;}
-.bill-amt{font-family:'DM Mono',monospace;font-size:11px;color:var(--text);}
-.bill-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:3px;}
-.bill-del:hover{color:var(--red);}
+/* DAILY BUDGET */
+.dbc{background:linear-gradient(135deg,var(--wn),var(--wa));border:2px solid var(--green);border-radius:13px;padding:14px;margin-bottom:12px;}
+.dbig{font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--green);line-height:1;}
+.dlbl{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:3px;}
+.dsub{font-size:10px;color:var(--muted);margin-top:3px;}
+.dsr{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);}
+.dsr:last-child{border-bottom:none;}
+.dsl{font-size:11px;color:var(--text);}
+.dsi{background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:4px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:75px;outline:none;text-align:right;}
+.dsi:focus{border-color:var(--gold);}
 
 /* INPUT */
-.input-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
-.input-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;}
-.inp{background:var(--dim);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;color:var(--text);font-size:13px;font-family:'Outfit',sans-serif;width:100%;outline:none;}
+.ig{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+.il{font-family:'DM Mono',monospace;font-size:7px;letter-spacing:0.11em;color:var(--muted);text-transform:uppercase;}
+.inp{background:var(--ibg);border:1px solid var(--border2);border-radius:7px;padding:8px 10px;color:var(--text);font-size:12px;font-family:'Outfit',sans-serif;width:100%;outline:none;}
 .inp:focus{border-color:var(--gold);}
-.inp-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.ir{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 
-/* BADGE */
-.badge{display:inline-block;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.06em;text-transform:uppercase;}
-.b-gold{background:rgba(240,192,64,0.15);color:var(--gold);}
-.b-green{background:rgba(0,229,160,0.12);color:var(--green);}
-.b-red{background:rgba(255,85,85,0.12);color:var(--red);}
-.b-blue{background:rgba(64,196,255,0.12);color:var(--blue);}
-.b-purple{background:rgba(179,136,255,0.12);color:var(--purple);}
-.b-orange{background:rgba(255,171,64,0.12);color:var(--orange);}
+.badge{display:inline-block;padding:2px 5px;border-radius:3px;font-family:'DM Mono',monospace;font-size:7px;text-transform:uppercase;}
+.bg{background:rgba(240,192,64,0.15);color:var(--gold);}
+.bgr{background:rgba(0,229,160,0.12);color:var(--green);}
+.br{background:rgba(255,85,85,0.12);color:var(--red);}
+.bb{background:rgba(64,196,255,0.12);color:var(--blue);}
+.bp{background:rgba(179,136,255,0.12);color:var(--purple);}
+.bo{background:rgba(255,171,64,0.12);color:var(--orange);}
 
-/* VAC */
-.vac-big{background:linear-gradient(135deg,rgba(240,192,64,0.12),rgba(0,229,160,0.06));border:1px solid rgba(240,192,64,0.25);border-radius:14px;padding:18px;margin-bottom:14px;}
-.vac-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
-.vac-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;color:var(--gold);text-transform:uppercase;margin-bottom:3px;}
-.vac-amt{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--gold);line-height:1;}
-.vac-days{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--text);line-height:1;}
-.vac-days-label{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;}
-.check-row{display:flex;gap:5px;flex-wrap:wrap;}
-.chk{flex:1;min-width:68px;max-width:95px;background:rgba(0,0,0,0.3);border:1px solid rgba(240,192,64,0.15);border-radius:8px;padding:8px 6px;text-align:center;}
+/* VACATION */
+.vb{background:linear-gradient(135deg,rgba(240,192,64,0.1),rgba(0,229,160,0.05));border:1px solid rgba(240,192,64,0.2);border-radius:13px;padding:16px;margin-bottom:12px;}
+.vt{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.vl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.14em;color:var(--gold);text-transform:uppercase;margin-bottom:2px;}
+.va{font-family:'Bebas Neue',sans-serif;font-size:46px;color:var(--gold);line-height:1;}
+.vd{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--text);line-height:1;}
+.vdl{font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;}
+.cr{display:flex;gap:4px;flex-wrap:wrap;}
+.chk{flex:1;min-width:60px;max-width:85px;background:var(--dim);border:1px solid var(--border);border-radius:7px;padding:6px 4px;text-align:center;}
 .chk.done{border-color:var(--gold);background:rgba(240,192,64,0.1);}
-.chk.now{border-color:var(--green);background:rgba(0,229,160,0.1);animation:glow 2s infinite;}
-.chk-date{font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);margin-bottom:2px;}
-.chk.done .chk-date{color:var(--gold);}.chk.now .chk-date{color:var(--green);}
-.chk-amt{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--muted);}
-.chk.done .chk-amt{color:var(--gold);}.chk.now .chk-amt{color:var(--green);}
+.chk.now{border-color:var(--green);background:rgba(0,229,160,0.1);}
+.chkd{font-family:'DM Mono',monospace;font-size:6px;color:var(--muted);margin-bottom:1px;}
+.chk.done .chkd{color:var(--gold);}.chk.now .chkd{color:var(--green);}
+.chka{font-family:'Bebas Neue',sans-serif;font-size:12px;color:var(--muted);}
+.chk.done .chka{color:var(--gold);}.chk.now .chka{color:var(--green);}
 
 /* CREDIT */
-.cc-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:10px;}
-.cc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.cc-name{font-size:13px;font-weight:600;}
-.cc-bal{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--text);}
-.cc-detail{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px;}
-.cc-box{background:var(--dim);border-radius:7px;padding:8px;}
-.cc-box-label{font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;}
-.cc-box-val{font-size:12px;font-weight:600;}
+.cc{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px;margin-bottom:9px;}
+.cct{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;}
+.ccn{font-size:11px;font-weight:600;color:var(--text);}
+.ccsub{font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:1px;}
+.ccbal{font-family:'Bebas Neue',sans-serif;font-size:22px;line-height:1;text-align:right;}
+.ccd{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px;}
+.ccbox{background:var(--dim);border-radius:6px;padding:7px;}
+.ccbl{font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);text-transform:uppercase;margin-bottom:2px;}
+.ccbv{font-size:11px;font-weight:600;color:var(--text);}
 
 /* CREDIT EDITABLE */
-.credit-edit-row{display:flex;gap:8px;align-items:center;padding:9px 12px;border-radius:8px;background:var(--dim);border:1px solid var(--border);margin-bottom:6px;}
-.credit-edit-label{font-size:11px;color:var(--text2);flex:1;}
-.credit-edit-inp{background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:5px 9px;color:var(--text);font-size:12px;font-family:'DM Mono',monospace;width:100px;outline:none;text-align:right;}
-.credit-edit-inp:focus{border-color:var(--gold);}
+.cer{display:flex;gap:7px;align-items:center;padding:8px 11px;border-radius:7px;background:var(--dim);border:1px solid var(--border);margin-bottom:5px;}
+.cel{font-size:10px;color:var(--text2);flex:1;}
+.cei{background:var(--card);border:1px solid var(--border2);border-radius:5px;padding:4px 8px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:85px;outline:none;text-align:right;}
+.cei:focus{border-color:var(--gold);}
 
-/* SR */
-.sr-row{display:flex;align-items:flex-start;gap:11px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;}
-.sr-num{font-family:'Bebas Neue',sans-serif;font-size:20px;min-width:40px;}
-.sr-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;}
-.sr-desc{font-size:11px;color:var(--muted);line-height:1.5;}
+.sr-row{display:flex;align-items:flex-start;gap:9px;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:7px;}
+.srn{font-family:'Bebas Neue',sans-serif;font-size:19px;min-width:33px;}
+.srt{font-size:11px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.srd{font-size:10px;color:var(--muted);line-height:1.4;}
 
-/* TIMELINE */
-.timeline{position:relative;padding-left:18px;}
-.timeline::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:2px;background:var(--border);}
-.tl-item{position:relative;margin-bottom:14px;}
-.tl-item::before{content:'';position:absolute;left:-16px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--border);background:var(--bg);}
-.tl-item.done::before{background:var(--green);border-color:var(--green);}
-.tl-item.now::before{background:var(--gold);border-color:var(--gold);animation:glow 2s infinite;}
-.tl-item.future::before{background:var(--dim);}
-.tl-date{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:2px;letter-spacing:0.08em;}
-.tl-title{font-size:12px;font-weight:600;color:var(--text);}
-.tl-desc{font-size:10px;color:var(--muted);margin-top:2px;}
+.tl{position:relative;padding-left:16px;}
+.tl::before{content:'';position:absolute;left:4px;top:0;bottom:0;width:2px;background:var(--border);}
+.tli{position:relative;margin-bottom:12px;}
+.tli::before{content:'';position:absolute;left:-14px;top:3px;width:9px;height:9px;border-radius:50%;border:2px solid var(--border);background:var(--bg);}
+.tli.done::before{background:var(--green);border-color:var(--green);}
+.tli.now::before{background:var(--gold);border-color:var(--gold);}
+.tli.fut::before{background:var(--dim);}
+.tld{font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);margin-bottom:1px;}
+.tlt{font-size:11px;font-weight:600;color:var(--text);}
+.tlde{font-size:9px;color:var(--muted);margin-top:1px;}
 
-@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(0,229,160,0.3);}50%{box-shadow:0 0 0 5px rgba(0,229,160,0);}}
+/* PREDICTED CREDIT */
+.pt{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px;}
+.pb2{background:var(--dim);border-radius:7px;padding:9px;text-align:center;border:1px solid var(--border);}
+.pbd{font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);text-transform:uppercase;margin-bottom:3px;}
+.pbs{font-family:'Bebas Neue',sans-serif;font-size:26px;}
+.pbr{font-size:8px;color:var(--muted);margin-top:1px;}
+
 ::-webkit-scrollbar{width:3px;height:3px;}
 ::-webkit-scrollbar-track{background:var(--bg);}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+@media(max-width:460px){.sg.t{grid-template-columns:1fr 1fr;}.pt{grid-template-columns:1fr;}}
 </style>
 </head>
-<body>
-
+<body data-theme="dark">
 <div id="sync-bar"></div>
 
 <nav class="nav">
-  <div class="nav-brand">SIM-SIMMA <span>OS · EARL</span></div>
+  <div class="nav-brand">SIM-SIMMA <span>OS</span></div>
   <div class="nav-tabs">
-    <button class="ntab active" onclick="showPage('dashboard',this)">Dashboard</button>
-    <button class="ntab" onclick="showPage('schedule',this)">📅 Schedule</button>
-    <button class="ntab" onclick="showPage('paycheck',this)">Pay Calc</button>
+    <button class="ntab active" onclick="showPage('dash',this)">Dashboard</button>
+    <button class="ntab" onclick="showPage('sched',this)">📅 Schedule</button>
+    <button class="ntab" onclick="showPage('pay',this)">Pay Calc</button>
     <button class="ntab" onclick="showPage('budget',this)">Budget</button>
     <button class="ntab" onclick="showPage('debts',this)">Debts</button>
-    <button class="ntab" onclick="showPage('vacation',this)">✈️ Vacation</button>
+    <button class="ntab" onclick="showPage('vac',this)">✈️ Vacation</button>
     <button class="ntab" onclick="showPage('credit',this)">Credit</button>
   </div>
+  <button class="theme-btn" onclick="toggleTheme()" id="tbtn">☀️</button>
 </nav>
 
 <div class="main">
 
-<!-- ===== DASHBOARD ===== -->
-<div id="page-dashboard" class="page active">
+<!-- DASHBOARD -->
+<div id="page-dash" class="page active">
   <div class="hero">
-    <div class="hero-eyebrow">SIM-SIMMA Financial OS · Earl J. Simmons</div>
+    <div class="hero-ey">SIM-SIMMA Financial OS · Earl J. Simmons</div>
     <h1>YOUR<br>MONEY.<br><em>YOUR RULES.</em></h1>
     <div class="hero-sub">Delta Air Lines · Aircraft Move Agent GEO · JFK-1200-MOVE · $40.50/hr · Emp #00850338</div>
   </div>
-
   <div class="sec">Live Snapshot</div>
-  <div class="stat-grid">
-    <div class="scard gold"><div class="sc-label">Grind Check (Est.)</div><div class="sc-val" id="dash-check">$940</div><div class="sc-sub">After all deductions</div></div>
-    <div class="scard green"><div class="sc-label">Monthly Surplus</div><div class="sc-val">~$4,231</div><div class="sc-sub">Delta + Business</div></div>
+  <div class="sg">
+    <div class="sc g"><div class="sl">Last Check Take-Home</div><div class="sv" id="dash-check">$940</div><div class="ss">Mar 14–27 · 72hrs</div></div>
+    <div class="sc gr"><div class="sl">Daily Spend Budget</div><div class="sv" id="dash-daily">$--</div><div class="ss">After bills this period</div></div>
   </div>
-  <div class="stat-grid">
-    <div class="scard blue"><div class="sc-label">Vacation Fund</div><div class="sc-val" id="dash-vac">$250</div><div class="sc-sub" id="dash-days">-- days left</div></div>
-    <div class="scard purple"><div class="sc-label">Next Check Date</div><div class="sc-val" id="dash-nextcheck">Apr 17</div><div class="sc-sub" id="dash-pp">PP Mar 28–Apr 10</div></div>
+  <div class="sg">
+    <div class="sc b"><div class="sl">Vacation Fund</div><div class="sv" id="dash-vac">$250</div><div class="ss" id="dash-days">-- days to board</div></div>
+    <div class="sc p"><div class="sl">Next Check</div><div class="sv" id="dash-nc">Apr 17</div><div class="ss" id="dash-pp">PP Mar 28–Apr 10</div></div>
   </div>
-
   <div class="sec">🚨 Urgent This Month</div>
   <div id="urgent-list"></div>
-
   <div class="sec">Freedom Timeline</div>
-  <div class="timeline">
-    <div class="tl-item now"><div class="tl-date">NOW · APRIL 2026</div><div class="tl-title">April Grind Mode 💪</div><div class="tl-desc">Picking up Wed shifts · Vacation fund building · VACB May 29–Jun 2</div></div>
-    <div class="tl-item future"><div class="tl-date">JUNE 2026</div><div class="tl-title">Delta Loan 1 GONE ✂️ · Stripe Capital Loan Done</div><div class="tl-desc">+$242.78/check freed · Take-home jumps · Accept new Stripe Capital $2,100</div></div>
-    <div class="tl-item future"><div class="tl-date">JULY 1, 2026</div><div class="tl-title">VACATION BOARDS ✈️</div><div class="tl-desc">$1,750+ locked · Destination: SVD Caribbean</div></div>
-    <div class="tl-item future"><div class="tl-date">JULY 21, 2026</div><div class="tl-title">Affirm Done</div><div class="tl-desc">$114.14/mo freed</div></div>
-    <div class="tl-item future"><div class="tl-date">AUG 2026</div><div class="tl-title">NFCU Pledge A Done</div><div class="tl-desc">+$53/mo freed · Score boost incoming</div></div>
-    <div class="tl-item future"><div class="tl-date">OCT 2026</div><div class="tl-title">Upstart Drops Off TransUnion 🔥</div><div class="tl-desc">$5K charge-off gone · Automatic score bump expected</div></div>
-    <div class="tl-item future"><div class="tl-date">OCT 2029</div><div class="tl-title">Delta Loan 2 GONE 🔥</div><div class="tl-desc">+$364.80/check freed · Biggest jump</div></div>
-    <div class="tl-item future"><div class="tl-date">MAR 2030</div><div class="tl-title">ALL DELTA LOANS DEAD 🏆</div><div class="tl-desc">+$584/check total freed · Full financial freedom</div></div>
+  <div class="tl">
+    <div class="tli now"><div class="tld">NOW · APRIL 2026</div><div class="tlt">April Grind Mode 💪</div><div class="tlde">Extra shifts · Vacation fund building · VACB May 29–Jun 2</div></div>
+    <div class="tli fut"><div class="tld">JUNE 2026</div><div class="tlt">Delta Loan 1 GONE ✂️</div><div class="tlde">+$242.78/check freed · Take-home jumps automatically</div></div>
+    <div class="tli fut"><div class="tld">JULY 5, 2026</div><div class="tlt">VACATION BOARDS ✈️</div><div class="tlde">$1,750+ locked · SVD Caribbean 🌴</div></div>
+    <div class="tli fut"><div class="tld">JULY 21, 2026</div><div class="tlt">Affirm J6UU Done ✅</div><div class="tlde">$157/mo freed</div></div>
+    <div class="tli fut"><div class="tld">AUG 2026</div><div class="tlt">NFCU Pledge A Done</div><div class="tlde">+$53/mo freed · Credit score boost</div></div>
+    <div class="tli fut"><div class="tld">OCT 2026</div><div class="tlt">Upstart Drops Off TransUnion 🔥</div><div class="tlde">$5K charge-off gone · Automatic +40–60 pts</div></div>
+    <div class="tli fut"><div class="tld">MAR 2030</div><div class="tlt">ALL DELTA LOANS DEAD 🏆</div><div class="tlde">+$584/check freed · Full financial freedom</div></div>
   </div>
 </div>
 
-<!-- ===== SCHEDULE ===== -->
-<div id="page-schedule" class="page">
-  <div class="sec">MyDeltaDay · Shift Planner · JFK-1200-MOVE</div>
-  <div class="legend">
-    <div class="leg"><div class="leg-dot" style="background:var(--blue)"></div>Regular (8h)</div>
-    <div class="leg"><div class="leg-dot" style="background:var(--gold)"></div>Pickup</div>
-    <div class="leg"><div class="leg-dot" style="background:var(--purple)"></div>Holiday</div>
-    <div class="leg"><div class="leg-dot" style="background:var(--green)"></div>Short</div>
-    <div class="leg"><div class="leg-dot" style="background:var(--orange)"></div>Swap</div>
-    <div class="leg"><div class="leg-dot" style="background:var(--red)"></div>Give Away</div>
-    <div class="leg"><div class="leg-dot" style="background:var(--purple);opacity:0.7"></div>Vacation</div>
+<!-- SCHEDULE -->
+<div id="page-sched" class="page">
+  <div class="sec">MyDeltaDay · JFK-1200-MOVE · WFM Apr/May/Jun 2026</div>
+  <div class="leg">
+    <div class="lgi"><div class="lgd" style="background:var(--blue)"></div>Regular</div>
+    <div class="lgi"><div class="lgd" style="background:var(--gold)"></div>Pickup</div>
+    <div class="lgi"><div class="lgd" style="background:var(--purple)"></div>Holiday</div>
+    <div class="lgi"><div class="lgd" style="background:var(--green)"></div>Short</div>
+    <div class="lgi"><div class="lgd" style="background:var(--orange)"></div>Swap</div>
+    <div class="lgi"><div class="lgd" style="background:var(--red)"></div>Give Away</div>
+    <div class="lgi"><div class="lgd" style="background:var(--purple);opacity:0.55"></div>VACB</div>
   </div>
-  <div class="cal-wrapper">
-    <div class="cal-header">
-      <div class="cal-title" id="cal-month-title">April 2026</div>
+  <div class="cal-wrap">
+    <div class="cal-hdr">
+      <div class="cal-title" id="cal-title">April 2026</div>
       <div class="cal-nav">
-        <button class="cal-nav-btn" onclick="changeMonth(-1)">◀</button>
-        <button class="cal-nav-btn" onclick="changeMonth(1)">▶</button>
+        <button class="cal-nb" onclick="chMo(-1)">◀</button>
+        <button class="cal-nb" onclick="chMo(1)">▶</button>
       </div>
     </div>
-    <div class="cal-days-header">
-      <div class="cal-day-header">Sun</div><div class="cal-day-header">Mon</div>
-      <div class="cal-day-header">Tue</div><div class="cal-day-header">Wed</div>
-      <div class="cal-day-header">Thu</div><div class="cal-day-header">Fri</div>
-      <div class="cal-day-header">Sat</div>
+    <div class="cal-dh">
+      <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
     </div>
     <div class="cal-grid" id="cal-grid"></div>
   </div>
-  <div class="sec">Pay Period Breakdown · <span id="pp-month-label">April 2026</span></div>
+  <div class="sec">Pay Period Breakdown · <span id="pp-lbl">April 2026</span></div>
   <div class="pp-strip" id="pp-strip"></div>
   <div class="card">
     <div class="card-title">Month Summary</div>
     <table class="tbl">
-      <tr class="tbl-row hdr"><td>Shift Type</td><td style="text-align:right">Days</td><td style="text-align:right">Hours</td><td style="text-align:right">Est. Gross</td></tr>
-      <tr class="tbl-row"><td><span class="dot" style="background:var(--blue)"></span>Regular</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-reg-days">0</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-reg-hrs">0</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--blue)" id="sum-reg-pay">$0</td></tr>
-      <tr class="tbl-row"><td><span class="dot" style="background:var(--gold)"></span>Pickup/Extra</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-extra-days">0</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-extra-hrs">0</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--gold)" id="sum-extra-pay">$0</td></tr>
-      <tr class="tbl-row"><td><span class="dot" style="background:var(--purple)"></span>Holiday</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-hol-days">0</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-hol-hrs">0</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--purple)" id="sum-hol-pay">$0</td></tr>
-      <tr class="tbl-row sub"><td>Total</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-total-days">0</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-total-hrs">0</td><td style="text-align:right;font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold)" id="sum-total-pay">$0</td></tr>
+      <tr class="tbl-row hdr"><td>Type</td><td style="text-align:right">Days</td><td style="text-align:right">Hrs</td><td style="text-align:right">Est. Gross</td></tr>
+      <tr class="tbl-row"><td><span class="dot" style="background:var(--blue)"></span>Regular</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sr-d">0</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sr-h">0</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--blue)" id="sr-p">$0</td></tr>
+      <tr class="tbl-row"><td><span class="dot" style="background:var(--gold)"></span>Pickup</td><td style="text-align:right;font-family:'DM Mono',monospace" id="se-d">0</td><td style="text-align:right;font-family:'DM Mono',monospace" id="se-h">0</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--gold)" id="se-p">$0</td></tr>
+      <tr class="tbl-row"><td><span class="dot" style="background:var(--purple)"></span>Holiday</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sh-d">0</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sh-h">0</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--purple)" id="sh-p">$0</td></tr>
+      <tr class="tbl-row sub"><td>Total</td><td style="text-align:right;font-family:'DM Mono',monospace" id="st-d">0</td><td style="text-align:right;font-family:'DM Mono',monospace" id="st-h">0</td><td style="text-align:right;font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--gold)" id="st-p">$0</td></tr>
     </table>
   </div>
 </div>
 
-<!-- ===== PAY CALC ===== -->
-<div id="page-paycheck" class="page">
-  <div class="sec">Pay Calculator · $40.50/hr · 22.5% Tax Rate</div>
+<!-- PAY CALC -->
+<div id="page-pay" class="page">
+  <div class="sec">Pay Calculator · $40.50/hr · 22.5% Tax</div>
   <div class="card">
     <div class="card-title">Build Your Check</div>
-    <div class="inp-row">
-      <div class="input-group"><div class="input-label">Regular Hours</div><input class="inp" type="number" id="reg-hrs" value="80" oninput="calcPay()"></div>
-      <div class="input-group"><div class="input-label">Extra / Pickup Hours</div><input class="inp" type="number" id="extra-hrs" value="0" oninput="calcPay()"></div>
+    <div class="ir">
+      <div class="ig"><div class="il">Regular Hours</div><input class="inp" type="number" id="r-hrs" value="80" oninput="calcPay()"></div>
+      <div class="ig"><div class="il">Pickup / Extra Hours</div><input class="inp" type="number" id="e-hrs" value="0" oninput="calcPay()"></div>
     </div>
-    <div class="inp-row">
-      <div class="input-group"><div class="input-label">Holiday Hours</div><input class="inp" type="number" id="hol-hrs" value="0" oninput="calcPay()"></div>
-      <div class="input-group"><div class="input-label">OT 1.5x Hours</div><input class="inp" type="number" id="ot-hrs" value="0" oninput="calcPay()"></div>
+    <div class="ir">
+      <div class="ig"><div class="il">Holiday Hours</div><input class="inp" type="number" id="h-hrs" value="0" oninput="calcPay()"></div>
+      <div class="ig"><div class="il">OT 1.5x Hours</div><input class="inp" type="number" id="o-hrs" value="0" oninput="calcPay()"></div>
     </div>
-    <div class="inp-row">
-      <div class="input-group"><div class="input-label">Night Premium Hours</div><input class="inp" type="number" id="night-hrs" value="80" oninput="calcPay()"></div>
-      <div class="input-group"><div class="input-label">Double Time (2x) Hours</div><input class="inp" type="number" id="dt-hrs" value="0" oninput="calcPay()"></div>
+    <div class="ir">
+      <div class="ig"><div class="il">Night Premium Hours</div><input class="inp" type="number" id="n-hrs" value="80" oninput="calcPay()"></div>
+      <div class="ig"><div class="il">Double Time (2x) Hours</div><input class="inp" type="number" id="d-hrs" value="0" oninput="calcPay()"></div>
     </div>
   </div>
   <div class="sec">Check Breakdown</div>
   <div class="wf" id="pay-wf"></div>
-  <div class="sec" style="margin-top:16px;">Quick Scenarios</div>
-  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;">
-    <button class="btn btn-outline" onclick="setScenario(80,0,0,0,80,0)">Base 80h</button>
-    <button class="btn btn-outline" onclick="setScenario(80,16,0,0,96,0)">80+16h</button>
-    <button class="btn btn-outline" onclick="setScenario(80,24,0,0,104,0)">80+24h</button>
-    <button class="btn btn-outline" onclick="setScenario(80,32,0,0,112,0)">80+32h</button>
-    <button class="btn btn-outline" onclick="setScenario(80,16,8,0,104,0)">80+16+Holiday</button>
-    <button class="btn btn-outline" onclick="setScenario(80,24,8,0,112,0)">Full Grind+Holiday</button>
-    <button class="btn btn-gold" onclick="setScenario(80,24,0,0,104,0);showJuneNote()">After June (Loan 1 Gone)</button>
+  <div class="sec" style="margin-top:14px;">Quick Scenarios</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px;">
+    <button class="btn btn-o btn-sm" onclick="setS(80,0,0,0,80,0)">Base 80h</button>
+    <button class="btn btn-o btn-sm" onclick="setS(80,16,0,0,96,0)">80+16h</button>
+    <button class="btn btn-o btn-sm" onclick="setS(80,24,0,0,104,0)">80+24h</button>
+    <button class="btn btn-o btn-sm" onclick="setS(80,32,0,0,112,0)">80+32h</button>
+    <button class="btn btn-o btn-sm" onclick="setS(80,16,8,0,104,0)">+Holiday</button>
+    <button class="btn btn-g btn-sm" onclick="setS(80,24,0,0,104,0);showJune()">After June 🎉</button>
   </div>
-  <div id="june-note" style="display:none;" class="notice good"><span class="notice-icon">🎉</span><span>After June: Loan 1 gone → <strong>+$242.78/check</strong> freed automatically. New take-home on 80+24h = ~$2,100+</span></div>
-
-  <div class="sec">Actual Paystub Reference</div>
+  <div id="june-note" style="display:none;" class="notice good"><span class="ni2">🎉</span><span>Loan 1 gone June → <strong>+$242.78/check</strong> freed automatically.</span></div>
+  <div class="sec">Confirmed Paystub Data</div>
   <div class="card">
-    <div class="card-title">Last 3 Paystubs · Confirmed Real Data</div>
     <table class="tbl">
-      <tr class="tbl-row hdr"><td>Period</td><td style="text-align:right">Hours</td><td style="text-align:right">Gross</td><td style="text-align:right">Deductions</td><td style="text-align:right">Net</td></tr>
-      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:10px;">Feb 14–27</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;">58.5</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;">$2,456</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--red);">$1,285</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--green);">$626</td></tr>
-      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:10px;">Feb 28–Mar 13</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;">24.17</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;">$2,704</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--red);">$1,458</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--green);">$641</td></tr>
-      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:10px;">Mar 14–27</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;">72.0</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;">$2,958</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--red);">$1,340</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--green);">$940</td></tr>
+      <tr class="tbl-row hdr"><td>Period</td><td style="text-align:right">Hrs</td><td style="text-align:right">Gross</td><td style="text-align:right">Deduct</td><td style="text-align:right">Net</td></tr>
+      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">Feb 14–27</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">58.5</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,456</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,285</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$626</td></tr>
+      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">Feb 28–Mar 13</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">24.2</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,704</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,458</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$641</td></tr>
+      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">Mar 14–27</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">72.0</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,958</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,340</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$940</td></tr>
     </table>
-    <div style="font-size:10px;color:var(--muted);margin-top:8px;font-family:'DM Mono',monospace;">Effective tax rate: 22–23% · Deductions vary $1,285–$1,458 based on active loans</div>
   </div>
 </div>
 
-<!-- ===== BUDGET ===== -->
+<!-- BUDGET -->
 <div id="page-budget" class="page">
-  <div class="sec">Monthly Income</div>
-  <div class="stat-grid">
-    <div class="scard gold"><div class="sc-label">Delta (2 grind checks)</div><div class="sc-val">$1,880</div><div class="sc-sub">~$940 × 2 (72h pace)</div></div>
-    <div class="scard green"><div class="sc-label">Business Income</div><div class="sc-val">$4,684</div><div class="sc-sub">Simmons Nation Q1 avg</div></div>
+  <div class="sec">Daily Spend Budget</div>
+  <div class="dbc">
+    <div class="dlbl">💰 Daily Spending Allowance</div>
+    <div class="dbig" id="daily-allow">$--</div>
+    <div class="dsub" id="daily-sub">Calculating...</div>
   </div>
-  <div class="sec">Bills</div>
-  <div id="fixed-bills"></div>
+  <div class="card">
+    <div class="card-title">Daily Life Tracker</div>
+    <div class="dsr">
+      <div class="dsl">☕ Coffee / Store Runs</div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <input class="dsi" type="number" id="sp-coffee" value="0" placeholder="0" oninput="calcDaily()">
+        <span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">/day</span>
+      </div>
+    </div>
+    <div class="dsr">
+      <div class="dsl">🍔 Food / Meals</div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <input class="dsi" type="number" id="sp-food" value="0" placeholder="0" oninput="calcDaily()">
+        <span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">/day</span>
+      </div>
+    </div>
+    <div class="dsr">
+      <div class="dsl">🚗 Gas / Misc</div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <input class="dsi" type="number" id="sp-misc" value="0" placeholder="0" oninput="calcDaily()">
+        <span style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">/day</span>
+      </div>
+    </div>
+    <div class="dsr" style="border-top:1px solid var(--border);margin-top:4px;padding-top:10px;">
+      <div class="dsl" style="font-weight:600;">Total Daily Spend</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--orange);" id="daily-spend">$0.00</div>
+    </div>
+    <div class="dsr">
+      <div class="dsl" style="font-weight:600;color:var(--green);">Left After Spend</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;" id="daily-left">$--</div>
+    </div>
+  </div>
+
+  <div class="sec">Delta Monthly Income</div>
+  <div class="sg">
+    <div class="sc g"><div class="sl">This Check (Est.)</div><div class="sv" id="bc-val">$940</div><div class="ss">Based on Pay Calc</div></div>
+    <div class="sc b"><div class="sl">Monthly (2 checks)</div><div class="sv" id="bm-val">$1,880</div><div class="ss">Delta only</div></div>
+  </div>
+
+  <div class="sec">Bills · Color = Urgency</div>
+  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px;font-family:'DM Mono',monospace;font-size:8px;">
+    <span style="color:var(--red);">🔴 ≤3 days</span>
+    <span style="color:var(--orange);">🟠 ≤7 days</span>
+    <span style="color:var(--gold);">🟡 ≤14 days</span>
+    <span style="color:var(--muted);">⚫ Far out</span>
+    <span style="color:var(--green);">🟢 Paid</span>
+  </div>
+  <div id="bills-list"></div>
+
   <div class="sec">Add a Bill</div>
   <div class="card">
-    <div class="inp-row">
-      <div class="input-group"><div class="input-label">Bill Name</div><input class="inp" type="text" id="new-bill-name" placeholder="e.g. Netflix"></div>
-      <div class="input-group"><div class="input-label">Monthly Amount</div><input class="inp" type="number" id="new-bill-amt" placeholder="0.00"></div>
+    <div class="ir">
+      <div class="ig"><div class="il">Bill Name</div><input class="inp" type="text" id="nb-name" placeholder="e.g. Netflix"></div>
+      <div class="ig"><div class="il">Amount</div><input class="inp" type="number" id="nb-amt" placeholder="0.00"></div>
     </div>
-    <div class="inp-row">
-      <div class="input-group"><div class="input-label">Due Date (day)</div><input class="inp" type="number" id="new-bill-due" placeholder="1-31" min="1" max="31"></div>
-      <div class="input-group"><div class="input-label">Category</div>
-        <select class="inp" id="new-bill-cat">
+    <div class="ir">
+      <div class="ig"><div class="il">Due Day of Month</div><input class="inp" type="number" id="nb-due" placeholder="1-31" min="1" max="31"></div>
+      <div class="ig"><div class="il">Category</div>
+        <select class="inp" id="nb-cat">
           <option value="fixed">Fixed Bill</option>
-          <option value="subscription">Subscription</option>
+          <option value="sub">Subscription</option>
           <option value="debt">Debt Payment</option>
           <option value="savings">Savings</option>
           <option value="other">Other</option>
         </select>
       </div>
     </div>
-    <button class="btn btn-gold" onclick="addBill()" style="width:100%;margin-top:4px;">+ Add Bill</button>
+    <button class="btn btn-g" onclick="addBill()" style="width:100%;margin-top:3px;">+ Add Bill</button>
   </div>
-  <div class="sec">Summary</div>
+
+  <div class="sec">Budget Summary</div>
   <div class="card">
     <table class="tbl">
-      <tr class="tbl-row hdr"><td>Category</td><td style="text-align:right">Monthly</td></tr>
-      <tr class="tbl-row"><td><span class="dot" style="background:var(--red)"></span>Total Bills</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--red)" id="sum-fixed">$0</td></tr>
-      <tr class="tbl-row"><td><span class="dot" style="background:var(--green)"></span>Vacation Fund</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--green)">$500</td></tr>
+      <tr class="tbl-row hdr"><td>Item</td><td style="text-align:right">Monthly</td></tr>
+      <tr class="tbl-row"><td><span class="dot" style="background:var(--red)"></span>Total Bills</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--red)" id="sum-bills">$0</td></tr>
+      <tr class="tbl-row"><td><span class="dot" style="background:var(--blue)"></span>Vacation Fund</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--blue)">$500</td></tr>
       <tr class="tbl-row sub"><td>Total Out</td><td style="text-align:right;font-family:'DM Mono',monospace" id="sum-out">$0</td></tr>
-      <tr class="tbl-row surplus"><td style="color:var(--green);font-weight:700">Delta Surplus</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--green)" id="sum-surplus">$0</td></tr>
-      <tr class="tbl-row" style="background:rgba(0,229,160,0.04)"><td style="color:var(--green)">+ Business Income</td><td style="text-align:right;font-family:'DM Mono',monospace;color:var(--green)">+$4,684</td></tr>
-      <tr class="tbl-row" style="background:rgba(0,229,160,0.1);border-top:1px solid rgba(0,229,160,0.3)"><td style="font-weight:700;color:var(--green)">Total Monthly Surplus</td><td style="text-align:right;font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--green)" id="sum-grand">$0</td></tr>
+      <tr class="tbl-row sur"><td style="color:var(--green);font-weight:700">Delta Surplus</td><td style="text-align:right;font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--green)" id="sum-sur">$0</td></tr>
     </table>
   </div>
 </div>
 
-<!-- ===== DEBTS ===== -->
+<!-- DEBTS -->
 <div id="page-debts" class="page">
   <div class="sec">Delta Savings Plan Loans</div>
   <div class="card">
-    <div class="debt-item">
-      <div class="debt-top"><div><div class="debt-name">Loan 1 · Dec 2019 <span class="badge b-red">FINISHING</span></div><div class="debt-meta">$99.03/check · ~6 payments left</div></div></div>
-      <div class="debt-bal">$1,412.09</div>
-      <div class="prog-bg" style="margin:7px 0 4px;"><div class="prog-fill" style="width:96%;background:var(--red)"></div></div>
-      <div class="debt-footer"><span>96% done</span><span style="color:var(--green)">✓ GONE JUNE 2026 · +$242.78/check</span></div>
+    <div style="padding:12px;border-bottom:1px solid var(--border);">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Loan 1 · Dec 2019 <span class="badge br">FINISHING</span></div>
+      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">$99.03/check · ~6 payments left</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">$1,412.09</div>
+      <div class="pb" style="margin:6px 0 3px;"><div class="pf" style="width:96%;background:var(--red)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span>96% done</span><span style="color:var(--green)">✓ GONE JUNE 2026 · +$242.78/check</span></div>
     </div>
-    <div class="debt-item">
-      <div class="debt-top"><div><div class="debt-name">Loan 2 · Sep 2024 <span class="badge b-purple">ACTIVE</span></div><div class="debt-meta">$120.48/check · 85 payments remain</div></div></div>
-      <div class="debt-bal">$25,847.80</div>
-      <div class="prog-bg" style="margin:7px 0 4px;"><div class="prog-fill" style="width:18%;background:var(--purple)"></div></div>
-      <div class="debt-footer"><span>18% done</span><span>Oct 2029</span></div>
+    <div style="padding:12px;border-bottom:1px solid var(--border);">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Loan 2 · Sep 2024 <span class="badge bp">ACTIVE</span></div>
+      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">$120.48/check · 85 payments remain</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">$25,847.80</div>
+      <div class="pb" style="margin:6px 0 3px;"><div class="pf" style="width:18%;background:var(--purple)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span>18% done</span><span>Oct 2029</span></div>
     </div>
-    <div class="debt-item">
-      <div class="debt-top"><div><div class="debt-name">Loan 3 · Nov 2025 <span class="badge b-blue">ACTIVE</span></div><div class="debt-meta">$364.80/check · 112 payments remain</div></div></div>
-      <div class="debt-bal">$8,993.88</div>
-      <div class="prog-bg" style="margin:7px 0 4px;"><div class="prog-fill" style="width:8%;background:var(--blue)"></div></div>
-      <div class="debt-footer"><span>8% done</span><span>Mar 2030</span></div>
+    <div style="padding:12px;">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Loan 3 · Nov 2025 <span class="badge bb">ACTIVE</span></div>
+      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">$364.80/check · 112 payments remain</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">$8,993.88</div>
+      <div class="pb" style="margin:6px 0 3px;"><div class="pf" style="width:8%;background:var(--blue)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span>8% done</span><span>Mar 2030</span></div>
     </div>
   </div>
   <div class="sec">Navy Federal Pledge Loans · Credit Builders</div>
   <div class="card">
-    <div class="debt-item">
-      <div class="debt-top"><div><div class="debt-name">Pledge A ··9413 · 2.25% <span class="badge b-green">CREDIT BUILDER</span></div><div class="debt-meta">$53/mo · Perfect payment history · 12 months</div></div></div>
-      <div class="debt-bal">$896.00</div>
-      <div class="prog-bg" style="margin:7px 0 4px;"><div class="prog-fill" style="width:70%;background:var(--green)"></div></div>
-      <div class="debt-footer"><span>70% done</span><span style="color:var(--green)">Done ~Aug 2026</span></div>
+    <div style="padding:12px;border-bottom:1px solid var(--border);">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Pledge A ··9413 · 2.25% <span class="badge bgr">BUILDER</span></div>
+      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">$53/mo · Perfect history · Done ~Aug 2026</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">$896.00</div>
+      <div class="pb" style="margin:6px 0 3px;"><div class="pf" style="width:70%;background:var(--green)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span>70% done</span><span style="color:var(--green)">Done Aug 2026 🎯</span></div>
     </div>
-    <div class="debt-item">
-      <div class="debt-top"><div><div class="debt-name">Pledge B ··0596 · 2.25% <span class="badge b-green">CREDIT BUILDER</span></div><div class="debt-meta">$132/mo · Opened Nov 2025 · 4 months perfect</div></div></div>
-      <div class="debt-bal">$6,555.00</div>
-      <div class="prog-bg" style="margin:7px 0 4px;"><div class="prog-fill" style="width:13%;background:var(--green)"></div></div>
-      <div class="debt-footer"><span>13% done</span><span>~2030</span></div>
+    <div style="padding:12px;">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Pledge B ··0596 · 2.25% <span class="badge bgr">BUILDER</span></div>
+      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">$132/mo · Nov 2025 · Growing history</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">$6,555.00</div>
+      <div class="pb" style="margin:6px 0 3px;"><div class="pf" style="width:13%;background:var(--green)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span>13% done</span><span>~2030</span></div>
     </div>
   </div>
-  <div class="sec">Affirm Installments</div>
+  <div class="sec">Affirm</div>
   <div class="card">
-    <div class="debt-item">
-      <div class="debt-top"><div><div class="debt-name">Affirm J6UU <span class="badge b-orange">4 LEFT</span></div><div class="debt-meta">$157/mo · Apr/May/Jun/Jul · AutoPay</div></div></div>
-      <div class="debt-bal">$308.00</div>
-      <div class="prog-bg" style="margin:7px 0 4px;"><div class="prog-fill" style="width:66%;background:var(--orange)"></div></div>
-      <div class="debt-footer"><span>66% done</span><span style="color:var(--gold)">Done Jul 2026</span></div>
-    </div>
-    <div class="debt-item">
-      <div class="debt-top"><div><div class="debt-name">Affirm T31Y <span class="badge b-orange">ACTIVE</span></div><div class="debt-meta">$114/mo · Jan 2026 · 6 months</div></div></div>
-      <div class="debt-bal">$550.00</div>
-      <div class="prog-bg" style="margin:7px 0 4px;"><div class="prog-fill" style="width:16%;background:var(--orange)"></div></div>
-      <div class="debt-footer"><span>16% done</span><span style="color:var(--gold)">Done Jul 2026</span></div>
+    <div style="padding:12px;">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Affirm J6UU <span class="badge bo">~3 LEFT</span></div>
+      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">$157/mo · May/Jun/Jul · AutoPay ··5317</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">$308.00</div>
+      <div class="pb" style="margin:6px 0 3px;"><div class="pf" style="width:75%;background:var(--orange)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span>75% done</span><span style="color:var(--gold)">Done Jul 2026 🎯</span></div>
     </div>
   </div>
   <div class="sec">Auto Loan</div>
   <div class="card">
-    <div class="debt-item">
-      <div class="debt-top"><div><div class="debt-name">Bridgecrest ··7101 <span class="badge b-blue">CURRENT</span></div><div class="debt-meta">$825/mo · 72 months · Feb 2023 · 7× 30-day lates (old)</div></div></div>
-      <div class="debt-bal">$21,360.00</div>
-      <div class="prog-bg" style="margin:7px 0 4px;"><div class="prog-fill" style="width:30%;background:var(--blue)"></div></div>
-      <div class="debt-footer"><span>30% done</span><span>~Feb 2029</span></div>
+    <div style="padding:12px;">
+      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Bridgecrest ··7101 <span class="badge bb">CURRENT</span></div>
+      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">$825/mo · Due 8th · 7× 30-day lates aging out</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">$21,360.00</div>
+      <div class="pb" style="margin:6px 0 3px;"><div class="pf" style="width:30%;background:var(--blue)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span>30% done</span><span>~Feb 2029</span></div>
     </div>
   </div>
 </div>
 
-<!-- ===== VACATION ===== -->
-<div id="page-vacation" class="page">
-  <div class="sec">Vacation Vault · July 1, 2026 · SVD Caribbean ✈️</div>
-  <div class="vac-big">
-    <div class="vac-top">
-      <div><div class="vac-label">💰 Locked Until Boarding</div><div class="vac-amt" id="vac-total">$250</div></div>
-      <div style="text-align:right;"><div class="vac-days" id="vac-days">--</div><div class="vac-days-label">Days Left</div></div>
+<!-- VACATION -->
+<div id="page-vac" class="page">
+  <div class="sec">Vacation Vault · July 5, 2026 · SVD Caribbean ✈️</div>
+  <div class="vb">
+    <div class="vt">
+      <div><div class="vl">💰 Locked Until Boarding</div><div class="va" id="vac-total">$250</div></div>
+      <div style="text-align:right;"><div class="vd" id="vac-days">--</div><div class="vdl">Days to Board Jul 5</div></div>
     </div>
-    <div class="prog-bg" style="margin-bottom:11px;"><div class="prog-fill" id="vac-bar" style="width:0%;background:linear-gradient(90deg,var(--gold),var(--green));"></div></div>
-    <div class="check-row" id="vac-checks"></div>
+    <div class="pb" style="margin-bottom:10px;height:6px;"><div class="pf" id="vac-bar" style="width:0%;background:linear-gradient(90deg,var(--gold),var(--green));"></div></div>
+    <div class="cr" id="vac-checks"></div>
   </div>
   <div class="sec">Add Extra to Vault</div>
   <div class="card">
-    <div class="inp-row">
-      <div class="input-group"><div class="input-label">Extra Amount</div><input class="inp" type="number" id="vac-extra" placeholder="0.00"></div>
-      <div class="input-group"><div class="input-label">Source</div>
+    <div class="ir">
+      <div class="ig"><div class="il">Extra Amount</div><input class="inp" type="number" id="vac-extra-in" placeholder="0.00"></div>
+      <div class="ig"><div class="il">Source</div>
         <select class="inp" id="vac-src">
           <option>Delta Check</option>
           <option>Cash</option>
@@ -576,238 +630,198 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
         </select>
       </div>
     </div>
-    <button class="btn btn-gold" onclick="addVacExtra()" style="width:100%;margin-top:4px;">+ Add to Vault</button>
+    <button class="btn btn-g" onclick="addVacExtra()" style="width:100%;">+ Add to Vault</button>
   </div>
-  <div class="notice info" style="margin-top:8px;"><span class="notice-icon">✈️</span><span><strong>Rule:</strong> Vacation money boards the plane. Do not touch until July 1, 2026.</span></div>
+  <div class="notice info" style="margin-top:8px;"><span class="ni2">✈️</span><span><strong>Rule:</strong> Vacation money boards the plane July 5. Do not touch.</span></div>
 </div>
 
-<!-- ===== CREDIT ===== -->
+<!-- CREDIT -->
 <div id="page-credit" class="page">
-  <div class="sec">Credit Score · TransUnion VantageScore 3.0 · Apr 6, 2026</div>
+  <div class="sec">Credit Scores · April 6, 2026</div>
 
-  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
-    <div>
-      <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Current Score · TransUnion</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:64px;color:var(--orange);line-height:1;" id="score-display">649</div>
-      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">File #364237939 · On file since 01/17/2008</div>
-    </div>
-    <div style="text-align:right;">
-      <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Target</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--green);">720+</div>
-      <div style="font-size:10px;color:var(--muted);">~12–18 months</div>
-    </div>
+  <div class="card" style="text-align:center;padding:18px;">
+    <div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:3px;">TransUnion VantageScore 3.0</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:76px;line-height:1;" id="score-disp">649</div>
+    <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;">File since 01/17/2008 · Equifax est. highest · Experian est. lowest (Acima dropping)</div>
   </div>
 
-  <div class="sec">Edit Credit Data</div>
+  <div class="sec">Predicted Score Path</div>
   <div class="card">
-    <div class="card-title">Update Your Scores</div>
-    <div class="credit-edit-row"><span class="credit-edit-label">TransUnion Score</span><input class="credit-edit-inp" type="number" id="edit-tu" value="649" onchange="saveCredits()"></div>
-    <div class="credit-edit-row"><span class="credit-edit-label">Experian Score (est.)</span><input class="credit-edit-inp" type="number" id="edit-exp" value="620" onchange="saveCredits()"></div>
-    <div class="credit-edit-row"><span class="credit-edit-label">Equifax Score (est.)</span><input class="credit-edit-inp" type="number" id="edit-eq" value="655" onchange="saveCredits()"></div>
-    <div class="credit-edit-row"><span class="credit-edit-label">Capital One Balance ··8236</span><input class="credit-edit-inp" type="number" id="edit-c1bal" value="1767" onchange="saveCredits()"></div>
-    <div class="credit-edit-row"><span class="credit-edit-label">Apple Card Balance</span><input class="credit-edit-inp" type="number" id="edit-apbal" value="1" onchange="saveCredits()"></div>
-    <div class="credit-edit-row"><span class="credit-edit-label">Navy Federal Visa ··6424 Balance</span><input class="credit-edit-inp" type="number" id="edit-nfbal" value="0" onchange="saveCredits()"></div>
+    <div class="card-title">Based on Your Current Moves</div>
+    <div class="pt">
+      <div class="pb2"><div class="pbd">Now · Apr 2026</div><div class="pbs" style="color:var(--orange);">649</div><div class="pbr">Starting point TU</div></div>
+      <div class="pb2"><div class="pbd">May 2026</div><div class="pbs" style="color:var(--gold);">680–700</div><div class="pbr">Cap One $0 reports</div></div>
+      <div class="pb2"><div class="pbd">Oct 2026</div><div class="pbs" style="color:var(--gold);">700–720</div><div class="pbr">Upstart drops TU 🔥</div></div>
+      <div class="pb2"><div class="pbd">2027+</div><div class="pbs" style="color:var(--green);">720+</div><div class="pbr">Affirm done · Pledge A done</div></div>
+    </div>
   </div>
 
-  <div class="sec">Active Cards · All 3 at Zero or Near Zero ✅</div>
-  <div class="cc-card">
-    <div class="cc-top">
-      <div><div class="cc-name">Capital One Savor World Elite ··8236</div><div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">Closes April 21 · APR 28.99% · Opened Feb 2025</div></div>
-      <div class="cc-bal" style="color:var(--red);" id="c1-bal-disp">$1,767</div>
-    </div>
-    <div class="prog-bg"><div class="prog-fill" id="c1-util-bar" style="width:98%;background:var(--red)"></div></div>
-    <div class="cc-detail">
-      <div class="cc-box"><div class="cc-box-label">Limit</div><div class="cc-box-val" style="color:var(--text);">$1,800</div></div>
-      <div class="cc-box"><div class="cc-box-label">Max before close</div><div class="cc-box-val" style="color:var(--gold);">$180</div></div>
-    </div>
-    <div class="notice warn" style="margin-top:8px;font-size:11px;"><span class="notice-icon">⚠️</span><span>Change AutoPay to <strong>full balance</strong> — currently set to minimum only. Do this manually in the Capital One app.</span></div>
+  <div class="sec">Update Your Scores</div>
+  <div class="card">
+    <div class="cer"><span class="cel">TransUnion Score</span><input class="cei" type="number" id="e-tu" value="649" onchange="saveCredits()"></div>
+    <div class="cer"><span class="cel">Experian Score (est.)</span><input class="cei" type="number" id="e-exp" value="620" onchange="saveCredits()"></div>
+    <div class="cer"><span class="cel">Equifax Score (est.)</span><input class="cei" type="number" id="e-eq" value="655" onchange="saveCredits()"></div>
   </div>
 
-  <div class="cc-card">
-    <div class="cc-top">
-      <div><div class="cc-name">Apple Card · Goldman Sachs</div><div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">Closes last day of month · APR 25.49% · Limit $500</div></div>
-      <div class="cc-bal" style="color:var(--green);">$1</div>
+  <div class="sec">3 Cards · Update Balances</div>
+
+  <!-- Capital One -->
+  <div class="cc">
+    <div class="cct">
+      <div><div class="ccn">Capital One Savor ··8236</div><div class="ccsub">Closes Apr 21 · Limit $1,800 · APR 28.99%</div></div>
+      <div><div class="ccbal" id="c1-bal-disp" style="color:var(--green);">$0</div></div>
     </div>
-    <div class="notice good" style="margin-top:8px;font-size:11px;"><span class="notice-icon">✅</span><span>Using perfectly — small recurring charges paid in full monthly. Late history Oct 2023–Jan 2024 ages off ~2030.</span></div>
+    <div class="pb"><div class="pf" id="c1-util" style="width:0%;background:var(--green)"></div></div>
+    <div class="ccd" style="margin-top:8px;">
+      <div class="ccbox"><div class="ccbl">Current Balance</div>
+        <input class="cei" type="number" id="c1-bal" value="0" placeholder="0" oninput="updateCards()" style="width:100%;margin-top:3px;">
+      </div>
+      <div class="ccbox"><div class="ccbl">Utilization</div><div class="ccbv" id="c1-util-pct">0%</div></div>
+    </div>
+    <div class="notice warn" style="margin-top:7px;font-size:10px;"><span class="ni2">⚠️</span><span>Change AutoPay to <strong>full balance</strong> in Capital One app.</span></div>
   </div>
 
-  <div class="cc-card">
-    <div class="cc-top">
-      <div><div class="cc-name">Navy Federal CashRewards Visa ··6424</div><div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">Closes 23rd · APR 18% · Limit $2,000 · Best APR card</div></div>
-      <div class="cc-bal" style="color:var(--green);">$0</div>
+  <!-- Apple Card -->
+  <div class="cc">
+    <div class="cct">
+      <div><div class="ccn">Apple Card · Goldman Sachs</div><div class="ccsub">Closes last day of month · Limit $500 · APR 25.49%</div></div>
+      <div><div class="ccbal" id="ap-bal-disp" style="color:var(--green);">$0</div></div>
     </div>
-    <div class="notice good" style="margin-top:8px;font-size:11px;"><span class="notice-icon">✅</span><span>$0 balance. Paid in full Jan 29, 2026. Keep it clean — best card you have.</span></div>
+    <div class="pb"><div class="pf" id="ap-util" style="width:0%;background:var(--green)"></div></div>
+    <div class="ccd" style="margin-top:8px;">
+      <div class="ccbox"><div class="ccbl">Current Balance</div>
+        <input class="cei" type="number" id="ap-bal" value="0" placeholder="0" oninput="updateCards()" style="width:100%;margin-top:3px;">
+      </div>
+      <div class="ccbox"><div class="ccbl">Utilization</div><div class="ccbv" id="ap-util-pct">0%</div></div>
+    </div>
+    <div class="notice good" style="margin-top:7px;font-size:10px;"><span class="ni2">✅</span><span>Keep small recurring charges paid in full. Late history 2023 ages off ~2030.</span></div>
   </div>
 
-  <div class="sec">Total Debt Overview</div>
-  <div class="stat-grid">
-    <div class="scard red"><div class="sc-label">Total Debt</div><div class="sc-val">~$59K</div><div class="sc-sub">All obligations combined</div></div>
-    <div class="scard gold"><div class="sc-label">Monthly Minimums</div><div class="sc-val">~$2,500</div><div class="sc-sub">Auto-deducted from Delta</div></div>
+  <!-- Navy Federal -->
+  <div class="cc">
+    <div class="cct">
+      <div><div class="ccn">Navy Federal CashRewards Visa ··6424</div><div class="ccsub">Closes 23rd · Limit $2,000 · APR 18% — Best card</div></div>
+      <div><div class="ccbal" id="nf-bal-disp" style="color:var(--green);">$0</div></div>
+    </div>
+    <div class="pb"><div class="pf" id="nf-util" style="width:0%;background:var(--green)"></div></div>
+    <div class="ccd" style="margin-top:8px;">
+      <div class="ccbox"><div class="ccbl">Current Balance</div>
+        <input class="cei" type="number" id="nf-bal" value="0" placeholder="0" oninput="updateCards()" style="width:100%;margin-top:3px;">
+      </div>
+      <div class="ccbox"><div class="ccbl">Utilization</div><div class="ccbv" id="nf-util-pct">0%</div></div>
+    </div>
+    <div class="notice good" style="margin-top:7px;font-size:10px;"><span class="ni2">✅</span><span>Keep at $0. CLI request when score hits 680. $2K → $5K+ limit.</span></div>
   </div>
 
   <div class="sec">Derogatory Items · Let Them Age</div>
   <div class="card">
     <table class="tbl">
-      <tr class="tbl-row hdr"><td>Account</td><td style="text-align:right">Balance</td><td style="text-align:right">Removes</td><td style="text-align:right">Action</td></tr>
-      <tr class="tbl-row"><td><span style="font-size:11px;">OneMain ··7673</span><br><span style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;">Charge-off · Jun 2021</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--red);">$2,211</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);">Oct 2029</td><td style="text-align:right;"><span class="badge b-orange">LET AGE</span></td></tr>
-      <tr class="tbl-row"><td><span style="font-size:11px;">Upstart L109</span><br><span style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;">Charge-off · Sold to Jefferson Capital</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">$0</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--green);">Oct 2026 🔥</td><td style="text-align:right;"><span class="badge b-green">6 MONTHS</span></td></tr>
-      <tr class="tbl-row"><td><span style="font-size:11px;">Capital One ··0346</span><br><span style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;">Settled charge-off · Paid Feb 2026</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">$0</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);">May 2028</td><td style="text-align:right;"><span class="badge b-blue">DONE</span></td></tr>
-      <tr class="tbl-row"><td><span style="font-size:11px;">Acima Digital (Experian only)</span><br><span style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;">Charge-off · Not on TU or EQ</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--red);">$5,183</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);">May 2029</td><td style="text-align:right;"><span class="badge b-orange">LET AGE</span></td></tr>
-      <tr class="tbl-row"><td><span style="font-size:11px;">Flagship Auto</span><br><span style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;">Closed · 90 days late at end</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">$0</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);">Jun 2029</td><td style="text-align:right;"><span class="badge b-blue">GONE</span></td></tr>
+      <tr class="tbl-row hdr"><td>Account</td><td style="text-align:right">Removes</td><td style="text-align:right">Action</td></tr>
+      <tr class="tbl-row"><td><span style="font-size:10px;font-weight:600;">OneMain ··7673</span><br><span style="font-size:8px;color:var(--muted);">C/O · $2,211 · Jun 2021</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);">Oct 2029</td><td style="text-align:right;"><span class="badge bo">LET AGE</span></td></tr>
+      <tr class="tbl-row"><td><span style="font-size:10px;font-weight:600;">Upstart</span><br><span style="font-size:8px;color:var(--muted);">C/O · Sold · $0 owed</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">Oct 2026 🔥</td><td style="text-align:right;"><span class="badge bgr">6 MO</span></td></tr>
+      <tr class="tbl-row"><td><span style="font-size:10px;font-weight:600;">Capital One ··0346</span><br><span style="font-size:8px;color:var(--muted);">Settled · Paid Feb 2026</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);">May 2028</td><td style="text-align:right;"><span class="badge bb">DONE</span></td></tr>
+      <tr class="tbl-row"><td><span style="font-size:10px;font-weight:600;">Acima Digital</span><br><span style="font-size:8px;color:var(--muted);">Experian only · Paid off</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">Dropping soon</td><td style="text-align:right;"><span class="badge bgr">PAID ✓</span></td></tr>
     </table>
   </div>
 
   <div class="sec">Score Roadmap · 649 → 720+</div>
-  <div class="sr-row"><div class="sr-num" style="color:var(--green)">01</div><div><div class="sr-title">Keep all 3 cards at 0–10% on close date ✅</div><div class="sr-desc">Capital One closes Apr 21 · Apple closes Apr 30 · Navy Federal closes 23rd</div></div></div>
-  <div class="sr-row"><div class="sr-num" style="color:var(--red)">02</div><div><div class="sr-title">Change Capital One AutoPay to full balance 🔴</div><div class="sr-desc">Currently minimum only — do this now in Capital One app to avoid interest</div></div></div>
-  <div class="sr-row"><div class="sr-num" style="color:var(--gold)">03</div><div><div class="sr-title">Capital One $1,767 → $0 after April 21 close</div><div class="sr-desc">98% utilization clearing → estimated +30–60 points</div></div></div>
-  <div class="sr-row"><div class="sr-num" style="color:var(--gold)">04</div><div><div class="sr-title">Upstart drops off TransUnion — October 2026 🔥</div><div class="sr-desc">Automatic score boost · No action needed · Let time work</div></div></div>
-  <div class="sr-row"><div class="sr-num" style="color:var(--blue)">05</div><div><div class="sr-title">No new credit until 680+</div><div class="sr-desc">Every hard inquiry costs 3–5 points · Protect the file</div></div></div>
-  <div class="sr-row"><div class="sr-num" style="color:var(--purple)">06</div><div><div class="sr-title">Navy Federal CLI request at 680</div><div class="sr-desc">$2,000 → $5,000+ limit · Lowers overall utilization</div></div></div>
+  <div class="sr-row"><div class="srn" style="color:var(--green)">01</div><div><div class="srt">All 3 cards at $0 ✅</div><div class="srd">Capital One, Apple, Navy Federal — all clean</div></div></div>
+  <div class="sr-row"><div class="srn" style="color:var(--red)">02</div><div><div class="srt">Change Capital One AutoPay → Full Balance 🔴</div><div class="srd">Do this now in the Capital One app</div></div></div>
+  <div class="sr-row"><div class="srn" style="color:var(--gold)">03</div><div><div class="srt">Capital One $0 reports after Apr 21 → +30–60 pts</div><div class="srd">Utilization drops from 98% to 0% — biggest near-term boost</div></div></div>
+  <div class="sr-row"><div class="srn" style="color:var(--gold)">04</div><div><div class="srt">Upstart drops off TU — October 2026 🔥</div><div class="srd">Automatic +40–60 pts · No action needed</div></div></div>
+  <div class="sr-row"><div class="srn" style="color:var(--blue)">05</div><div><div class="srt">No new credit until 680+</div><div class="srd">Every hard inquiry costs 3–5 points</div></div></div>
+  <div class="sr-row"><div class="srn" style="color:var(--purple)">06</div><div><div class="srt">Navy Federal CLI at 680</div><div class="srd">$2K → $5K limit · Lowers overall utilization</div></div></div>
 
-  <div class="sec">Monitor · Spring Oaks Capital & Midland Credit</div>
-  <div class="notice warn"><span class="notice-icon">👀</span><span><strong>Spring Oaks Capital</strong> pulled your report Mar 26 and <strong>Midland Credit Management</strong> has pulled multiple times. These are debt collectors. If you receive letters, do not call them. Watch for new collection accounts appearing on your report.</span></div>
+  <div class="notice warn" style="margin-top:12px;"><span class="ni2">👀</span><span><strong>Monitor:</strong> Spring Oaks Capital + Midland Credit Management pulling your report. Watch for new collection accounts.</span></div>
 </div>
 
 </div><!-- end main -->
 
 <!-- SHIFT MODAL -->
-<div class="modal-overlay" id="shift-modal">
+<div class="mo" id="shift-modal">
   <div class="modal">
-    <div class="modal-date" id="modal-date">Monday, Apr 6</div>
-    <div class="shift-types">
-      <div class="shift-btn reg-btn" onclick="selectShiftType('reg')"><div class="sb-icon">🌙</div><div class="sb-label">Regular</div><div style="font-size:9px;color:var(--muted);">03:00–11:30</div></div>
-      <div class="shift-btn extra-btn" onclick="selectShiftType('extra')"><div class="sb-icon">⚡</div><div class="sb-label">Pickup</div><div style="font-size:9px;color:var(--muted);">+OT/Extra</div></div>
-      <div class="shift-btn holiday-btn" onclick="selectShiftType('holiday')"><div class="sb-icon">🎉</div><div class="sb-label">Holiday</div><div style="font-size:9px;color:var(--muted);">2x pay</div></div>
-      <div class="shift-btn short-btn" onclick="selectShiftType('short')"><div class="sb-icon">⏱</div><div class="sb-label">Short</div><div style="font-size:9px;color:var(--muted);">03:00–09:30</div></div>
-      <div class="shift-btn swap-btn" onclick="selectShiftType('swap')"><div class="sb-icon">🔄</div><div class="sb-label">Swap</div><div style="font-size:9px;color:var(--muted);">traded day</div></div>
-      <div class="shift-btn off-btn" onclick="selectShiftType('off')"><div class="sb-icon">❌</div><div class="sb-label">Give Away</div><div style="font-size:9px;color:var(--muted);">off</div></div>
-      <div class="shift-btn vacb-btn" onclick="selectShiftType('vacb')" style="grid-column:span 3 / auto;"><div class="sb-icon" style="font-size:14px;display:inline;">✈️</div><div class="sb-label" style="display:inline;margin-left:6px;">Vacation Block (VACB)</div></div>
+    <div class="md" id="md-date">Monday, Apr 6</div>
+    <div class="sts">
+      <div class="sb reg" onclick="selType('reg')"><div class="si">🌙</div><div class="sl2" style="color:var(--blue)">Regular</div></div>
+      <div class="sb extra" onclick="selType('extra')"><div class="si">⚡</div><div class="sl2" style="color:var(--gold)">Pickup</div></div>
+      <div class="sb holiday" onclick="selType('holiday')"><div class="si">🎉</div><div class="sl2" style="color:var(--purple)">Holiday</div></div>
+      <div class="sb short" onclick="selType('short')"><div class="si">⏱</div><div class="sl2" style="color:var(--green)">Short</div></div>
+      <div class="sb swap" onclick="selType('swap')"><div class="si">🔄</div><div class="sl2" style="color:var(--orange)">Swap</div></div>
+      <div class="sb off" onclick="selType('off')"><div class="si">❌</div><div class="sl2" style="color:var(--red)">Give Away</div></div>
+      <div class="sb vacb" onclick="selType('vacb')" style="grid-column:1/-1;"><div class="si" style="display:inline;font-size:12px;">✈️</div><span class="sl2" style="color:var(--purple);margin-left:5px;">Vacation Block (VACB)</span></div>
     </div>
-    <div class="modal-time-row">
-      <div class="modal-time-group"><div class="modal-time-label">Start Time</div><input class="modal-inp" type="time" id="modal-start" value="03:00"></div>
-      <div class="modal-time-group"><div class="modal-time-label">End Time</div><input class="modal-inp" type="time" id="modal-end" value="11:30"></div>
+    <div class="mtr">
+      <div class="mtg"><div class="mtl">Start</div><input class="mi" type="time" id="md-start" value="03:00"></div>
+      <div class="mtg"><div class="mtl">End</div><input class="mi" type="time" id="md-end" value="11:30"></div>
     </div>
-    <textarea class="modal-note" id="modal-note" placeholder="Notes (optional)"></textarea>
-    <div class="modal-btns">
-      <button class="btn btn-gold" onclick="saveShift()" style="flex:1;">Save Shift</button>
-      <button class="btn btn-red" onclick="clearShift()">Clear</button>
-      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+    <textarea class="mn" id="md-note" placeholder="Notes (optional)"></textarea>
+    <div class="mbs">
+      <button class="btn btn-g" onclick="saveShift()" style="flex:1;">Save</button>
+      <button class="btn btn-r" onclick="clearShift()">Clear</button>
+      <button class="btn btn-o" onclick="closeMo()">Cancel</button>
     </div>
   </div>
 </div>
 
 <!-- Firebase -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBQJsAg-WnWYhak40NpOGCL6Rx5Sy_06FU",
-  authDomain: "simmsimma-os.firebaseapp.com",
-  databaseURL: "https://simmsimma-os-default-rtdb.firebaseio.com",
-  projectId: "simmsimma-os",
-  storageBucket: "simmsimma-os.firebasestorage.app",
-  messagingSenderId: "436234775747",
-  appId: "1:436234775747:web:5a886a4f1bf4f357e00676",
-  measurementId: "G-9NRYCNE6TS"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-window.fbDb = db;
-window.fbRef = ref;
-window.fbSet = set;
-window.fbOnValue = onValue;
-window.fbGet = get;
-
-// ---- SYNC INDICATOR ----
-function syncStart(){const b=document.getElementById('sync-bar');b.className='syncing';}
-function syncDone(){const b=document.getElementById('sync-bar');b.className='synced';setTimeout(()=>{b.className='';},1200);}
-window.syncStart=syncStart;
-window.syncDone=syncDone;
-
-// ---- FIREBASE SAVE ----
-window.fbSave = async function(path, data) {
-  try {
-    syncStart();
-    await set(ref(db, path), data);
-    syncDone();
-  } catch(e) { console.warn('FB save error',e); }
-};
-
-// ---- LOAD ALL DATA ----
-async function loadAll() {
-  try {
-    const snap = await get(ref(db, 'simmsimma'));
-    if(snap.exists()) {
-      const d = snap.val();
-      if(d.shifts) { window.shifts = d.shifts; }
-      if(d.bills) { window.bills = d.bills; }
-      if(d.vacExtra !== undefined) { window.vacExtra = d.vacExtra; }
-      if(d.urgentDone) { window.urgentDone = d.urgentDone; }
-      if(d.credits) { window.userCredits = d.credits; }
-    }
-  } catch(e) { console.warn('FB load error',e); }
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getDatabase,ref,set,onValue,get}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+const cfg={apiKey:"AIzaSyBQJsAg-WnWYhak40NpOGCL6Rx5Sy_06FU",authDomain:"simmsimma-os.firebaseapp.com",databaseURL:"https://simmsimma-os-default-rtdb.firebaseio.com",projectId:"simmsimma-os",storageBucket:"simmsimma-os.firebasestorage.app",messagingSenderId:"436234775747",appId:"1:436234775747:web:5a886a4f1bf4f357e00676"};
+const app=initializeApp(cfg);const db=getDatabase(app);
+window.fbSave=async(p,d)=>{try{const b=document.getElementById('sync-bar');if(b)b.className='syncing';await set(ref(db,p),d);if(b){b.className='synced';setTimeout(()=>b.className='',1100);}}catch(e){console.warn(e);}};
+async function loadAll(){
+  try{const s=await get(ref(db,'simmsimma'));if(s.exists()){const d=s.val();
+    if(d.shifts)window.shifts=d.shifts;
+    if(d.bills)window.bills=d.bills;
+    if(d.vacExtra!==undefined)window.vacExtra=d.vacExtra;
+    if(d.urgentDone)window.urgentDone=d.urgentDone;
+    if(d.credits)window.credits=d.credits;
+    if(d.paidBills)window.paidBills=d.paidBills;
+    if(d.cards)window.cards=d.cards;
+    if(d.theme)document.body.setAttribute('data-theme',d.theme);
+  }}catch(e){console.warn(e);}
   window.appInit();
 }
-
-// ---- REALTIME LISTENER ----
-onValue(ref(db,'simmsimma/shifts'), (snap) => {
-  if(snap.exists() && window.listenReady) {
-    window.shifts = snap.val();
-    window.renderCalendar();
-  }
+['shifts','bills','vacExtra','urgentDone','paidBills','cards'].forEach(k=>{
+  onValue(ref(db,'simmsimma/'+k),(s)=>{
+    if(s.exists()&&window.lr){window[k]=s.val();if(k==='shifts')window.renderCal();if(k==='bills'||k==='paidBills')window.renderBills();if(k==='vacExtra')window.renderVac();if(k==='urgentDone')window.renderUrgent();if(k==='cards')window.updateCards();}
+  });
 });
-onValue(ref(db,'simmsimma/bills'), (snap) => {
-  if(snap.exists() && window.listenReady) {
-    window.bills = snap.val();
-    window.renderBills();
-  }
-});
-onValue(ref(db,'simmsimma/vacExtra'), (snap) => {
-  if(snap.exists() && window.listenReady) {
-    window.vacExtra = snap.val()||0;
-    window.renderVacChecks();
-  }
-});
-onValue(ref(db,'simmsimma/urgentDone'), (snap) => {
-  if(snap.exists() && window.listenReady) {
-    window.urgentDone = snap.val()||{};
-    window.renderUrgent();
-  }
-});
-
 loadAll();
 </script>
 
 <script>
-// ============ CONSTANTS ============
-const RATE=40.50, NIGHT_PREM=0.59, TAX_RATE=0.225, DEDUCTIONS=1340.53;
-const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
-const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const RATE=40.50,NP=0.59,TAX=0.225,DED=1340.53;
+const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DY=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-const PAY_PERIODS_2026=[
-  {start:'2026-03-14',end:'2026-03-27',check:'2026-04-03',label:'PP1',cls:'pp1'},
-  {start:'2026-03-28',end:'2026-04-10',check:'2026-04-17',label:'PP2',cls:'pp2'},
-  {start:'2026-04-11',end:'2026-04-24',check:'2026-05-01',label:'PP3',cls:'pp3'},
-  {start:'2026-04-25',end:'2026-05-08',check:'2026-05-15',label:'PP4',cls:'pp4'},
-  {start:'2026-05-09',end:'2026-05-22',check:'2026-05-29',label:'PP5',cls:'pp1'},
-  {start:'2026-05-23',end:'2026-06-05',check:'2026-06-12',label:'PP6',cls:'pp2'},
-  {start:'2026-06-06',end:'2026-06-19',check:'2026-06-26',label:'PP7',cls:'pp3'},
+const PPS=[
+  {s:'2026-03-14',e:'2026-03-27',c:'2026-04-03',l:'PP1',cls:'pp1'},
+  {s:'2026-03-28',e:'2026-04-10',c:'2026-04-17',l:'PP2',cls:'pp2'},
+  {s:'2026-04-11',e:'2026-04-24',c:'2026-05-01',l:'PP3',cls:'pp3'},
+  {s:'2026-04-25',e:'2026-05-08',c:'2026-05-15',l:'PP4',cls:'pp4'},
+  {s:'2026-05-09',e:'2026-05-22',c:'2026-05-29',l:'PP5',cls:'pp1'},
+  {s:'2026-05-23',e:'2026-06-05',c:'2026-06-12',l:'PP6',cls:'pp2'},
+  {s:'2026-06-06',e:'2026-06-19',c:'2026-06-26',l:'PP7',cls:'pp3'},
+  {s:'2026-06-20',e:'2026-07-03',c:'2026-07-10',l:'PP8',cls:'pp4'},
 ];
 
-// April + May 2026 schedule from WFM screenshots
-const PRELOADED_SHIFTS={
+// ===== WFM SCHEDULES FROM PHOTOS =====
+// APRIL 2026
+// MAY 2026
+// JUNE 2026
+const WFM={
+  // MARCH overflow
   '2026-03-30':{type:'reg',start:'03:00',end:'11:30',note:''},
   '2026-03-31':{type:'reg',start:'03:00',end:'11:30',note:''},
-  '2026-04-02':{type:'extra',start:'05:00',end:'11:30',note:'WFM 5AM pickup'},
+  // APRIL
+  '2026-04-02':{type:'extra',start:'05:00',end:'11:30',note:'WFM Pickup'},
   '2026-04-03':{type:'holiday',start:'03:00',end:'11:30',note:'Good Friday'},
   '2026-04-04':{type:'reg',start:'03:00',end:'11:30',note:''},
   '2026-04-06':{type:'reg',start:'03:00',end:'11:30',note:''},
   '2026-04-07':{type:'reg',start:'03:00',end:'11:30',note:''},
-  '2026-04-08':{type:'extra',start:'05:00',end:'11:30',note:'WFM 5AM pickup'},
+  '2026-04-08':{type:'extra',start:'05:00',end:'11:30',note:'WFM Pickup'},
   '2026-04-10':{type:'reg',start:'03:00',end:'11:30',note:''},
   '2026-04-11':{type:'reg',start:'03:00',end:'11:30',note:''},
   '2026-04-13':{type:'reg',start:'03:00',end:'11:30',note:''},
@@ -823,8 +837,9 @@ const PRELOADED_SHIFTS={
   '2026-04-25':{type:'reg',start:'03:00',end:'11:30',note:''},
   '2026-04-27':{type:'reg',start:'03:00',end:'11:30',note:''},
   '2026-04-28':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-04-29':{type:'short',start:'03:00',end:'09:30',note:'Short shift'},
   '2026-04-30':{type:'short',start:'03:00',end:'09:30',note:'Short shift'},
-  // May 2026
+  // MAY
   '2026-05-01':{type:'reg',start:'03:00',end:'11:30',note:''},
   '2026-05-02':{type:'reg',start:'03:00',end:'11:30',note:''},
   '2026-05-03':{type:'reg',start:'03:00',end:'11:30',note:''},
@@ -848,463 +863,398 @@ const PRELOADED_SHIFTS={
   '2026-05-29':{type:'vacb',start:'03:00',end:'11:30',note:'VACATION BLOCK'},
   '2026-05-30':{type:'vacb',start:'03:00',end:'11:30',note:'VACATION BLOCK'},
   '2026-05-31':{type:'vacb',start:'03:00',end:'11:30',note:'VACATION BLOCK'},
+  // JUNE
   '2026-06-01':{type:'vacb',start:'03:00',end:'11:30',note:'VACATION BLOCK'},
   '2026-06-02':{type:'vacb',start:'03:00',end:'11:30',note:'VACATION BLOCK'},
+  '2026-06-05':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-06':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-07':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-08':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-09':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-12':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-13':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-14':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-15':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-16':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-19':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-20':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-21':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-22':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-23':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-26':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-27':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-28':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-29':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-06-30':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-07-03':{type:'reg',start:'03:00',end:'11:30',note:''},
+  '2026-07-04':{type:'holiday',start:'03:00',end:'11:30',note:'Independence Day'},
 };
 
 const DEFAULT_BILLS=[
   {id:1,name:'Rent',amt:825,due:1,cat:'fixed',icon:'🏠',locked:true},
-  {id:2,name:'Car Payment (Bridgecrest)',amt:825,due:17,cat:'fixed',icon:'🚗',locked:true},
-  {id:3,name:'State Farm Insurance',amt:330.07,due:1,cat:'fixed',icon:'🛡️',locked:true},
-  {id:4,name:'Verizon WiFi',amt:65,due:3,cat:'fixed',icon:'📶',locked:true},
-  {id:5,name:'Apple Family',amt:26.99,due:2,cat:'subscription',icon:'🍎',locked:true},
-  {id:6,name:'Gas / Tolls',amt:200,due:0,cat:'fixed',icon:'⛽',locked:true},
-  {id:7,name:'Credit Card Minimums',amt:150,due:16,cat:'debt',icon:'💳',locked:true},
+  {id:2,name:'Apple Music Family',amt:16.99,due:3,cat:'sub',icon:'🎵',locked:true},
+  {id:3,name:'iCloud+ 2TB',amt:9.99,due:6,cat:'sub',icon:'☁️',locked:true},
+  {id:4,name:'Claude Pro',amt:20,due:7,cat:'sub',icon:'🤖',locked:false},
+  {id:5,name:'Bridgecrest (Car)',amt:825,due:8,cat:'debt',icon:'🚗',locked:true},
+  {id:6,name:'ChatGPT Plus',amt:20,due:13,cat:'sub',icon:'💬',locked:false},
+  {id:7,name:'Verizon WiFi',amt:65,due:13,cat:'fixed',icon:'📶',locked:true},
   {id:8,name:'NFCU Pledge Loans',amt:185,due:15,cat:'debt',icon:'🏦',locked:true},
-  {id:9,name:'Affirm (til July)',amt:271.14,due:21,cat:'debt',icon:'⏱️',locked:false},
+  {id:9,name:'Credit Card Minimums',amt:150,due:16,cat:'debt',icon:'💳',locked:true},
+  {id:10,name:'State Farm Insurance',amt:330.07,due:20,cat:'fixed',icon:'🛡️',locked:true},
+  {id:11,name:'Affirm J6UU',amt:157,due:21,cat:'debt',icon:'⏱️',locked:false},
+  {id:12,name:'Gas / Tolls',amt:200,due:0,cat:'fixed',icon:'⛽',locked:true},
 ];
 
-const URGENT_ITEMS=[
-  {id:'u1',type:'warn',text:'<strong>Capital One ··8236 closes April 21</strong> — Keep under $180. Change AutoPay to full balance in Capital One app.'},
-  {id:'u2',type:'warn',text:'<strong>Affirm $271 due April 21</strong> — $157 (J6UU) + $114 (T31Y) autopay. Confirm NFCU has funds.'},
-  {id:'u3',type:'good',text:'<strong>Apple Card closes April 30</strong> — $1 balance. Clean.'},
-  {id:'u4',type:'good',text:'<strong>Navy Federal Visa closes April 23</strong> — $0 balance. Perfect.'},
-  {id:'u5',type:'warn',text:'<strong>Nav.com</strong> — Connect DUNS 118311301 + PNC ··1784 + Stripe to see your D&B Paydex score.'},
+const URGENT=[
+  {id:'u1',type:'warn',text:'<strong>Taxes due April 15</strong> — File your federal and NY state return TODAY. Use IRS Free File or TurboTax. Don\'t miss it.'},
+  {id:'u2',type:'warn',text:'<strong>Eye Appointment</strong> — Schedule your eye exam. Vision coverage through Delta benefits. Call or book online.'},
+  {id:'u3',type:'warn',text:'<strong>Primary Care Doctor</strong> — Find a PCP and book a physical. Required for FMLA documentation. Check Delta/Aetna provider directory.'},
+  {id:'u4',type:'warn',text:'<strong>FMLA</strong> — Physical needed before filing. Get PCP established first, then request FMLA paperwork from HR.'},
+  {id:'u5',type:'warn',text:'<strong>Capital One AutoPay</strong> — Change to full balance in Capital One app to avoid interest charges.'},
+  {id:'u6',type:'warn',text:'<strong>ChatGPT Plus payment failed</strong> — Update payment method at chat.openai.com.'},
+  {id:'u7',type:'good',text:'<strong>Apple Card closes April 30</strong> — $0 balance. Clean.'},
+  {id:'u8',type:'good',text:'<strong>Navy Federal Visa closes April 23</strong> — $0 balance. Perfect.'},
 ];
 
-// ============ STATE ============
-window.shifts={};
-window.bills=DEFAULT_BILLS;
-window.vacExtra=0;
-window.urgentDone={};
-window.userCredits={};
-window.listenReady=false;
+// STATE
+window.shifts={};window.bills=DEFAULT_BILLS;window.vacExtra=250;// $250 already in
+window.urgentDone={};window.credits={};window.paidBills={};window.cards={c1:0,ap:0,nf:0};window.lr=false;
+let cY=2026,cM=3,selDate=null,selShiftType=null,nextBId=30;
 
-let calYear=2026,calMonth=3;
-let selectedDate=null,selectedShiftType=null;
-let nextBillId=20;
+// THEME
+function toggleTheme(){
+  const cur=document.body.getAttribute('data-theme')||'dark';
+  const nxt=cur==='dark'?'light':'dark';
+  document.body.setAttribute('data-theme',nxt);
+  document.getElementById('tbtn').textContent=nxt==='dark'?'☀️':'🌙';
+  if(window.fbSave)window.fbSave('simmsimma/theme',nxt);
+}
+window.toggleTheme=toggleTheme;
 
-// ============ INIT ============
+// INIT
 window.appInit=function(){
-  if(!window.shifts||Object.keys(window.shifts).length===0){
-    window.shifts={...PRELOADED_SHIFTS};
-  }
-  if(!window.bills||window.bills.length===0){
-    window.bills=DEFAULT_BILLS;
-  }
-  window.listenReady=true;
-  updateDays();
-  renderCalendar();
-  calcPay();
-  renderBills();
-  renderVacChecks();
-  renderUrgent();
-  loadCreditEdits();
-  updateNextCheck();
+  if(!window.shifts||Object.keys(window.shifts).length===0)window.shifts={...WFM};
+  if(!window.bills||window.bills.length===0)window.bills=DEFAULT_BILLS;
+  if(window.vacExtra===0||window.vacExtra===undefined)window.vacExtra=250;
+  window.lr=true;
+  updateDays();updateNextCheck();renderCal();calcPay();renderBills();renderVac();renderUrgent();loadCredits();updateCards();
+  const t=document.body.getAttribute('data-theme')||'dark';
+  document.getElementById('tbtn').textContent=t==='dark'?'☀️':'🌙';
 };
 
-// ============ NAV ============
-function showPage(name,btn){
+function showPage(n,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  btn.classList.add('active');
-  window.scrollTo(0,0);
-  if(name==='schedule')renderCalendar();
+  document.getElementById('page-'+n).classList.add('active');
+  btn.classList.add('active');window.scrollTo(0,0);
+  if(n==='sched')renderCal();
+  if(n==='budget'){renderBills();calcDaily();}
 }
 
 function updateDays(){
-  const today=new Date();
-  const july1=new Date('2026-07-01');
-  const diff=Math.ceil((july1-today)/(1000*60*60*24));
-  const el=document.getElementById('dash-days');
-  if(el)el.textContent=diff+' days to vacation';
-  const el2=document.getElementById('vac-days');
-  if(el2)el2.textContent=diff;
+  const t=new Date();const b=new Date('2026-07-05');
+  const d=Math.ceil((b-t)/(1000*60*60*24));
+  const e=document.getElementById('dash-days');if(e)e.textContent=d+' days to board';
+  const e2=document.getElementById('vac-days');if(e2)e2.textContent=d;
 }
 
 function updateNextCheck(){
-  const today=new Date().toISOString().split('T')[0];
-  for(let pp of PAY_PERIODS_2026){
-    if(pp.check>=today){
-      const d=new Date(pp.check);
-      const el=document.getElementById('dash-nextcheck');
-      if(el)el.textContent=d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-      const el2=document.getElementById('dash-pp');
-      const s=new Date(pp.start).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-      const e=new Date(pp.end).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-      if(el2)el2.textContent=`PP ${s}–${e}`;
-      break;
-    }
-  }
+  const t=new Date().toISOString().split('T')[0];
+  for(let pp of PPS){if(pp.c>=t){
+    const d=new Date(pp.c);
+    const e=document.getElementById('dash-nc');if(e)e.textContent=d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const s=new Date(pp.s).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const en=new Date(pp.e).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const e2=document.getElementById('dash-pp');if(e2)e2.textContent=`PP ${s}–${en}`;
+    break;
+  }}
 }
 
-// ============ URGENT CHECKLIST ============
+// URGENT
 window.renderUrgent=function(){
-  const container=document.getElementById('urgent-list');
-  if(!container)return;
-  container.innerHTML='';
-  URGENT_ITEMS.forEach(item=>{
+  const c=document.getElementById('urgent-list');if(!c)return;c.innerHTML='';
+  URGENT.forEach(item=>{
     const done=!!(window.urgentDone&&window.urgentDone[item.id]);
     const div=document.createElement('div');
-    div.className=`urgent-item ${done?'done-item':item.type+'-item'}`;
-    div.innerHTML=`
-      <div class="urgent-check"><span class="urgent-check-inner">✓</span></div>
-      <div class="urgent-text">${item.text}</div>
-    `;
-    div.onclick=()=>toggleUrgent(item.id);
-    container.appendChild(div);
+    div.className=`ui ${done?'done-i':item.type+'-i'}`;
+    div.innerHTML=`<div class="uc"><span class="uci">✓</span></div><div class="ut">${item.text}</div>`;
+    div.onclick=()=>{if(!window.urgentDone)window.urgentDone={};window.urgentDone[item.id]=!window.urgentDone[item.id];window.renderUrgent();if(window.fbSave)window.fbSave('simmsimma/urgentDone',window.urgentDone);};
+    c.appendChild(div);
   });
 };
 
-function toggleUrgent(id){
-  if(!window.urgentDone)window.urgentDone={};
-  window.urgentDone[id]=!window.urgentDone[id];
-  window.renderUrgent();
-  if(window.fbSave)window.fbSave('simmsimma/urgentDone',window.urgentDone);
+// CALENDAR
+function dk(y,m,d){return`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
+function getPP(k){for(let p of PPS){if(k>=p.s&&k<=p.e)return p;}return null;}
+function sHrs(s){
+  if(!s||s.type==='off'||s.type==='vacb')return 0;
+  const[sh,sm]=s.start.split(':').map(Number);const[eh,em]=s.end.split(':').map(Number);
+  let h=(eh*60+em-sh*60-sm)/60;if(h<0)h+=24;return Math.max(0,h-0.5);
 }
 
-// ============ CALENDAR ============
-function dateKey(y,m,d){return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
-
-function getPPForDate(dateStr){
-  for(let pp of PAY_PERIODS_2026){if(dateStr>=pp.start&&dateStr<=pp.end)return pp;}
-  return null;
-}
-
-function getShiftHours(shift){
-  if(!shift||shift.type==='off'||shift.type==='vacb')return 0;
-  const[sh,sm]=shift.start.split(':').map(Number);
-  const[eh,em]=shift.end.split(':').map(Number);
-  let hrs=(eh*60+em-sh*60-sm)/60;
-  if(hrs<0)hrs+=24;
-  return Math.max(0,hrs-0.5);
-}
-
-window.renderCalendar=function(){
-  const title=`${MONTHS[calMonth]} ${calYear}`;
-  document.getElementById('cal-month-title').textContent=title;
-  document.getElementById('pp-month-label').textContent=title;
-  const today=new Date();
-  const firstDay=new Date(calYear,calMonth,1).getDay();
-  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
-  const daysInPrev=new Date(calYear,calMonth,0).getDate();
-  const grid=document.getElementById('cal-grid');
-  grid.innerHTML='';
-  let regDays=0,regHrs=0,extraDays=0,extraHrs=0,holDays=0,holHrs=0;
-
+window.renderCal=function(){
+  const t=`${MO[cM]} ${cY}`;
+  document.getElementById('cal-title').textContent=t;
+  document.getElementById('pp-lbl').textContent=t;
+  const today=new Date();const fd=new Date(cY,cM,1).getDay();
+  const dim=new Date(cY,cM+1,0).getDate();const dip=new Date(cY,cM,0).getDate();
+  const g=document.getElementById('cal-grid');g.innerHTML='';
+  let rD=0,rH=0,eD=0,eH=0,hD=0,hH=0;
   for(let i=0;i<42;i++){
-    const cell=document.createElement('div');
-    cell.className='cal-cell';
-    let day,month,year,isOther=false;
-    if(i<firstDay){day=daysInPrev-firstDay+i+1;month=calMonth-1;year=calYear;if(month<0){month=11;year--;}isOther=true;}
-    else if(i>=firstDay+daysInMonth){day=i-firstDay-daysInMonth+1;month=calMonth+1;year=calYear;if(month>11){month=0;year++;}isOther=true;}
-    else{day=i-firstDay+1;month=calMonth;year=calYear;}
-
-    const dk=dateKey(year,month,day);
-    const isToday=(year===today.getFullYear()&&month===today.getMonth()&&day===today.getDate());
-    const isSunday=(i%7===0);
-    if(isOther)cell.classList.add('other-month');
-    if(isToday)cell.classList.add('today');
-    if(isSunday&&!isOther)cell.classList.add('sunday');
-
-    const pp=getPPForDate(dk);
-    if(pp&&!isOther){
-      const badge=document.createElement('div');
-      badge.className=`cal-pp-badge ${pp.cls}`;
-      badge.textContent=pp.label;
-      cell.appendChild(badge);
-    }
-
-    const dateDiv=document.createElement('div');
-    dateDiv.className='cal-date';
-    dateDiv.textContent=day;
-    cell.appendChild(dateDiv);
-
-    const shift=window.shifts[dk];
+    const cell=document.createElement('div');cell.className='cal-cell';
+    let day,mo,yr,oth=false;
+    if(i<fd){day=dip-fd+i+1;mo=cM-1;yr=cY;if(mo<0){mo=11;yr--;}oth=true;}
+    else if(i>=fd+dim){day=i-fd-dim+1;mo=cM+1;yr=cY;if(mo>11){mo=0;yr++;}oth=true;}
+    else{day=i-fd+1;mo=cM;yr=cY;}
+    const k=dk(yr,mo,day);
+    const isTod=(yr===today.getFullYear()&&mo===today.getMonth()&&day===today.getDate());
+    if(oth)cell.classList.add('om');if(isTod)cell.classList.add('today');
+    const pp=getPP(k);
+    if(pp&&!oth){const b=document.createElement('div');b.className=`ppb ${pp.cls}`;b.textContent=pp.l;cell.appendChild(b);}
+    const dd=document.createElement('div');dd.className='cd';dd.textContent=day;cell.appendChild(dd);
+    const shift=window.shifts[k];
     if(shift){
-      const block=document.createElement('div');
-      block.className=`cal-shift-block ${shift.type}`;
-      const hrs=getShiftHours(shift);
-      const labels={reg:'REG',extra:'PICKUP',holiday:'HOL',short:'SHORT',swap:'SWAP',off:'GIVE',vacb:'VACB'};
-      block.textContent=`${labels[shift.type]||shift.type} ${shift.start}–${shift.end}`;
-      if(hrs>0)block.textContent+=` (${hrs}h)`;
-      if(shift.note&&shift.type==='vacb')block.textContent='✈️ VACATION';
-      cell.appendChild(block);
-      if(!isOther){
-        if(shift.type==='reg'){regDays++;regHrs+=hrs;}
-        else if(shift.type==='extra'){extraDays++;extraHrs+=hrs;}
-        else if(shift.type==='holiday'){holDays++;holHrs+=hrs;}
-      }
+      const bl=document.createElement('div');bl.className=`csb ${shift.type}`;
+      const hrs=sHrs(shift);
+      const lbs={reg:'REG',extra:'PICKUP',holiday:'HOL',short:'SHORT',swap:'SWAP',off:'GIVE',vacb:'VACB'};
+      bl.textContent=shift.type==='vacb'?'✈️ VACB':`${lbs[shift.type]} ${shift.start}–${shift.end}${hrs>0?` (${hrs}h)`:''}`;
+      cell.appendChild(bl);
+      if(!oth){if(shift.type==='reg'){rD++;rH+=hrs;}else if(shift.type==='extra'){eD++;eH+=hrs;}else if(shift.type==='holiday'){hD++;hH+=hrs;}}
     }
-
-    cell.onclick=()=>openModal(dk,year,month,day);
-    grid.appendChild(cell);
+    cell.onclick=()=>openMo(k,yr,mo,day);g.appendChild(cell);
   }
-
-  document.getElementById('sum-reg-days').textContent=regDays;
-  document.getElementById('sum-reg-hrs').textContent=regHrs.toFixed(1);
-  document.getElementById('sum-reg-pay').textContent='$'+(regHrs*RATE).toFixed(0);
-  document.getElementById('sum-extra-days').textContent=extraDays;
-  document.getElementById('sum-extra-hrs').textContent=extraHrs.toFixed(1);
-  document.getElementById('sum-extra-pay').textContent='$'+(extraHrs*RATE).toFixed(0);
-  document.getElementById('sum-hol-days').textContent=holDays;
-  document.getElementById('sum-hol-hrs').textContent=holHrs.toFixed(1);
-  document.getElementById('sum-hol-pay').textContent='$'+(holHrs*RATE).toFixed(0);
-  const totalHrs=regHrs+extraHrs+holHrs;
-  document.getElementById('sum-total-days').textContent=regDays+extraDays+holDays;
-  document.getElementById('sum-total-hrs').textContent=totalHrs.toFixed(1);
-  document.getElementById('sum-total-pay').textContent='$'+(totalHrs*RATE).toFixed(0);
-  renderPPStrip();
+  document.getElementById('sr-d').textContent=rD;document.getElementById('sr-h').textContent=rH.toFixed(1);document.getElementById('sr-p').textContent='$'+(rH*RATE).toFixed(0);
+  document.getElementById('se-d').textContent=eD;document.getElementById('se-h').textContent=eH.toFixed(1);document.getElementById('se-p').textContent='$'+(eH*RATE).toFixed(0);
+  document.getElementById('sh-d').textContent=hD;document.getElementById('sh-h').textContent=hH.toFixed(1);document.getElementById('sh-p').textContent='$'+(hH*RATE).toFixed(0);
+  const tot=rH+eH+hH;document.getElementById('st-d').textContent=rD+eD+hD;document.getElementById('st-h').textContent=tot.toFixed(1);document.getElementById('st-p').textContent='$'+(tot*RATE).toFixed(0);
+  renderPPS();
 };
 
-function renderPPStrip(){
-  const strip=document.getElementById('pp-strip');
-  strip.innerHTML='';
-  const relevantPPs=PAY_PERIODS_2026.filter(pp=>{
-    const s=new Date(pp.start),e=new Date(pp.end);
-    return s.getMonth()===calMonth||e.getMonth()===calMonth;
-  }).slice(0,4);
-
-  relevantPPs.forEach(pp=>{
-    let ppHrs=0;
-    const start=new Date(pp.start),end=new Date(pp.end);
-    for(let d=new Date(start);d<=end;d.setDate(d.getDate()+1)){
-      const dk=d.toISOString().split('T')[0];
-      const shift=window.shifts[dk];
-      if(shift)ppHrs+=getShiftHours(shift);
-    }
-    const gross=ppHrs*RATE;
-    const takehome=Math.max(0,gross*(1-TAX_RATE)-DEDUCTIONS);
-    const checkDate=new Date(pp.check).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    const startFmt=new Date(pp.start).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    const endFmt=new Date(pp.end).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    const card=document.createElement('div');
-    card.className=`pp-card ${pp.cls}`;
-    card.innerHTML=`<div class="pp-label">${pp.label} · Pay Period</div><div class="pp-dates">${startFmt} – ${endFmt}</div><div class="pp-check">💰 Check: ${checkDate}</div><div style="display:flex;justify-content:space-between;align-items:flex-end;"><div><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">HRS</div><div class="pp-hrs">${ppHrs.toFixed(1)}</div></div><div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">TAKE-HOME</div><div class="pp-pay">$${takehome.toFixed(0)}</div></div></div>`;
+function renderPPS(){
+  const strip=document.getElementById('pp-strip');strip.innerHTML='';
+  const rel=PPS.filter(p=>{const s=new Date(p.s),e=new Date(p.e);return s.getMonth()===cM||e.getMonth()===cM;}).slice(0,4);
+  rel.forEach(p=>{
+    let hrs=0;for(let d=new Date(p.s);d<=new Date(p.e);d.setDate(d.getDate()+1)){const shift=window.shifts[d.toISOString().split('T')[0]];if(shift)hrs+=sHrs(shift);}
+    const gross=hrs*RATE;const take=Math.max(0,gross*(1-TAX)-DED);
+    const chk=new Date(p.c).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const s=new Date(p.s).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const e=new Date(p.e).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const card=document.createElement('div');card.className=`ppc ${p.cls}`;
+    card.innerHTML=`<div class="ppl">${p.l} · Pay Period</div><div class="ppd">${s} – ${e}</div><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:3px;">💰 Check: ${chk}</div><div style="display:flex;justify-content:space-between;align-items:flex-end;"><div><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);">HRS</div><div class="pph">${hrs.toFixed(1)}</div></div><div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);">TAKE-HOME</div><div class="pppay">$${take.toFixed(0)}</div></div></div>`;
     strip.appendChild(card);
   });
 }
 
-function changeMonth(dir){
-  calMonth+=dir;
-  if(calMonth>11){calMonth=0;calYear++;}
-  if(calMonth<0){calMonth=11;calYear--;}
-  window.renderCalendar();
-}
+function chMo(d){cM+=d;if(cM>11){cM=0;cY++;}if(cM<0){cM=11;cY--;}window.renderCal();}
 
-// ============ MODAL ============
-function openModal(dk,year,month,day){
-  selectedDate=dk;selectedShiftType=null;
-  const dayName=DAYS[new Date(year,month,day).getDay()];
-  document.getElementById('modal-date').textContent=`${dayName}, ${MONTHS[month]} ${day}`;
-  const existing=window.shifts[dk];
-  document.querySelectorAll('.shift-btn').forEach(b=>b.classList.remove('selected'));
-  if(existing){
-    selectedShiftType=existing.type;
-    document.querySelector(`.${existing.type}-btn`)?.classList.add('selected');
-    document.getElementById('modal-start').value=existing.start;
-    document.getElementById('modal-end').value=existing.end;
-    document.getElementById('modal-note').value=existing.note||'';
-  } else {
-    document.getElementById('modal-start').value='03:00';
-    document.getElementById('modal-end').value='11:30';
-    document.getElementById('modal-note').value='';
-  }
+// MODAL
+function openMo(k,yr,mo,day){
+  selDate=k;selShiftType=null;
+  document.getElementById('md-date').textContent=`${DY[new Date(yr,mo,day).getDay()]}, ${MO[mo]} ${day}`;
+  const ex=window.shifts[k];
+  document.querySelectorAll('.sb').forEach(b=>b.classList.remove('sel'));
+  if(ex){selShiftType=ex.type;document.querySelector(`.sb.${ex.type}`)?.classList.add('sel');document.getElementById('md-start').value=ex.start;document.getElementById('md-end').value=ex.end;document.getElementById('md-note').value=ex.note||'';}
+  else{document.getElementById('md-start').value='03:00';document.getElementById('md-end').value='11:30';document.getElementById('md-note').value='';}
   document.getElementById('shift-modal').classList.add('open');
 }
-
-function selectShiftType(type){
-  selectedShiftType=type;
-  document.querySelectorAll('.shift-btn').forEach(b=>b.classList.remove('selected'));
-  document.querySelector(`.${type}-btn`)?.classList.add('selected');
+function selType(t){
+  selShiftType=t;document.querySelectorAll('.sb').forEach(b=>b.classList.remove('sel'));document.querySelector(`.sb.${t}`)?.classList.add('sel');
   const times={reg:['03:00','11:30'],extra:['03:00','11:30'],holiday:['03:00','11:30'],short:['03:00','09:30'],swap:['03:00','11:30'],vacb:['03:00','11:30']};
-  if(times[type]){document.getElementById('modal-start').value=times[type][0];document.getElementById('modal-end').value=times[type][1];}
+  if(times[t]){document.getElementById('md-start').value=times[t][0];document.getElementById('md-end').value=times[t][1];}
 }
-
 function saveShift(){
-  if(!selectedShiftType||!selectedDate)return;
-  window.shifts[selectedDate]={type:selectedShiftType,start:document.getElementById('modal-start').value,end:document.getElementById('modal-end').value,note:document.getElementById('modal-note').value};
+  if(!selShiftType||!selDate)return;
+  window.shifts[selDate]={type:selShiftType,start:document.getElementById('md-start').value,end:document.getElementById('md-end').value,note:document.getElementById('md-note').value};
   if(window.fbSave)window.fbSave('simmsimma/shifts',window.shifts);
-  closeModal();
-  window.renderCalendar();
+  closeMo();window.renderCal();
 }
+function clearShift(){if(selDate)delete window.shifts[selDate];if(window.fbSave)window.fbSave('simmsimma/shifts',window.shifts);closeMo();window.renderCal();}
+function closeMo(){document.getElementById('shift-modal').classList.remove('open');}
 
-function clearShift(){
-  if(selectedDate){delete window.shifts[selectedDate];}
-  if(window.fbSave)window.fbSave('simmsimma/shifts',window.shifts);
-  closeModal();
-  window.renderCalendar();
-}
-
-function closeModal(){document.getElementById('shift-modal').classList.remove('open');}
-
-// ============ PAY CALC ============
+// PAY CALC
 function calcPay(){
-  const reg=parseFloat(document.getElementById('reg-hrs').value)||0;
-  const extra=parseFloat(document.getElementById('extra-hrs').value)||0;
-  const hol=parseFloat(document.getElementById('hol-hrs').value)||0;
-  const ot=parseFloat(document.getElementById('ot-hrs').value)||0;
-  const night=parseFloat(document.getElementById('night-hrs').value)||0;
-  const dt=parseFloat(document.getElementById('dt-hrs').value)||0;
-  const gross=(reg+extra+hol)*RATE + ot*RATE*0.5 + dt*RATE + night*NIGHT_PREM;
-  const taxes=gross*TAX_RATE;
-  const takehome=gross-taxes-DEDUCTIONS;
-  const afterVac=takehome-250;
-  const el=document.getElementById('dash-check');
-  if(el)el.textContent='$'+Math.max(0,takehome).toFixed(0);
-  document.getElementById('pay-wf').innerHTML=`
-    <div class="wf-row wf-gross"><div class="wl"><span class="wl-icon">💵</span><div><span class="wl-label">Gross Earnings</span><span class="wl-note">${reg+extra+hol}h × $${RATE} + ${ot}h OT + ${dt}h 2x + Night</span></div></div><div class="wa">+$${gross.toFixed(2)}</div></div>
-    <div class="wf-row wf-tax"><div class="wl"><span class="wl-icon">🏛</span><div><span class="wl-label">Taxes (Fed+NY+NYC)</span><span class="wl-note">22.5% effective rate · Confirmed from 3 paystubs</span></div></div><div class="wa">-$${taxes.toFixed(2)}</div></div>
-    <div class="wf-row wf-ded"><div class="wl"><span class="wl-icon">📋</span><div><span class="wl-label">All Deductions</span><span class="wl-note">Loans ($584.31) + 401k + Benefits + Stock + STD</span></div></div><div class="wa">-$${DEDUCTIONS.toFixed(2)}</div></div>
-    <div class="wf-row wf-net"><div class="wl"><span class="wl-icon">✅</span><div><span class="wl-label"><strong>Take-Home Pay</strong></span></div></div><div class="wa">$${Math.max(0,takehome).toFixed(2)}</div></div>
-    <div class="wf-row wf-alloc"><div class="wl"><span class="wl-icon">✈️</span><div><span class="wl-label">Vacation Fund</span><span class="wl-note">Locked until July 1</span></div></div><div class="wa">-$250.00</div></div>
-    <div class="wf-row wf-remain"><div class="wl"><span class="wl-icon">🏦</span><div><span class="wl-label"><strong>Available for Bills</strong></span></div></div><div class="wa">$${Math.max(0,afterVac).toFixed(2)}</div></div>
+  const r=parseFloat(document.getElementById('r-hrs')?.value)||0;
+  const e=parseFloat(document.getElementById('e-hrs')?.value)||0;
+  const h=parseFloat(document.getElementById('h-hrs')?.value)||0;
+  const o=parseFloat(document.getElementById('o-hrs')?.value)||0;
+  const n=parseFloat(document.getElementById('n-hrs')?.value)||0;
+  const d=parseFloat(document.getElementById('d-hrs')?.value)||0;
+  const gross=(r+e+h)*RATE+o*RATE*0.5+d*RATE+n*NP;
+  const taxes=gross*TAX;const take=gross-taxes-DED;const av=take-250;
+  const dc=document.getElementById('dash-check');if(dc)dc.textContent='$'+Math.max(0,take).toFixed(0);
+  const bc=document.getElementById('bc-val');if(bc)bc.textContent='$'+Math.max(0,take).toFixed(0);
+  const bm=document.getElementById('bm-val');if(bm)bm.textContent='$'+Math.max(0,take*2).toFixed(0);
+  const wf=document.getElementById('pay-wf');
+  if(wf)wf.innerHTML=`
+    <div class="wfr wg-r"><div class="wl"><span class="wi">💵</span><div><span class="wlt">Gross Earnings</span><span class="wln">${r+e+h}h × $${RATE} + OT + Night + 2x</span></div></div><div class="wa">+$${gross.toFixed(2)}</div></div>
+    <div class="wfr wt-r"><div class="wl"><span class="wi">🏛</span><div><span class="wlt">Taxes (Fed+NY+NYC)</span><span class="wln">22.5% · Confirmed 3 paystubs</span></div></div><div class="wa">-$${taxes.toFixed(2)}</div></div>
+    <div class="wfr wd-r"><div class="wl"><span class="wi">📋</span><div><span class="wlt">All Deductions</span><span class="wln">Loans + 401k + Benefits + Stock + STD</span></div></div><div class="wa">-$${DED.toFixed(2)}</div></div>
+    <div class="wfr wn-r"><div class="wl"><span class="wi">✅</span><div><span class="wlt"><strong>Take-Home Pay</strong></span></div></div><div class="wa">$${Math.max(0,take).toFixed(2)}</div></div>
+    <div class="wfr wa-r"><div class="wl"><span class="wi">✈️</span><div><span class="wlt">Vacation Fund</span><span class="wln">Locked until July 5</span></div></div><div class="wa">-$250.00</div></div>
+    <div class="wfr wr-r"><div class="wl"><span class="wi">🏦</span><div><span class="wlt"><strong>Available for Bills</strong></span></div></div><div class="wa">$${Math.max(0,av).toFixed(2)}</div></div>
   `;
+  calcDaily();
 }
-
-function setScenario(reg,extra,hol,ot,night,dt){
-  document.getElementById('reg-hrs').value=reg;
-  document.getElementById('extra-hrs').value=extra;
-  document.getElementById('hol-hrs').value=hol;
-  document.getElementById('ot-hrs').value=ot;
-  document.getElementById('night-hrs').value=night;
-  document.getElementById('dt-hrs').value=dt;
+function setS(r,e,h,o,n,d){
+  document.getElementById('r-hrs').value=r;document.getElementById('e-hrs').value=e;
+  document.getElementById('h-hrs').value=h;document.getElementById('o-hrs').value=o;
+  document.getElementById('n-hrs').value=n;document.getElementById('d-hrs').value=d;
   calcPay();
 }
+function showJune(){document.getElementById('june-note').style.display='flex';}
 
-function showJuneNote(){document.getElementById('june-note').style.display='flex';}
+// DAILY BUDGET
+function calcDaily(){
+  const r=parseFloat(document.getElementById('r-hrs')?.value)||80;
+  const e=parseFloat(document.getElementById('e-hrs')?.value)||0;
+  const h=parseFloat(document.getElementById('h-hrs')?.value)||0;
+  const o=parseFloat(document.getElementById('o-hrs')?.value)||0;
+  const n=parseFloat(document.getElementById('n-hrs')?.value)||80;
+  const d=parseFloat(document.getElementById('d-hrs')?.value)||0;
+  const gross=(r+e+h)*RATE+o*RATE*0.5+d*RATE+n*NP;
+  const take=Math.max(0,gross*(1-TAX)-DED-250);
+  const bs=Array.isArray(window.bills)?window.bills:Object.values(window.bills||{});
+  const totalBills=bs.reduce((s,b)=>s+parseFloat(b.amt||0),0);
+  const billsPP=totalBills/2;
+  const left=Math.max(0,take-billsPP);
+  const today=new Date();let dL=14;
+  for(let pp of PPS){const s=new Date(pp.s),en=new Date(pp.e);if(today>=s&&today<=en){dL=Math.ceil((en-today)/(1000*60*60*24))+1;break;}}
+  dL=Math.max(1,dL);
+  const daily=left/dL;
+  const da=document.getElementById('daily-allow');if(da)da.textContent='$'+daily.toFixed(0);
+  const dd=document.getElementById('dash-daily');if(dd)dd.textContent='$'+daily.toFixed(0);
+  const ds=document.getElementById('daily-sub');if(ds)ds.textContent=`$${left.toFixed(0)} left after bills ÷ ${dL} days in period`;
+  const coffee=parseFloat(document.getElementById('sp-coffee')?.value)||0;
+  const food=parseFloat(document.getElementById('sp-food')?.value)||0;
+  const misc=parseFloat(document.getElementById('sp-misc')?.value)||0;
+  const tot=coffee+food+misc;const rem=daily-tot;
+  const sp=document.getElementById('daily-spend');if(sp)sp.textContent='$'+tot.toFixed(2);
+  const dl=document.getElementById('daily-left');if(dl){dl.textContent='$'+rem.toFixed(2);dl.style.color=rem>=0?'var(--green)':'var(--red)';}
+}
+window.calcDaily=calcDaily;
 
-// ============ BILLS ============
+// BILLS
 window.renderBills=function(){
-  const container=document.getElementById('fixed-bills');
-  if(!container)return;
-  const today=new Date().getDate();
-  container.innerHTML='';
+  const c=document.getElementById('bills-list');if(!c)return;
+  const today=new Date();const td=today.getDate();c.innerHTML='';
   const bs=Array.isArray(window.bills)?window.bills:Object.values(window.bills||{});
   bs.sort((a,b)=>(a.due||0)-(b.due||0)).forEach(bill=>{
-    const urgent=bill.due>0&&bill.due>=today&&bill.due<=today+5;
-    const div=document.createElement('div');
-    div.className='bill-item';
-    if(urgent)div.style.borderColor='rgba(255,171,64,0.4)';
-    div.innerHTML=`<div class="bill-left"><span class="bill-icon">${bill.icon||'💸'}</span><div><div class="bill-name">${bill.name}${urgent?' <span class="badge b-orange">DUE SOON</span>':''}</div><div class="bill-due">${bill.due?'Due: '+bill.due+'th':'Variable'}</div></div></div><div class="bill-right"><span class="bill-amt">$${parseFloat(bill.amt).toFixed(2)}/mo</span>${!bill.locked?`<button class="bill-del" onclick="deleteBill(${bill.id})">✕</button>`:''}</div>`;
-    container.appendChild(div);
+    if(!bill||!bill.name)return;
+    const paid=!!(window.paidBills&&window.paidBills[bill.id]);
+    let cls='far',sl='',sc='var(--muted)';
+    if(paid){cls='upd';sl='PAID 🟢';sc='var(--green)';}
+    else if(bill.due>0){
+      const du=bill.due>=td?bill.due-td:bill.due+(31-td);
+      if(du<=3){cls='ur';sl='DUE NOW 🔴';sc='var(--red)';}
+      else if(du<=7){cls='uo';sl='COMING UP 🟠';sc='var(--orange)';}
+      else if(du<=14){cls='uy';sl='UPCOMING 🟡';sc='var(--gold)';}
+    }
+    const div=document.createElement('div');div.className=`bill ${cls}`;
+    div.innerHTML=`<div class="bl"><span class="bi">${bill.icon||'💸'}</span><div><div class="bn">${bill.name}</div><div class="bdl">${bill.due?'Due '+bill.due+'th':'Variable'}${sl?' · <span style="color:'+sc+';">'+sl+'</span>':''}</div></div></div><div class="br2"><span class="ba">$${parseFloat(bill.amt).toFixed(2)}/mo</span><button class="bpb" onclick="tPaid(${bill.id})">${paid?'↩ Unpay':'✓ Paid'}</button>${!bill.locked?`<button class="bdel" onclick="delBill(${bill.id})">✕</button>`:''}</div>`;
+    c.appendChild(div);
   });
-  updateBudgetSummary();
+  updSum();
 };
+
+function tPaid(id){if(!window.paidBills)window.paidBills={};window.paidBills[id]=!window.paidBills[id];if(window.fbSave)window.fbSave('simmsimma/paidBills',window.paidBills);window.renderBills();}
 
 function addBill(){
-  const name=document.getElementById('new-bill-name').value.trim();
-  const amt=parseFloat(document.getElementById('new-bill-amt').value);
-  const due=parseInt(document.getElementById('new-bill-due').value)||0;
-  const cat=document.getElementById('new-bill-cat').value;
+  const name=document.getElementById('nb-name').value.trim();const amt=parseFloat(document.getElementById('nb-amt').value);
+  const due=parseInt(document.getElementById('nb-due').value)||0;const cat=document.getElementById('nb-cat').value;
   if(!name||!amt)return;
-  const icons={fixed:'💸',subscription:'📱',debt:'💳',savings:'🏦',other:'📌'};
+  const icons={fixed:'💸',sub:'📱',debt:'💳',savings:'🏦',other:'📌'};
   if(!Array.isArray(window.bills))window.bills=Object.values(window.bills||{});
-  window.bills.push({id:nextBillId++,name,amt,due,cat,icon:icons[cat]||'💸',locked:false});
+  window.bills.push({id:nextBId++,name,amt,due,cat,icon:icons[cat]||'💸',locked:false});
   if(window.fbSave)window.fbSave('simmsimma/bills',window.bills);
-  document.getElementById('new-bill-name').value='';
-  document.getElementById('new-bill-amt').value='';
-  document.getElementById('new-bill-due').value='';
+  document.getElementById('nb-name').value='';document.getElementById('nb-amt').value='';document.getElementById('nb-due').value='';
   window.renderBills();
 }
+function delBill(id){if(!Array.isArray(window.bills))window.bills=Object.values(window.bills||{});window.bills=window.bills.filter(b=>b.id!==id);if(window.fbSave)window.fbSave('simmsimma/bills',window.bills);window.renderBills();}
 
-function deleteBill(id){
-  if(!Array.isArray(window.bills))window.bills=Object.values(window.bills||{});
-  window.bills=window.bills.filter(b=>b.id!==id);
-  if(window.fbSave)window.fbSave('simmsimma/bills',window.bills);
-  window.renderBills();
-}
-
-function updateBudgetSummary(){
+function updSum(){
   const bs=Array.isArray(window.bills)?window.bills:Object.values(window.bills||{});
-  const totalFixed=bs.reduce((s,b)=>s+parseFloat(b.amt||0),0);
-  const totalOut=totalFixed+500;
-  const deltaMonthly=940*2;
-  const surplus=deltaMonthly-totalOut;
-  const el1=document.getElementById('sum-fixed');if(el1)el1.textContent='$'+totalFixed.toFixed(2);
-  const el2=document.getElementById('sum-out');if(el2)el2.textContent='$'+totalOut.toFixed(2);
-  const el3=document.getElementById('sum-surplus');if(el3){el3.textContent=(surplus>=0?'+':'')+surplus.toFixed(2);el3.style.color=surplus>=0?'var(--green)':'var(--red)';}
-  const el4=document.getElementById('sum-grand');if(el4)el4.textContent='~$'+Math.max(0,surplus+4684).toFixed(0);
+  const tot=bs.reduce((s,b)=>s+parseFloat(b.amt||0),0);
+  const out=tot+500;const sur=(940*2)-out;
+  const e1=document.getElementById('sum-bills');if(e1)e1.textContent='$'+tot.toFixed(2);
+  const e2=document.getElementById('sum-out');if(e2)e2.textContent='$'+out.toFixed(2);
+  const e3=document.getElementById('sum-sur');if(e3){e3.textContent=(sur>=0?'+':'')+sur.toFixed(2);e3.style.color=sur>=0?'var(--green)':'var(--red)';}
+  calcDaily();
 }
 
-// ============ VACATION ============
-const VAC_DATA=[{date:'APR 4'},{date:'APR 18'},{date:'MAY 2'},{date:'MAY 16'},{date:'MAY 30'},{date:'JUN 13'},{date:'JUN 27'}];
-const VAC_CHECK_DATES=[new Date('2026-04-04'),new Date('2026-04-18'),new Date('2026-05-02'),new Date('2026-05-16'),new Date('2026-05-30'),new Date('2026-06-13'),new Date('2026-06-27')];
-
-window.renderVacChecks=function(){
-  const today=new Date();
-  let done=0,current=-1;
-  VAC_CHECK_DATES.forEach((d,i)=>{if(today>d)done=i+1;else if(current===-1)current=i;});
-  const total=done*250+(window.vacExtra||0);
-  const el=document.getElementById('vac-total');if(el)el.textContent='$'+total.toLocaleString();
-  const el2=document.getElementById('dash-vac');if(el2)el2.textContent='$'+total.toLocaleString();
+// VACATION
+const VAC_D=[{d:'APR 4'},{d:'APR 18'},{d:'MAY 2'},{d:'MAY 16'},{d:'MAY 30'},{d:'JUN 13'},{d:'JUN 27'}];
+const VAC_DT=[new Date('2026-04-04'),new Date('2026-04-18'),new Date('2026-05-02'),new Date('2026-05-16'),new Date('2026-05-30'),new Date('2026-06-13'),new Date('2026-06-27')];
+window.renderVac=function(){
+  const today=new Date();let done=0,cur=-1;
+  VAC_DT.forEach((d,i)=>{if(today>d)done=i+1;else if(cur===-1)cur=i;});
+  const total=(window.vacExtra||250);// starts at $250
+  const e=document.getElementById('vac-total');if(e)e.textContent='$'+total.toLocaleString();
+  const e2=document.getElementById('dash-vac');if(e2)e2.textContent='$'+total.toLocaleString();
   const pct=Math.min(100,(total/1750)*100);
   const bar=document.getElementById('vac-bar');if(bar)bar.style.width=pct+'%';
-  const container=document.getElementById('vac-checks');if(!container)return;
-  container.innerHTML='';
-  VAC_DATA.forEach((c,i)=>{
-    const isDone=i<done,isNow=i===current;
-    const div=document.createElement('div');
-    div.className='chk'+(isDone?' done':'')+(isNow?' now':'');
-    div.innerHTML=`<div class="chk-date">${c.date}</div><div class="chk-amt">$250</div>`;
-    container.appendChild(div);
+  const c=document.getElementById('vac-checks');if(!c)return;c.innerHTML='';
+  VAC_D.forEach((v,i)=>{
+    const isDone=i<done,isNow=i===cur;
+    const div=document.createElement('div');div.className='chk'+(isDone?' done':'')+(isNow?' now':'');
+    div.innerHTML=`<div class="chkd">${v.d}</div><div class="chka">$250</div>`;
+    c.appendChild(div);
   });
 };
-
 function addVacExtra(){
-  const amt=parseFloat(document.getElementById('vac-extra').value)||0;
-  if(!amt)return;
-  window.vacExtra=(window.vacExtra||0)+amt;
+  const amt=parseFloat(document.getElementById('vac-extra-in').value)||0;if(!amt)return;
+  window.vacExtra=(window.vacExtra||250)+amt;
   if(window.fbSave)window.fbSave('simmsimma/vacExtra',window.vacExtra);
-  document.getElementById('vac-extra').value='';
-  window.renderVacChecks();
+  document.getElementById('vac-extra-in').value='';
+  window.renderVac();
 }
 
-// ============ CREDIT EDITS ============
+// CREDIT
 function saveCredits(){
-  const data={
-    tu:document.getElementById('edit-tu').value,
-    exp:document.getElementById('edit-exp').value,
-    eq:document.getElementById('edit-eq').value,
-    c1bal:document.getElementById('edit-c1bal').value,
-    apbal:document.getElementById('edit-apbal').value,
-    nfbal:document.getElementById('edit-nfbal').value,
-  };
-  window.userCredits=data;
-  if(window.fbSave)window.fbSave('simmsimma/credits',data);
-  updateCreditDisplay();
+  window.credits={tu:document.getElementById('e-tu').value,exp:document.getElementById('e-exp').value,eq:document.getElementById('e-eq').value};
+  if(window.fbSave)window.fbSave('simmsimma/credits',window.credits);
+  updateScore();
 }
-
-function loadCreditEdits(){
-  if(window.userCredits&&window.userCredits.tu){
-    document.getElementById('edit-tu').value=window.userCredits.tu||649;
-    document.getElementById('edit-exp').value=window.userCredits.exp||620;
-    document.getElementById('edit-eq').value=window.userCredits.eq||655;
-    document.getElementById('edit-c1bal').value=window.userCredits.c1bal||1767;
-    document.getElementById('edit-apbal').value=window.userCredits.apbal||1;
-    document.getElementById('edit-nfbal').value=window.userCredits.nfbal||0;
-    updateCreditDisplay();
+function loadCredits(){
+  if(window.credits&&window.credits.tu){
+    document.getElementById('e-tu').value=window.credits.tu||649;
+    document.getElementById('e-exp').value=window.credits.exp||620;
+    document.getElementById('e-eq').value=window.credits.eq||655;
+    updateScore();
   }
 }
-
-function updateCreditDisplay(){
-  const score=parseInt(document.getElementById('edit-tu').value)||649;
-  const el=document.getElementById('score-display');
-  if(el){
-    el.textContent=score;
-    el.style.color=score>=700?'var(--green)':score>=650?'var(--gold)':'var(--orange)';
-  }
-  const c1bal=parseFloat(document.getElementById('edit-c1bal').value)||0;
-  const el2=document.getElementById('c1-bal-disp');
-  if(el2)el2.textContent='$'+c1bal.toLocaleString();
-  const util=Math.min(100,(c1bal/1800)*100);
-  const bar=document.getElementById('c1-util-bar');
-  if(bar){bar.style.width=util+'%';bar.style.background=util>30?'var(--red)':'var(--green)';}
+function updateScore(){
+  const s=parseInt(document.getElementById('e-tu').value)||649;
+  const el=document.getElementById('score-disp');
+  if(el){el.textContent=s;el.style.color=s>=720?'var(--green)':s>=680?'var(--gold)':'var(--orange)';}
 }
 
-// ============ CLOSE MODAL ============
-document.getElementById('shift-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+// CARD BALANCES
+window.updateCards=function(){
+  const c1=parseFloat(document.getElementById('c1-bal')?.value)||0;
+  const ap=parseFloat(document.getElementById('ap-bal')?.value)||0;
+  const nf=parseFloat(document.getElementById('nf-bal')?.value)||0;
+  // Capital One limit $1800
+  const c1u=Math.min(100,(c1/1800)*100);
+  const e=document.getElementById('c1-bal-disp');if(e){e.textContent='$'+c1.toLocaleString();e.style.color=c1===0?'var(--green)':c1>900?'var(--red)':'var(--gold)';}
+  const eu=document.getElementById('c1-util');if(eu){eu.style.width=c1u+'%';eu.style.background=c1u>30?'var(--red)':'var(--green)';}
+  const ep=document.getElementById('c1-util-pct');if(ep)ep.textContent=c1u.toFixed(0)+'%';
+  // Apple limit $500
+  const apu=Math.min(100,(ap/500)*100);
+  const e2=document.getElementById('ap-bal-disp');if(e2){e2.textContent='$'+ap.toLocaleString();e2.style.color=ap===0?'var(--green)':ap>250?'var(--red)':'var(--gold)';}
+  const e2u=document.getElementById('ap-util');if(e2u){e2u.style.width=apu+'%';e2u.style.background=apu>30?'var(--red)':'var(--green)';}
+  const e2p=document.getElementById('ap-util-pct');if(e2p)e2p.textContent=apu.toFixed(0)+'%';
+  // Navy Federal limit $2000
+  const nfu=Math.min(100,(nf/2000)*100);
+  const e3=document.getElementById('nf-bal-disp');if(e3){e3.textContent='$'+nf.toLocaleString();e3.style.color=nf===0?'var(--green)':nf>600?'var(--red)':'var(--gold)';}
+  const e3u=document.getElementById('nf-util');if(e3u){e3u.style.width=nfu+'%';e3u.style.background=nfu>30?'var(--red)':'var(--green)';}
+  const e3p=document.getElementById('nf-util-pct');if(e3p)e3p.textContent=nfu.toFixed(0)+'%';
+  // Save to Firebase
+  const cards={c1,ap,nf};
+  if(window.fbSave&&window.lr)window.fbSave('simmsimma/cards',cards);
+};
+
+// CLOSE MODAL
+document.getElementById('shift-modal').addEventListener('click',function(e){if(e.target===this)closeMo();});
 </script>
 </body>
 </html>
