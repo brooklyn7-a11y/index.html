@@ -1074,7 +1074,15 @@ function getPP(k){for(let p of PPS){if(k>=p.s&&k<=p.e)return p;}return null;}
 function sHrs(s){
   if(!s||s.type==='off'||s.type==='vacb')return 0;
   const[sh,sm]=s.start.split(':').map(Number);const[eh,em]=s.end.split(':').map(Number);
-  let h=(eh*60+em-sh*60-sm)/60;if(h<0)h+=24;return Math.max(0,h-0.5);
+  let h=(eh*60+em-sh*60-sm)/60;if(h<0)h+=24;
+  let total=Math.max(0,h-0.5);
+  // ADD double shift hours if present
+  if(s.dbl){
+    const[sh2,sm2]=s.dbl.start.split(':').map(Number);const[eh2,em2]=s.dbl.end.split(':').map(Number);
+    let h2=(eh2*60+em2-sh2*60-sm2)/60;if(h2<0)h2+=24;
+    total+=Math.max(0,h2-0.5);
+  }
+  return total;
 }
 
 window.renderCal=function(){
