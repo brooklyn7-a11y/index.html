@@ -333,7 +333,6 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
     <button class="ntab" onclick="showPage('pay',this)">Pay Calc</button>
     <button class="ntab" onclick="showPage('budget',this)">Budget</button>
     <button class="ntab" onclick="showPage('debts',this)">Debts</button>
-    <button class="ntab" onclick="showPage('vac',this)">✈️ Vacation</button>
     <button class="ntab" onclick="showPage('credit',this)">Credit</button>
   </div>
   <button class="theme-btn" onclick="toggleTheme()" id="tbtn">☀️</button>
@@ -447,6 +446,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
       <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">Feb 14–27</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">58.5</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,456</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,285</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$626</td></tr>
       <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">Feb 28–Mar 13</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">24.2</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,704</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,458</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$641</td></tr>
       <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">Mar 14–27</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">72.0</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,958</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,340</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$940</td></tr>
+      <tr class="tbl-row" style="background:rgba(0,229,160,0.05);"><td style="font-family:'DM Mono',monospace;font-size:9px;">Mar 28–Apr 10 🆕</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">76.0</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$3,176</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,364</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);font-weight:700;">$1,055</td></tr>
     </table>
   </div>
 </div>
@@ -543,71 +543,137 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 
 <!-- DEBTS -->
 <div id="page-debts" class="page">
-  <div class="sec">Delta Savings Plan Loans</div>
+  <div class="notice info" style="margin-bottom:12px;"><span class="ni2">💡</span><span><strong>Auto-deducted loans</strong> update each check. Tap any balance field to edit after payment lands.</span></div>
+
+  <div class="sec">Delta Savings Plan Loans · Auto-Deducted</div>
   <div class="card">
     <div style="padding:12px;border-bottom:1px solid var(--border);">
-      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Loan 1 · Dec 2019 <span class="badge br">FINISHING</span></div>
-      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">$99.03/check · ~6 payments left</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">$1,412.09</div>
-      <div class="pb" style="margin:6px 0 3px;"><div class="pf" style="width:96%;background:var(--red)"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span>96% done</span><span style="color:var(--green)">✓ GONE JUNE 2026 · +$242.78/check</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text);">Loan 1 · Dec 2019 <span class="badge br">FINISHING</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$99.03/check · auto</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);" id="l1-disp">$1,313.06</div>
+        <input type="number" id="l1-bal" value="1313.06" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:90px;outline:none;text-align:right;" oninput="updateLoan('l1',this.value,3235,'var(--red)',96)">
+        <span style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">edit ✏️</span>
+      </div>
+      <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="l1-bar" style="width:96%;background:var(--red)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="l1-pct">96% done</span><span style="color:var(--green)">✓ GONE ~JUNE 2026 · +$242.78/check</span></div>
     </div>
     <div style="padding:12px;border-bottom:1px solid var(--border);">
-      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Loan 2 · Sep 2024 <span class="badge bp">ACTIVE</span></div>
-      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">$120.48/check · 85 payments remain</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">$25,847.80</div>
-      <div class="pb" style="margin:6px 0 3px;"><div class="pf" style="width:18%;background:var(--purple)"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span>18% done</span><span>Oct 2029</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text);">Loan 2 · Sep 2024 <span class="badge bp">ACTIVE</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$120.48/check · auto</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);" id="l2-disp">$25,727.32</div>
+        <input type="number" id="l2-bal" value="25727.32" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:100px;outline:none;text-align:right;" oninput="updateLoan('l2',this.value,31440,'var(--purple)',18)">
+        <span style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">edit ✏️</span>
+      </div>
+      <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="l2-bar" style="width:18%;background:var(--purple)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="l2-pct">18% done</span><span>Oct 2029</span></div>
     </div>
     <div style="padding:12px;">
-      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Loan 3 · Nov 2025 <span class="badge bb">ACTIVE</span></div>
-      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">$364.80/check · 112 payments remain</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">$8,993.88</div>
-      <div class="pb" style="margin:6px 0 3px;"><div class="pf" style="width:8%;background:var(--blue)"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span>8% done</span><span>Mar 2030</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text);">Loan 3 · Nov 2025 <span class="badge bb">ACTIVE</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$364.80/check · auto</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);" id="l3-disp">$8,629.08</div>
+        <input type="number" id="l3-bal" value="8629.08" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:100px;outline:none;text-align:right;" oninput="updateLoan('l3',this.value,9760,'var(--blue)',8)">
+        <span style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">edit ✏️</span>
+      </div>
+      <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="l3-bar" style="width:8%;background:var(--blue)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="l3-pct">8% done</span><span>Mar 2030</span></div>
     </div>
   </div>
+
   <div class="sec">Navy Federal Pledge Loans · Credit Builders</div>
   <div class="card">
     <div style="padding:12px;border-bottom:1px solid var(--border);">
-      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Pledge A ··9413 · 2.25% <span class="badge bgr">BUILDER</span></div>
-      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">$53/mo · Perfect history · Done ~Aug 2026</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">$896.00</div>
-      <div class="pb" style="margin:6px 0 3px;"><div class="pf" style="width:70%;background:var(--green)"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span>70% done</span><span style="color:var(--green)">Done Aug 2026 🎯</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text);">Pledge A ··9413 · 2.25% <span class="badge bgr">BUILDER</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$53/mo · Done ~Aug 2026</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);" id="pa-disp">$843.00</div>
+        <input type="number" id="pa-bal" value="843.00" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:90px;outline:none;text-align:right;" oninput="updateLoan('pa',this.value,1250,'var(--green)',70)">
+        <span style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">edit ✏️</span>
+      </div>
+      <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="pa-bar" style="width:70%;background:var(--green)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="pa-pct">70% done</span><span style="color:var(--green)">Done Aug 2026 🎯</span></div>
     </div>
     <div style="padding:12px;">
-      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Pledge B ··0596 · 2.25% <span class="badge bgr">BUILDER</span></div>
-      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">$132/mo · Nov 2025 · Growing history</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">$6,555.00</div>
-      <div class="pb" style="margin:6px 0 3px;"><div class="pf" style="width:13%;background:var(--green)"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span>13% done</span><span>~2030</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text);">Pledge B ··0596 · 2.25% <span class="badge bgr">BUILDER</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$132/mo · Growing history</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);" id="pb2-disp">$6,423.00</div>
+        <input type="number" id="pb2-bal" value="6423.00" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:100px;outline:none;text-align:right;" oninput="updateLoan('pb2',this.value,7590,'var(--green)',13)">
+        <span style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">edit ✏️</span>
+      </div>
+      <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="pb2-bar" style="width:13%;background:var(--green)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="pb2-pct">13% done</span><span>~2030</span></div>
     </div>
   </div>
+
   <div class="sec">Affirm</div>
   <div class="card">
     <div style="padding:12px;">
-      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Affirm J6UU <span class="badge bo">~3 LEFT</span></div>
-      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">$157/mo · May/Jun/Jul · AutoPay ··5317</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">$308.00</div>
-      <div class="pb" style="margin:6px 0 3px;"><div class="pf" style="width:75%;background:var(--orange)"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span>75% done</span><span style="color:var(--gold)">Done Jul 2026 🎯</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text);">Affirm J6UU <span class="badge bo">~3 LEFT</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$157/mo · AutoPay ··5317</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);" id="af-disp">$308.00</div>
+        <input type="number" id="af-bal" value="308.00" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:90px;outline:none;text-align:right;" oninput="updateLoan('af',this.value,471,'var(--orange)',75)">
+        <span style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">edit ✏️</span>
+      </div>
+      <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="af-bar" style="width:75%;background:var(--orange)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="af-pct">75% done</span><span style="color:var(--gold)">Done Jul 2026 🎯</span></div>
     </div>
   </div>
+
   <div class="sec">Auto Loan</div>
   <div class="card">
     <div style="padding:12px;">
-      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;">Bridgecrest ··7101 <span class="badge bb">CURRENT</span></div>
-      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:6px;">$825/mo · Due 8th · 7× 30-day lates aging out</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">$21,360.00</div>
-      <div class="pb" style="margin:6px 0 3px;"><div class="pf" style="width:30%;background:var(--blue)"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span>30% done</span><span>~Feb 2029</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text);">Bridgecrest ··7101 <span class="badge bb">CURRENT</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$825/mo · Due 8th</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);" id="brc-disp">$20,535.00</div>
+        <input type="number" id="brc-bal" value="20535.00" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:100px;outline:none;text-align:right;" oninput="updateLoan('brc',this.value,28000,'var(--blue)',30)">
+        <span style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">edit ✏️</span>
+      </div>
+      <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="brc-bar" style="width:30%;background:var(--blue)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="brc-pct">30% done</span><span>~Feb 2029 · 7× lates aging out</span></div>
     </div>
+  </div>
+
+  <div class="sec">Other Debts · Add &amp; Track Payments</div>
+  <div id="other-debts-list"></div>
+  <div class="card">
+    <div class="card-title">Add a Debt · Edit Balance After Each Payment</div>
+    <div class="ir">
+      <div class="ig"><div class="il">Debt Name</div><input class="inp" type="text" id="od-name" placeholder="e.g. Credit Card"></div>
+      <div class="ig"><div class="il">Current Balance ($)</div><input class="inp" type="number" id="od-bal" placeholder="0.00"></div>
+    </div>
+    <div class="ir">
+      <div class="ig"><div class="il">Monthly Payment ($)</div><input class="inp" type="number" id="od-pmt" placeholder="0.00"></div>
+      <div class="ig"><div class="il">Est. Payoff Date</div><input class="inp" type="text" id="od-end" placeholder="e.g. Dec 2027"></div>
+    </div>
+    <div class="ir">
+      <div class="ig"><div class="il">Original Balance ($)</div><input class="inp" type="number" id="od-orig" placeholder="Starting balance"></div>
+      <div class="ig"><div class="il">Interest Rate (%)</div><input class="inp" type="number" id="od-rate" placeholder="e.g. 24.99"></div>
+    </div>
+    <button class="btn btn-g" onclick="addOtherDebt()" style="width:100%;margin-top:3px;">+ Add Debt</button>
   </div>
 </div>
 
-<!-- VACATION -->
-<div id="page-vac" class="page">
+<!-- VACATION — hidden from nav but still functional in background -->
+<div id="page-vac" class="page" style="display:none!important;">
   <div class="sec">Vacation Vault · July 5, 2026 · SVD Caribbean ✈️</div>
   <div class="vb">
     <div class="vt">
@@ -749,6 +815,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
       <div class="sb swap" onclick="selType('swap')"><div class="si">🔄</div><div class="sl2" style="color:var(--orange)">Swap</div></div>
       <div class="sb off" onclick="selType('off')"><div class="si">❌</div><div class="sl2" style="color:var(--red)">Give Away</div></div>
       <div class="sb vacb" onclick="selType('vacb')" style="grid-column:1/-1;"><div class="si" style="display:inline;font-size:12px;">✈️</div><span class="sl2" style="color:var(--purple);margin-left:5px;">Vacation Block (VACB)</span></div>
+      <div class="sb dbl" onclick="selType('dbl')" style="grid-column:1/-1;background:rgba(0,229,160,0.08);border-color:rgba(0,229,160,0.3);"><div class="si" style="display:inline;font-size:12px;">2️⃣</div><span class="sl2" style="color:var(--green);margin-left:5px;">Double Shift — Add 2nd shift block to this day</span></div>
     </div>
     <div class="mtr">
       <div class="mtg"><div class="mtl">Start</div><input class="mi" type="time" id="md-start" value="03:00"></div>
@@ -797,14 +864,32 @@ const MO=['January','February','March','April','May','June','July','August','Sep
 const DY=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
 const PPS=[
-  {s:'2026-03-14',e:'2026-03-27',c:'2026-04-03',l:'PP1',cls:'pp1'},
-  {s:'2026-03-28',e:'2026-04-10',c:'2026-04-17',l:'PP2',cls:'pp2'},
-  {s:'2026-04-11',e:'2026-04-24',c:'2026-05-01',l:'PP3',cls:'pp3'},
-  {s:'2026-04-25',e:'2026-05-08',c:'2026-05-15',l:'PP4',cls:'pp4'},
-  {s:'2026-05-09',e:'2026-05-22',c:'2026-05-29',l:'PP5',cls:'pp1'},
-  {s:'2026-05-23',e:'2026-06-05',c:'2026-06-12',l:'PP6',cls:'pp2'},
-  {s:'2026-06-06',e:'2026-06-19',c:'2026-06-26',l:'PP7',cls:'pp3'},
-  {s:'2026-06-20',e:'2026-07-03',c:'2026-07-10',l:'PP8',cls:'pp4'},
+  {s:'2025-12-14',e:'2025-12-27',c:'2026-01-02',l:'PP1',cls:'pp1'},
+  {s:'2025-12-28',e:'2026-01-10',c:'2026-01-16',l:'PP2',cls:'pp2'},
+  {s:'2026-01-11',e:'2026-01-24',c:'2026-01-30',l:'PP3',cls:'pp3'},
+  {s:'2026-01-25',e:'2026-02-07',c:'2026-02-13',l:'PP4',cls:'pp4'},
+  {s:'2026-02-08',e:'2026-02-21',c:'2026-02-27',l:'PP5',cls:'pp1'},
+  {s:'2026-02-22',e:'2026-03-07',c:'2026-03-13',l:'PP6',cls:'pp2'},
+  {s:'2026-03-08',e:'2026-03-21',c:'2026-03-27',l:'PP7',cls:'pp3'},
+  {s:'2026-03-22',e:'2026-04-04',c:'2026-04-10',l:'PP8',cls:'pp4'},
+  {s:'2026-04-05',e:'2026-04-18',c:'2026-04-24',l:'PP9',cls:'pp1'},
+  {s:'2026-04-19',e:'2026-05-02',c:'2026-05-08',l:'PP10',cls:'pp2'},
+  {s:'2026-05-03',e:'2026-05-16',c:'2026-05-22',l:'PP11',cls:'pp3'},
+  {s:'2026-05-17',e:'2026-05-30',c:'2026-06-05',l:'PP12',cls:'pp4'},
+  {s:'2026-05-31',e:'2026-06-13',c:'2026-06-19',l:'PP13',cls:'pp1'},
+  {s:'2026-06-14',e:'2026-06-27',c:'2026-07-03',l:'PP14',cls:'pp2'},
+  {s:'2026-06-28',e:'2026-07-11',c:'2026-07-17',l:'PP15',cls:'pp3'},
+  {s:'2026-07-12',e:'2026-07-25',c:'2026-07-31',l:'PP16',cls:'pp4'},
+  {s:'2026-07-26',e:'2026-08-08',c:'2026-08-14',l:'PP17',cls:'pp1'},
+  {s:'2026-08-09',e:'2026-08-22',c:'2026-08-28',l:'PP18',cls:'pp2'},
+  {s:'2026-08-23',e:'2026-09-05',c:'2026-09-11',l:'PP19',cls:'pp3'},
+  {s:'2026-09-06',e:'2026-09-19',c:'2026-09-25',l:'PP20',cls:'pp4'},
+  {s:'2026-09-20',e:'2026-10-03',c:'2026-10-09',l:'PP21',cls:'pp1'},
+  {s:'2026-10-04',e:'2026-10-17',c:'2026-10-23',l:'PP22',cls:'pp2'},
+  {s:'2026-10-18',e:'2026-10-31',c:'2026-11-06',l:'PP23',cls:'pp3'},
+  {s:'2026-11-01',e:'2026-11-14',c:'2026-11-20',l:'PP24',cls:'pp4'},
+  {s:'2026-11-15',e:'2026-11-28',c:'2026-12-04',l:'PP25',cls:'pp1'},
+  {s:'2026-11-29',e:'2026-12-12',c:'2026-12-18',l:'PP26',cls:'pp2'},
 ];
 
 // ===== WFM SCHEDULES FROM PHOTOS =====
@@ -937,7 +1022,7 @@ window.appInit=function(){
   if(!window.bills||window.bills.length===0)window.bills=DEFAULT_BILLS;
   if(window.vacExtra===0||window.vacExtra===undefined)window.vacExtra=250;
   window.lr=true;
-  updateDays();updateNextCheck();renderCal();calcPay();renderBills();renderVac();renderUrgent();loadCredits();updateCards();
+  updateDays();updateNextCheck();renderCal();calcPay();renderBills();renderVac();renderUrgent();loadCredits();updateCards();renderOtherDebts();loadLoanBalances();
   const t=document.body.getAttribute('data-theme')||'dark';
   document.getElementById('tbtn').textContent=t==='dark'?'☀️':'🌙';
 };
@@ -1019,6 +1104,15 @@ window.renderCal=function(){
       const lbs={reg:'REG',extra:'PICKUP',holiday:'HOL',short:'SHORT',swap:'SWAP',off:'GIVE',vacb:'VACB'};
       bl.textContent=shift.type==='vacb'?'✈️ VACB':`${lbs[shift.type]} ${shift.start}–${shift.end}${hrs>0?` (${hrs}h)`:''}`;
       cell.appendChild(bl);
+      // DOUBLE SHIFT — second block in teal
+      if(shift.dbl){
+        const bl2=document.createElement('div');
+        bl2.className='csb';
+        bl2.style.cssText='background:rgba(0,229,160,0.2);color:var(--green);border-left:2px solid var(--green);border-radius:3px;padding:2px 4px;margin-bottom:2px;font-size:7px;font-family:DM Mono,monospace;font-weight:600;';
+        const hrs2=sHrs2(shift.dbl);
+        bl2.textContent=`2ND ${shift.dbl.start}–${shift.dbl.end}${hrs2>0?` (${hrs2}h)`:''}`;
+        cell.appendChild(bl2);
+      }
       if(!oth){if(shift.type==='reg'){rD++;rH+=hrs;}else if(shift.type==='extra'){eD++;eH+=hrs;}else if(shift.type==='holiday'){hD++;hH+=hrs;}}
     }
     cell.onclick=()=>openMo(k,yr,mo,day);g.appendChild(cell);
@@ -1057,6 +1151,107 @@ function openMo(k,yr,mo,day){
   else{document.getElementById('md-start').value='03:00';document.getElementById('md-end').value='11:30';document.getElementById('md-note').value='';}
   document.getElementById('shift-modal').classList.add('open');
 }
+function sHrs2(s){
+  if(!s)return 0;
+  const[sh,sm]=s.start.split(':').map(Number);const[eh,em]=s.end.split(':').map(Number);
+  let h=(eh*60+em-sh*60-sm)/60;if(h<0)h+=24;return Math.max(0,h-0.5);
+}
+
+// ===== EDITABLE LOAN BALANCES =====
+const loanStorage=JSON.parse(localStorage.getItem('ss-loans')||'{}');
+
+function updateLoan(id,val,orig,color,initPct){
+  const bal=parseFloat(val)||0;
+  const pct=Math.min(100,Math.round((1-(bal/orig))*100));
+  const disp=document.getElementById(id+'-disp');
+  const bar=document.getElementById(id+'-bar');
+  const pctEl=document.getElementById(id+'-pct');
+  if(disp)disp.textContent='$'+bal.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(bar)bar.style.width=pct+'%';
+  if(pctEl)pctEl.textContent=pct+'% done';
+  loanStorage[id]=bal;
+  localStorage.setItem('ss-loans',JSON.stringify(loanStorage));
+  if(window.fbSave)window.fbSave('simmsimma/loans',loanStorage);
+}
+
+function loadLoanBalances(){
+  const saved=JSON.parse(localStorage.getItem('ss-loans')||'{}');
+  const loans={
+    l1:{orig:3235,color:'var(--red)'},
+    l2:{orig:31440,color:'var(--purple)'},
+    l3:{orig:9760,color:'var(--blue)'},
+    pa:{orig:1250,color:'var(--green)'},
+    pb2:{orig:7590,color:'var(--green)'},
+    af:{orig:471,color:'var(--orange)'},
+    brc:{orig:28000,color:'var(--blue)'},
+  };
+  Object.keys(saved).forEach(id=>{
+    const inp=document.getElementById(id+'-bal');
+    if(inp&&saved[id]!==undefined){
+      inp.value=saved[id];
+      if(loans[id])updateLoan(id,saved[id],loans[id].orig,loans[id].color,0);
+    }
+  });
+}
+
+// ===== OTHER DEBTS =====
+let otherDebts=JSON.parse(localStorage.getItem('ss-other-debts')||'[]');
+let nextDebtId=otherDebts.length?Math.max(...otherDebts.map(d=>d.id))+1:100;
+
+function renderOtherDebts(){
+  const c=document.getElementById('other-debts-list');if(!c)return;
+  if(!otherDebts.length){c.innerHTML='<div style="font-size:11px;color:var(--muted);padding:8px 0 12px;">No other debts added yet</div>';return;}
+  c.innerHTML='';
+  otherDebts.forEach(d=>{
+    const pct=d.orig>0?Math.min(100,Math.round((1-(d.bal/d.orig))*100)):0;
+    const div=document.createElement('div');div.className='card';div.style.marginBottom='10px';
+    div.innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text);">${d.name} <span style="font-size:8px;font-family:'DM Mono',monospace;color:var(--muted);">${d.rate?d.rate+'% APR':''}</span></div>
+          <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:1px;">$${parseFloat(d.pmt||0).toFixed(2)}/mo · Payoff: ${d.end||'TBD'}</div>
+        </div>
+        <button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;" onclick="delOtherDebt(${d.id})">✕</button>
+      </div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);margin-bottom:6px;">$${parseFloat(d.bal).toLocaleString()}</div>
+      <div class="pb" style="margin-bottom:6px;"><div class="pf" style="width:${pct}%;background:var(--blue)"></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);">${pct}% paid off</span>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;">Update balance:</span>
+          <input type="number" value="${d.bal}" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:90px;outline:none;text-align:right;" oninput="updateOtherDebt(${d.id},this.value)" placeholder="${d.bal}">
+        </div>
+      </div>`;
+    c.appendChild(div);
+  });
+}
+
+function addOtherDebt(){
+  const name=document.getElementById('od-name').value.trim();
+  const bal=parseFloat(document.getElementById('od-bal').value)||0;
+  const pmt=parseFloat(document.getElementById('od-pmt').value)||0;
+  const end=document.getElementById('od-end').value;
+  const orig=parseFloat(document.getElementById('od-orig').value)||bal;
+  const rate=document.getElementById('od-rate').value;
+  if(!name||!bal)return;
+  otherDebts.push({id:nextDebtId++,name,bal,pmt,end,orig,rate});
+  localStorage.setItem('ss-other-debts',JSON.stringify(otherDebts));
+  document.getElementById('od-name').value='';document.getElementById('od-bal').value='';
+  document.getElementById('od-pmt').value='';document.getElementById('od-end').value='';
+  document.getElementById('od-orig').value='';document.getElementById('od-rate').value='';
+  renderOtherDebts();
+}
+
+function updateOtherDebt(id,val){
+  const d=otherDebts.find(d=>d.id===id);
+  if(d){d.bal=parseFloat(val)||0;localStorage.setItem('ss-other-debts',JSON.stringify(otherDebts));renderOtherDebts();}
+}
+
+function delOtherDebt(id){
+  otherDebts=otherDebts.filter(d=>d.id!==id);
+  localStorage.setItem('ss-other-debts',JSON.stringify(otherDebts));renderOtherDebts();
+}
+
 function selType(t){
   selShiftType=t;document.querySelectorAll('.sb').forEach(b=>b.classList.remove('sel'));document.querySelector(`.sb.${t}`)?.classList.add('sel');
   const times={reg:['03:00','11:30'],extra:['03:00','11:30'],holiday:['03:00','11:30'],short:['03:00','09:30'],swap:['03:00','11:30'],vacb:['03:00','11:30']};
@@ -1064,7 +1259,14 @@ function selType(t){
 }
 function saveShift(){
   if(!selShiftType||!selDate)return;
-  window.shifts[selDate]={type:selShiftType,start:document.getElementById('md-start').value,end:document.getElementById('md-end').value,note:document.getElementById('md-note').value};
+  const existing=window.shifts[selDate]||{};
+  if(selShiftType==='dbl'){
+    // Adding a second shift block to existing day
+    existing.dbl={start:document.getElementById('md-start').value,end:document.getElementById('md-end').value,note:document.getElementById('md-note').value};
+    window.shifts[selDate]=existing;
+  } else {
+    window.shifts[selDate]={type:selShiftType,start:document.getElementById('md-start').value,end:document.getElementById('md-end').value,note:document.getElementById('md-note').value,...(existing.dbl?{dbl:existing.dbl}:{})};
+  }
   if(window.fbSave)window.fbSave('simmsimma/shifts',window.shifts);
   closeMo();window.renderCal();
 }
