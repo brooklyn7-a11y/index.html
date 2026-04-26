@@ -703,54 +703,60 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 
 <!-- CREDIT -->
 <div id="page-credit" class="page">
-  <div class="sec">Credit Scores · April 6, 2026</div>
+  <div class="sec">Credit Scores · April 26, 2026 · All 3 Bureaus</div>
 
   <div class="card" style="text-align:center;padding:18px;">
-    <div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:3px;">TransUnion VantageScore 3.0</div>
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:76px;line-height:1;" id="score-disp">649</div>
-    <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;">File since 01/17/2008 · Equifax est. highest · Experian est. lowest (Acima dropping)</div>
+    <div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:3px;">TransUnion · File since 01/17/2008</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:76px;line-height:1;" id="score-disp">688</div>
+    <div style="display:flex;justify-content:center;gap:16px;margin-top:10px;">
+      <div style="text-align:center;"><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);">TRANSUNION</div><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--blue);">688</div></div>
+      <div style="text-align:center;"><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);">EXPERIAN</div><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green);">695</div></div>
+      <div style="text-align:center;"><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);">EQUIFAX</div><div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--orange);">664</div></div>
+    </div>
   </div>
+
+  <div class="notice good"><span class="ni2">📈</span><span><strong>Up from 649 → 688 TU · 620 → 695 EXP · 655 → 664 EQ.</strong> Real progress. Keep the momentum.</span></div>
 
   <div class="sec">Predicted Score Path</div>
   <div class="card">
-    <div class="card-title">Based on Your Current Moves</div>
+    <div class="card-title">Based on Today's Report · April 26, 2026</div>
     <div class="pt">
-      <div class="pb2"><div class="pbd">Now · Apr 2026</div><div class="pbs" style="color:var(--orange);">649</div><div class="pbr">Starting point TU</div></div>
-      <div class="pb2"><div class="pbd">May 2026</div><div class="pbs" style="color:var(--gold);">680–700</div><div class="pbr">Cap One $0 reports</div></div>
-      <div class="pb2"><div class="pbd">Oct 2026</div><div class="pbs" style="color:var(--gold);">700–720</div><div class="pbr">Upstart drops TU 🔥</div></div>
-      <div class="pb2"><div class="pbd">2027+</div><div class="pbs" style="color:var(--green);">720+</div><div class="pbr">Affirm done · Pledge A done</div></div>
+      <div class="pb2"><div class="pbd">Now · Apr 2026</div><div class="pbs" style="color:var(--blue);">688</div><div class="pbr">TU confirmed today</div></div>
+      <div class="pb2"><div class="pbd">May 2026</div><div class="pbs" style="color:var(--gold);">695–710</div><div class="pbr">Cap One $7 → $0 reports · Utilization drops</div></div>
+      <div class="pb2"><div class="pbd">Oct 2026</div><div class="pbs" style="color:var(--gold);">710–725</div><div class="pbr">Upstart drops TU 🔥 +40–60 pts</div></div>
+      <div class="pb2"><div class="pbd">2027+</div><div class="pbs" style="color:var(--green);">725+</div><div class="pbr">Affirm done · Pledge A done · Accounts aging</div></div>
     </div>
   </div>
 
   <div class="sec">Update Your Scores</div>
   <div class="card">
-    <div class="cer"><span class="cel">TransUnion Score</span><input class="cei" type="number" id="e-tu" value="649" onchange="saveCredits()"></div>
-    <div class="cer"><span class="cel">Experian Score (est.)</span><input class="cei" type="number" id="e-exp" value="620" onchange="saveCredits()"></div>
-    <div class="cer"><span class="cel">Equifax Score (est.)</span><input class="cei" type="number" id="e-eq" value="655" onchange="saveCredits()"></div>
+    <div class="cer"><span class="cel">TransUnion Score</span><input class="cei" type="number" id="e-tu" value="688" onchange="saveCredits()"></div>
+    <div class="cer"><span class="cel">Experian Score</span><input class="cei" type="number" id="e-exp" value="695" onchange="saveCredits()"></div>
+    <div class="cer"><span class="cel">Equifax Score</span><input class="cei" type="number" id="e-eq" value="664" onchange="saveCredits()"></div>
   </div>
 
   <div class="sec">3 Cards · Update Balances</div>
 
-  <!-- Capital One -->
+  <!-- Capital One Savor -->
   <div class="cc">
     <div class="cct">
-      <div><div class="ccn">Capital One Savor ··8236</div><div class="ccsub">Closes Apr 21 · Limit $1,800 · APR 28.99%</div></div>
-      <div><div class="ccbal" id="c1-bal-disp" style="color:var(--green);">$0</div></div>
+      <div><div class="ccn">Capital One Savor ··8236</div><div class="ccsub">Closes 21st · Limit $1,800 · APR 28.99% · Opened Feb 2025</div></div>
+      <div><div class="ccbal" id="c1-bal-disp" style="color:var(--green);">$7</div></div>
     </div>
     <div class="pb"><div class="pf" id="c1-util" style="width:0%;background:var(--green)"></div></div>
     <div class="ccd" style="margin-top:8px;">
       <div class="ccbox"><div class="ccbl">Current Balance</div>
-        <input class="cei" type="number" id="c1-bal" value="0" placeholder="0" oninput="updateCards()" style="width:100%;margin-top:3px;">
+        <input class="cei" type="number" id="c1-bal" value="7" placeholder="0" oninput="updateCards()" style="width:100%;margin-top:3px;">
       </div>
       <div class="ccbox"><div class="ccbl">Utilization</div><div class="ccbv" id="c1-util-pct">0%</div></div>
     </div>
-    <div class="notice warn" style="margin-top:7px;font-size:10px;"><span class="ni2">⚠️</span><span>Change AutoPay to <strong>full balance</strong> in Capital One app.</span></div>
+    <div class="notice warn" style="margin-top:7px;font-size:10px;"><span class="ni2">⚠️</span><span>Change AutoPay to <strong>full balance</strong> in Capital One app NOW. Was $1,767 last month — now $7. Keep it at $0.</span></div>
   </div>
 
   <!-- Apple Card -->
   <div class="cc">
     <div class="cct">
-      <div><div class="ccn">Apple Card · Goldman Sachs</div><div class="ccsub">Closes last day of month · Limit $500 · APR 25.49%</div></div>
+      <div><div class="ccn">Apple Card · Goldman Sachs</div><div class="ccsub">Closes last day of month · Limit $500 · APR 25.49% · Opened Oct 2020</div></div>
       <div><div class="ccbal" id="ap-bal-disp" style="color:var(--green);">$0</div></div>
     </div>
     <div class="pb"><div class="pf" id="ap-util" style="width:0%;background:var(--green)"></div></div>
@@ -760,43 +766,56 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
       </div>
       <div class="ccbox"><div class="ccbl">Utilization</div><div class="ccbv" id="ap-util-pct">0%</div></div>
     </div>
-    <div class="notice good" style="margin-top:7px;font-size:10px;"><span class="ni2">✅</span><span>Keep small recurring charges paid in full. Late history 2023 ages off ~2030.</span></div>
+    <div class="notice good" style="margin-top:7px;font-size:10px;"><span class="ni2">✅</span><span>$0 balance confirmed. 30/60/90/120 day lates from Oct 2023–Jan 2024 age off ~late 2030.</span></div>
   </div>
 
   <!-- Navy Federal -->
   <div class="cc">
     <div class="cct">
-      <div><div class="ccn">Navy Federal CashRewards Visa ··6424</div><div class="ccsub">Closes 23rd · Limit $2,000 · APR 18% — Best card</div></div>
-      <div><div class="ccbal" id="nf-bal-disp" style="color:var(--green);">$0</div></div>
+      <div><div class="ccn">Navy Federal CashRewards Visa ··6424</div><div class="ccsub">Closes 23rd · Limit $2,000 · APR 18% · 16 months perfect · Best card</div></div>
+      <div><div class="ccbal" id="nf-bal-disp" style="color:var(--gold);">$167</div></div>
     </div>
-    <div class="pb"><div class="pf" id="nf-util" style="width:0%;background:var(--green)"></div></div>
+    <div class="pb"><div class="pf" id="nf-util" style="width:8%;background:var(--green)"></div></div>
     <div class="ccd" style="margin-top:8px;">
       <div class="ccbox"><div class="ccbl">Current Balance</div>
-        <input class="cei" type="number" id="nf-bal" value="0" placeholder="0" oninput="updateCards()" style="width:100%;margin-top:3px;">
+        <input class="cei" type="number" id="nf-bal" value="167" placeholder="0" oninput="updateCards()" style="width:100%;margin-top:3px;">
       </div>
-      <div class="ccbox"><div class="ccbl">Utilization</div><div class="ccbv" id="nf-util-pct">0%</div></div>
+      <div class="ccbox"><div class="ccbl">Utilization</div><div class="ccbv" id="nf-util-pct">8%</div></div>
     </div>
-    <div class="notice good" style="margin-top:7px;font-size:10px;"><span class="ni2">✅</span><span>Keep at $0. CLI request when score hits 680. $2K → $5K+ limit.</span></div>
+    <div class="notice good" style="margin-top:7px;font-size:10px;"><span class="ni2">🚀</span><span><strong>CLI REQUEST NOW.</strong> 16 months perfect. Call 1-888-842-6328. Ask for soft pull CLI to $5,000.</span></div>
   </div>
 
-  <div class="sec">Derogatory Items · Let Them Age</div>
+  <div class="sec">🔴 Immediate Action Items</div>
+  <div class="notice warn"><span class="ni2">🔴</span><span><strong>Equifax name error — "EARL J SIMMINS"</strong> — dispute at equifax.com/personal/disputes. Change to EARL J SIMMONS.</span></div>
+  <div class="notice warn"><span class="ni2">🔴</span><span><strong>Equifax primary address</strong> — shows Poughkeepsie as current. Update to 442 Logan St Brooklyn NY 11208 at equifax.com/personal/disputes.</span></div>
+  <div class="notice warn"><span class="ni2">🟡</span><span><strong>Spring Oaks Capital</strong> pulled TU on April 24. Likely tied to OneMain. If you get a letter — send debt validation via certified mail within 30 days. Do NOT call them.</span></div>
+  <div class="notice info"><span class="ni2">💡</span><span><strong>Upstart on TU</strong> — dispute as "sold/transferred, $0 balance." Removes Oct 2026 naturally but dispute may remove it early.</span></div>
+  <div class="notice info"><span class="ni2">💡</span><span><strong>Capital One old charge-off ··0346</strong> — paid Feb 2026. Send goodwill letter to Capital One Executive Office. Reference Savor card account as active customer. May remove early.</span></div>
+
+  <div class="sec">Derogatory Items · Full Picture</div>
   <div class="card">
     <table class="tbl">
-      <tr class="tbl-row hdr"><td>Account</td><td style="text-align:right">Removes</td><td style="text-align:right">Action</td></tr>
-      <tr class="tbl-row"><td><span style="font-size:10px;font-weight:600;">OneMain ··7673</span><br><span style="font-size:8px;color:var(--muted);">C/O · $2,211 · Jun 2021</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);">Oct 2029</td><td style="text-align:right;"><span class="badge bo">LET AGE</span></td></tr>
-      <tr class="tbl-row"><td><span style="font-size:10px;font-weight:600;">Upstart</span><br><span style="font-size:8px;color:var(--muted);">C/O · Sold · $0 owed</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">Oct 2026 🔥</td><td style="text-align:right;"><span class="badge bgr">6 MO</span></td></tr>
-      <tr class="tbl-row"><td><span style="font-size:10px;font-weight:600;">Capital One ··0346</span><br><span style="font-size:8px;color:var(--muted);">Settled · Paid Feb 2026</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);">May 2028</td><td style="text-align:right;"><span class="badge bb">DONE</span></td></tr>
-      <tr class="tbl-row"><td><span style="font-size:10px;font-weight:600;">Acima Digital</span><br><span style="font-size:8px;color:var(--muted);">Experian only · Paid off</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">Dropping soon</td><td style="text-align:right;"><span class="badge bgr">PAID ✓</span></td></tr>
+      <tr class="tbl-row hdr"><td>Account</td><td style="text-align:right">Removes</td><td style="text-align:right">Strategy</td></tr>
+      <tr class="tbl-row"><td><span style="font-size:10px;font-weight:600;">OneMain ··7274</span><br><span style="font-size:8px;color:var(--muted);">C/O · $2,211 · Opened Jun 2021 · All 3 bureaus</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--orange);">Oct 2029</td><td style="text-align:right;"><span class="badge bo">DO NOT PAY</span></td></tr>
+      <tr class="tbl-row"><td><span style="font-size:10px;font-weight:600;">Upstart L109</span><br><span style="font-size:8px;color:var(--muted);">Sold/C/O · $0 · TU only · Opened Apr 2021</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">Oct 2026 🔥</td><td style="text-align:right;"><span class="badge bgr">DISPUTE TU</span></td></tr>
+      <tr class="tbl-row"><td><span style="font-size:10px;font-weight:600;">Capital One ··0346 (old)</span><br><span style="font-size:8px;color:var(--muted);">Settled/Paid Feb 2026 · $0 · TU</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);">May 2028</td><td style="text-align:right;"><span class="badge bb">GOODWILL LTR</span></td></tr>
+      <tr class="tbl-row"><td><span style="font-size:10px;font-weight:600;">Flagship Credit ··7</span><br><span style="font-size:8px;color:var(--muted);">Paid/Closed Oct 2022 · Was 90 days late · TU</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);">Jun 2029</td><td style="text-align:right;"><span class="badge bo">AGE OUT</span></td></tr>
+      <tr class="tbl-row"><td><span style="font-size:10px;font-weight:600;">Apple Card lates</span><br><span style="font-size:8px;color:var(--muted);">30/60/90/120 · Oct 2023–Jan 2024 · Now current</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);">Late 2030</td><td style="text-align:right;"><span class="badge bo">AGE OUT</span></td></tr>
+      <tr class="tbl-row"><td><span style="font-size:10px;font-weight:600;">Bridgecrest lates</span><br><span style="font-size:8px;color:var(--muted);">7× 30-day lates 2023–2024 · Now current since Sep 2024</span></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);">2030–2031</td><td style="text-align:right;"><span class="badge bo">AGE OUT</span></td></tr>
     </table>
   </div>
 
-  <div class="sec">Score Roadmap · 649 → 720+</div>
-  <div class="sr-row"><div class="srn" style="color:var(--green)">01</div><div><div class="srt">All 3 cards at $0 ✅</div><div class="srd">Capital One, Apple, Navy Federal — all clean</div></div></div>
-  <div class="sr-row"><div class="srn" style="color:var(--red)">02</div><div><div class="srt">Change Capital One AutoPay → Full Balance 🔴</div><div class="srd">Do this now in the Capital One app</div></div></div>
-  <div class="sr-row"><div class="srn" style="color:var(--gold)">03</div><div><div class="srt">Capital One $0 reports after Apr 21 → +30–60 pts</div><div class="srd">Utilization drops from 98% to 0% — biggest near-term boost</div></div></div>
-  <div class="sr-row"><div class="srn" style="color:var(--gold)">04</div><div><div class="srt">Upstart drops off TU — October 2026 🔥</div><div class="srd">Automatic +40–60 pts · No action needed</div></div></div>
-  <div class="sr-row"><div class="srn" style="color:var(--blue)">05</div><div><div class="srt">No new credit until 680+</div><div class="srd">Every hard inquiry costs 3–5 points</div></div></div>
-  <div class="sr-row"><div class="srn" style="color:var(--purple)">06</div><div><div class="srt">Navy Federal CLI at 680</div><div class="srd">$2K → $5K limit · Lowers overall utilization</div></div></div>
+  <div class="sec">Score Roadmap · 688 → 750+</div>
+  <div class="sr-row"><div class="srn" style="color:var(--green)">01</div><div><div class="srt">Dispute Equifax name error "SIMMINS" 🔴</div><div class="srd">equifax.com/personal/disputes · Takes 30 days · Easy win</div></div></div>
+  <div class="sr-row"><div class="srn" style="color:var(--green)">02</div><div><div class="srt">Update Equifax primary address to Brooklyn 🔴</div><div class="srd">442 Logan St APT 3A Brooklyn NY 11208 — Poughkeepsie was insurance address</div></div></div>
+  <div class="sr-row"><div class="srn" style="color:var(--blue)">03</div><div><div class="srt">Call Navy Federal CLI — TODAY 🚀</div><div class="srd">1-888-842-6328 · 16 months perfect · Ask soft pull · $2K → $5K</div></div></div>
+  <div class="sr-row"><div class="srn" style="color:var(--gold)">04</div><div><div class="srt">Capital One closes Apr 21 — $7 → $0</div><div class="srd">Change AutoPay to full balance in Cap One app. Every point counts.</div></div></div>
+  <div class="sr-row"><div class="srn" style="color:var(--gold)">05</div><div><div class="srt">Goodwill letter — Capital One old charge-off</div><div class="srd">Paid Feb 2026. Write to Cap One Executive Office. Reference active Savor account.</div></div></div>
+  <div class="sr-row"><div class="srn" style="color:var(--purple)">06</div><div><div class="srt">Dispute Upstart on TransUnion</div><div class="srd">"Account sold — $0 balance — no longer owed to original creditor." May remove before Oct 2026.</div></div></div>
+  <div class="sr-row"><div class="srn" style="color:var(--orange)">07</div><div><div class="srt">Watch Spring Oaks Capital</div><div class="srd">Pulled TU Apr 24. Related to OneMain. Debt validation letter if contacted — certified mail only.</div></div></div>
+  <div class="sr-row"><div class="srn" style="color:var(--green)">08</div><div><div class="srt">Oct 2026 — Upstart GONE 🔥</div><div class="srd">Automatic +40–60 pts. Do nothing. Just wait.</div></div></div>
+
+  <div class="notice warn" style="margin-top:12px;"><span class="ni2">⚠️</span><span><strong>DO NOT PAY OneMain $2,211</strong> unless you receive a <strong>pay-for-delete agreement in writing</strong>. Paying without that does nothing for your score. It removes Oct 2029 regardless.</span></div>
 
   <div class="notice warn" style="margin-top:12px;"><span class="ni2">👀</span><span><strong>Monitor:</strong> Spring Oaks Capital + Midland Credit Management pulling your report. Watch for new collection accounts.</span></div>
 </div>
@@ -891,6 +910,8 @@ const PPS=[
   {s:'2026-11-15',e:'2026-11-28',c:'2026-12-04',l:'PP25',cls:'pp1'},
   {s:'2026-11-29',e:'2026-12-12',c:'2026-12-18',l:'PP26',cls:'pp2'},
 ];
+// TODAY = April 22, 2026 → PP9 (Apr 5–Apr 18, check Apr 24) is current
+// PP10 starts Apr 19 → check May 8
 
 // ===== WFM SCHEDULES FROM PHOTOS =====
 // APRIL 2026
@@ -1426,9 +1447,9 @@ function saveCredits(){
 }
 function loadCredits(){
   if(window.credits&&window.credits.tu){
-    document.getElementById('e-tu').value=window.credits.tu||649;
-    document.getElementById('e-exp').value=window.credits.exp||620;
-    document.getElementById('e-eq').value=window.credits.eq||655;
+    document.getElementById('e-tu').value=window.credits.tu||688;
+    document.getElementById('e-exp').value=window.credits.exp||695;
+    document.getElementById('e-eq').value=window.credits.eq||664;
     updateScore();
   }
 }
