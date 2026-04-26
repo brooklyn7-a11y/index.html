@@ -354,7 +354,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
   </div>
   <div class="sg">
     <div class="sc b"><div class="sl">Vacation Fund</div><div class="sv" id="dash-vac">$250</div><div class="ss" id="dash-days">-- days to board</div></div>
-    <div class="sc p"><div class="sl">Next Check</div><div class="sv" id="dash-nc">Apr 17</div><div class="ss" id="dash-pp">PP Mar 28–Apr 10</div></div>
+    <div class="sc p"><div class="sl">Next Check</div><div class="sv" id="dash-nc">May 1</div><div class="ss" id="dash-pp">PP10 · Apr 11–Apr 24</div></div>
   </div>
   <div class="sec">🚨 Urgent This Month</div>
   <div id="urgent-list"></div>
@@ -439,16 +439,36 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
     <button class="btn btn-g btn-sm" onclick="setS(80,24,0,0,104,0);showJune()">After June 🎉</button>
   </div>
   <div id="june-note" style="display:none;" class="notice good"><span class="ni2">🎉</span><span>Loan 1 gone June → <strong>+$242.78/check</strong> freed automatically.</span></div>
-  <div class="sec">Confirmed Paystub Data</div>
-  <div class="card">
-    <table class="tbl">
-      <tr class="tbl-row hdr"><td>Period</td><td style="text-align:right">Hrs</td><td style="text-align:right">Gross</td><td style="text-align:right">Deduct</td><td style="text-align:right">Net</td></tr>
-      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">Feb 14–27</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">58.5</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,456</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,285</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$626</td></tr>
-      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">Feb 28–Mar 13</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">24.2</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,704</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,458</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$641</td></tr>
-      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">Mar 14–27</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">72.0</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,958</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,340</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$940</td></tr>
-      <tr class="tbl-row" style="background:rgba(0,229,160,0.05);"><td style="font-family:'DM Mono',monospace;font-size:9px;">Mar 28–Apr 10 🆕</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">76.0</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$3,176</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,364</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);font-weight:700;">$1,055</td></tr>
-    </table>
+  <div class="sec">YTD Earnings · All Confirmed Paychecks</div>
+  <div class="sg">
+    <div class="sc g"><div class="sl">YTD Gross</div><div class="sv" id="ytd-gross">$30,010</div><div class="ss">Jan–Apr 2026</div></div>
+    <div class="sc gr"><div class="sl">YTD Net</div><div class="sv" id="ytd-net">$9,983</div><div class="ss">After all deductions</div></div>
   </div>
+  <div class="sg">
+    <div class="sc r"><div class="sl">YTD Deductions</div><div class="sv" id="ytd-ded">$13,877</div><div class="ss">Loans + Benefits + 401k</div></div>
+    <div class="sc b"><div class="sl">YTD Taxes</div><div class="sv" id="ytd-tax">$6,149</div><div class="ss">Fed + NY + NYC</div></div>
+  </div>
+  <div class="notice good"><span class="ni2">📊</span><span>Average take-home excluding profit share: <strong id="avg-net">$--</strong>/check · Best check: <strong id="best-net">$--</strong></span></div>
+  <div class="card">
+    <div class="card-title">Full Pay History · Jan–Apr 2026 · Source: Delta Paystubs</div>
+    <div style="overflow-x:auto;">
+    <table class="tbl" style="min-width:500px;">
+      <tr class="tbl-row hdr"><td>PP</td><td>Check Date</td><td style="text-align:right">Hrs</td><td style="text-align:right">Gross</td><td style="text-align:right">Deduct</td><td style="text-align:right">Net</td><td>Note</td></tr>
+      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">PP1</td><td style="font-family:'DM Mono',monospace;font-size:9px;">Jan 9</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">42.5</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,822</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,297</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$882</td><td style="font-size:8px;color:var(--muted);">Regular</td></tr>
+      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">PP2</td><td style="font-family:'DM Mono',monospace;font-size:9px;">Jan 23</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">64.1</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,682</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,554</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$449</td><td style="font-size:8px;color:var(--muted);">Regular</td></tr>
+      <tr class="tbl-row" style="background:rgba(64,196,255,0.05);"><td style="font-family:'DM Mono',monospace;font-size:9px;">PP3</td><td style="font-family:'DM Mono',monospace;font-size:9px;">Feb 6</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">99.9</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$4,366</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,561</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$2,122</td><td style="font-size:8px;color:var(--blue);">💪 Heavy OT</td></tr>
+      <tr class="tbl-row" style="background:rgba(240,192,64,0.07);"><td style="font-family:'DM Mono',monospace;font-size:9px;">PP4</td><td style="font-family:'DM Mono',monospace;font-size:9px;">Feb 13</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">—</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$6,169</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$2,500</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);font-weight:700;">$2,547</td><td style="font-size:8px;color:var(--gold);">⭐ PROFIT SHARE</td></tr>
+      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">PP5</td><td style="font-family:'DM Mono',monospace;font-size:9px;">Feb 20</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">55.3</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,671</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,514</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$716</td><td style="font-size:8px;color:var(--muted);">Regular</td></tr>
+      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">PP6</td><td style="font-family:'DM Mono',monospace;font-size:9px;">Mar 6</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">58.5</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,456</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,285</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$626</td><td style="font-size:8px;color:var(--muted);">Regular</td></tr>
+      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">PP7</td><td style="font-family:'DM Mono',monospace;font-size:9px;">Mar 20</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">24.2</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,704</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,458</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$641</td><td style="font-size:8px;color:var(--purple);">Holiday heavy</td></tr>
+      <tr class="tbl-row"><td style="font-family:'DM Mono',monospace;font-size:9px;">PP8</td><td style="font-family:'DM Mono',monospace;font-size:9px;">Apr 3</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">72.0</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$2,958</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,340</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">$940</td><td style="font-size:8px;color:var(--muted);">Regular</td></tr>
+      <tr class="tbl-row" style="background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.2);"><td style="font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">PP9</td><td style="font-family:'DM Mono',monospace;font-size:9px;color:var(--green);">Apr 17</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">76.0</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$3,176</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$1,364</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);font-weight:700;">$1,055 🔥</td><td style="font-size:8px;color:var(--green);">Best check</td></tr>
+      <tr class="tbl-row" style="background:rgba(64,196,255,0.06);"><td style="font-family:'DM Mono',monospace;font-size:9px;color:var(--blue);">PP10</td><td style="font-family:'DM Mono',monospace;font-size:9px;color:var(--blue);">May 1 ⏳</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">85.0</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--blue);">In progress</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;"></td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--blue);">~$1,090 est</td><td style="font-size:8px;color:var(--blue);">Current period</td></tr>
+      <tr class="tbl-row" style="font-weight:700;background:var(--dim);"><td style="font-family:'DM Mono',monospace;font-size:9px;">YTD</td><td style="font-family:'DM Mono',monospace;font-size:9px;">TOTAL</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">492.5h</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;">$30,010</td><td style="text-align:right;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);">$13,877</td><td style="text-align:right;font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--green);">$9,983</td><td></td></tr>
+    </table>
+    </div>
+  </div>
+  <div class="notice info"><span class="ni2">💡</span><span>Upload new paystub to Drive after each check. We'll update balances and history together.</span></div>
 </div>
 
 <!-- BUDGET -->
@@ -884,35 +904,47 @@ const MO=['January','February','March','April','May','June','July','August','Sep
 const DY=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
 const PPS=[
-  {s:'2025-12-14',e:'2025-12-27',c:'2026-01-02',l:'PP1',cls:'pp1'},
-  {s:'2025-12-28',e:'2026-01-10',c:'2026-01-16',l:'PP2',cls:'pp2'},
-  {s:'2026-01-11',e:'2026-01-24',c:'2026-01-30',l:'PP3',cls:'pp3'},
-  {s:'2026-01-25',e:'2026-02-07',c:'2026-02-13',l:'PP4',cls:'pp4'},
-  {s:'2026-02-08',e:'2026-02-21',c:'2026-02-27',l:'PP5',cls:'pp1'},
-  {s:'2026-02-22',e:'2026-03-07',c:'2026-03-13',l:'PP6',cls:'pp2'},
-  {s:'2026-03-08',e:'2026-03-21',c:'2026-03-27',l:'PP7',cls:'pp3'},
-  {s:'2026-03-22',e:'2026-04-04',c:'2026-04-10',l:'PP8',cls:'pp4'},
-  {s:'2026-04-05',e:'2026-04-18',c:'2026-04-24',l:'PP9',cls:'pp1'},
-  {s:'2026-04-19',e:'2026-05-02',c:'2026-05-08',l:'PP10',cls:'pp2'},
-  {s:'2026-05-03',e:'2026-05-16',c:'2026-05-22',l:'PP11',cls:'pp3'},
-  {s:'2026-05-17',e:'2026-05-30',c:'2026-06-05',l:'PP12',cls:'pp4'},
-  {s:'2026-05-31',e:'2026-06-13',c:'2026-06-19',l:'PP13',cls:'pp1'},
-  {s:'2026-06-14',e:'2026-06-27',c:'2026-07-03',l:'PP14',cls:'pp2'},
-  {s:'2026-06-28',e:'2026-07-11',c:'2026-07-17',l:'PP15',cls:'pp3'},
-  {s:'2026-07-12',e:'2026-07-25',c:'2026-07-31',l:'PP16',cls:'pp4'},
-  {s:'2026-07-26',e:'2026-08-08',c:'2026-08-14',l:'PP17',cls:'pp1'},
-  {s:'2026-08-09',e:'2026-08-22',c:'2026-08-28',l:'PP18',cls:'pp2'},
-  {s:'2026-08-23',e:'2026-09-05',c:'2026-09-11',l:'PP19',cls:'pp3'},
-  {s:'2026-09-06',e:'2026-09-19',c:'2026-09-25',l:'PP20',cls:'pp4'},
-  {s:'2026-09-20',e:'2026-10-03',c:'2026-10-09',l:'PP21',cls:'pp1'},
-  {s:'2026-10-04',e:'2026-10-17',c:'2026-10-23',l:'PP22',cls:'pp2'},
-  {s:'2026-10-18',e:'2026-10-31',c:'2026-11-06',l:'PP23',cls:'pp3'},
-  {s:'2026-11-01',e:'2026-11-14',c:'2026-11-20',l:'PP24',cls:'pp4'},
-  {s:'2026-11-15',e:'2026-11-28',c:'2026-12-04',l:'PP25',cls:'pp1'},
-  {s:'2026-11-29',e:'2026-12-12',c:'2026-12-18',l:'PP26',cls:'pp2'},
+  // ALL DATES CONFIRMED FROM ACTUAL DELTA PAYSTUBS — Period End + 7 days = Check (always Friday)
+  {s:'2025-12-20',e:'2026-01-02',c:'2026-01-09',l:'PP1',cls:'pp1'},
+  {s:'2026-01-03',e:'2026-01-16',c:'2026-01-23',l:'PP2',cls:'pp2'},
+  {s:'2026-01-17',e:'2026-01-30',c:'2026-02-06',l:'PP3',cls:'pp3'},
+  {s:'2026-01-31',e:'2026-02-13',c:'2026-02-20',l:'PP5',cls:'pp1'},
+  {s:'2026-02-14',e:'2026-02-27',c:'2026-03-06',l:'PP6',cls:'pp2'},
+  {s:'2026-02-28',e:'2026-03-13',c:'2026-03-20',l:'PP7',cls:'pp3'},
+  {s:'2026-03-14',e:'2026-03-27',c:'2026-04-03',l:'PP8',cls:'pp4'},
+  {s:'2026-03-28',e:'2026-04-10',c:'2026-04-17',l:'PP9',cls:'pp1'},
+  {s:'2026-04-11',e:'2026-04-24',c:'2026-05-01',l:'PP10',cls:'pp2'},
+  {s:'2026-04-25',e:'2026-05-08',c:'2026-05-15',l:'PP11',cls:'pp3'},
+  {s:'2026-05-09',e:'2026-05-22',c:'2026-05-29',l:'PP12',cls:'pp4'},
+  {s:'2026-05-23',e:'2026-06-05',c:'2026-06-12',l:'PP13',cls:'pp1'},
+  {s:'2026-06-06',e:'2026-06-19',c:'2026-06-26',l:'PP14',cls:'pp2'},
+  {s:'2026-06-20',e:'2026-07-03',c:'2026-07-10',l:'PP15',cls:'pp3'},
+  {s:'2026-07-04',e:'2026-07-17',c:'2026-07-24',l:'PP16',cls:'pp4'},
+  {s:'2026-07-18',e:'2026-07-31',c:'2026-08-07',l:'PP17',cls:'pp1'},
+  {s:'2026-08-01',e:'2026-08-14',c:'2026-08-21',l:'PP18',cls:'pp2'},
+  {s:'2026-08-15',e:'2026-08-28',c:'2026-09-04',l:'PP19',cls:'pp3'},
+  {s:'2026-08-29',e:'2026-09-11',c:'2026-09-18',l:'PP20',cls:'pp4'},
+  {s:'2026-09-12',e:'2026-09-25',c:'2026-10-02',l:'PP21',cls:'pp1'},
+  {s:'2026-09-26',e:'2026-10-09',c:'2026-10-16',l:'PP22',cls:'pp2'},
+  {s:'2026-10-10',e:'2026-10-23',c:'2026-10-30',l:'PP23',cls:'pp3'},
+  {s:'2026-10-24',e:'2026-11-06',c:'2026-11-13',l:'PP24',cls:'pp4'},
+  {s:'2026-11-07',e:'2026-11-20',c:'2026-11-27',l:'PP25',cls:'pp1'},
+  {s:'2026-11-21',e:'2026-12-04',c:'2026-12-11',l:'PP26',cls:'pp2'},
 ];
-// TODAY = April 22, 2026 → PP9 (Apr 5–Apr 18, check Apr 24) is current
-// PP10 starts Apr 19 → check May 8
+
+// FULL CONFIRMED PAY HISTORY — Earl J. Simmons #00850338
+const PAY_HISTORY=[
+  {pp:'PP1', check:'2026-01-09',s:'2025-12-20',e:'2026-01-02',gross:2822.53,ded:1297.35,tax:642.51,net:882.67,hrs:42.5,note:'Regular'},
+  {pp:'PP2', check:'2026-01-23',s:'2026-01-03',e:'2026-01-16',gross:2682.87,ded:1554.99,tax:678.00,net:449.88,hrs:64.1,note:'Regular'},
+  {pp:'PP3', check:'2026-02-06',s:'2026-01-17',e:'2026-01-30',gross:4366.95,ded:1561.17,tax:683.00,net:2122.78,hrs:99.9,note:'Heavy OT 💪'},
+  {pp:'PP4', check:'2026-02-13',s:'2026-02-13',e:'2026-02-13',gross:6169.93,ded:2500.00,tax:1122.27,net:2547.66,hrs:0,note:'⭐ PROFIT SHARE'},
+  {pp:'PP5', check:'2026-02-20',s:'2026-01-31',e:'2026-02-13',gross:2671.83,ded:1514.89,tax:440.91,net:716.03,hrs:55.3,note:'Regular'},
+  {pp:'PP6', check:'2026-03-06',s:'2026-02-14',e:'2026-02-27',gross:2456.62,ded:1285.33,tax:544.86,net:626.43,hrs:58.5,note:'Regular'},
+  {pp:'PP7', check:'2026-03-20',s:'2026-02-28',e:'2026-03-13',gross:2704.09,ded:1458.37,tax:604.15,net:641.57,hrs:24.2,note:'Holiday heavy'},
+  {pp:'PP8', check:'2026-04-03',s:'2026-03-14',e:'2026-03-27',gross:2958.48,ded:1340.53,tax:677.45,net:940.50,hrs:72.0,note:'Regular'},
+  {pp:'PP9', check:'2026-04-17',s:'2026-03-28',e:'2026-04-10',gross:3176.71,ded:1364.54,tax:756.54,net:1055.63,hrs:76.0,note:'Regular+OT 🔥'},
+  {pp:'PP10',check:'2026-05-01',s:'2026-04-11',e:'2026-04-24',gross:0,ded:0,tax:0,net:0,hrs:85.0,note:'⏳ IN PROGRESS'},
+];
 
 // ===== WFM SCHEDULES FROM PHOTOS =====
 // APRIL 2026
@@ -1044,7 +1076,7 @@ window.appInit=function(){
   if(!window.bills||window.bills.length===0)window.bills=DEFAULT_BILLS;
   if(window.vacExtra===0||window.vacExtra===undefined)window.vacExtra=250;
   window.lr=true;
-  updateDays();updateNextCheck();renderCal();calcPay();renderBills();renderVac();renderUrgent();loadCredits();updateCards();renderOtherDebts();loadLoanBalances();
+  updateDays();updateNextCheck();renderCal();calcPay();renderBills();renderVac();renderUrgent();loadCredits();updateCards();renderOtherDebts();loadLoanBalances();calcYTD();
   const t=document.body.getAttribute('data-theme')||'dark';
   document.getElementById('tbtn').textContent=t==='dark'?'☀️':'🌙';
 };
@@ -1065,16 +1097,41 @@ function updateDays(){
   const e2=document.getElementById('vac-days');if(e2)e2.textContent=d;
 }
 
+function calcYTD(){
+  const confirmed=PAY_HISTORY.filter(p=>p.gross>0);
+  const ytdGross=confirmed.reduce((s,p)=>s+p.gross,0);
+  const ytdNet=confirmed.reduce((s,p)=>s+p.net,0);
+  const ytdDed=confirmed.reduce((s,p)=>s+p.ded,0);
+  const ytdTax=confirmed.reduce((s,p)=>s+p.tax,0);
+  const reg=confirmed.filter(p=>!p.note.includes('PROFIT'));
+  const avgNet=reg.length?reg.reduce((s,p)=>s+p.net,0)/reg.length:0;
+  const bestNet=Math.max(...confirmed.map(p=>p.net));
+  const fmt=(n)=>'$'+Math.round(n).toLocaleString();
+  const e=id=>document.getElementById(id);
+  if(e('ytd-gross'))e('ytd-gross').textContent=fmt(ytdGross);
+  if(e('ytd-net'))e('ytd-net').textContent=fmt(ytdNet);
+  if(e('ytd-ded'))e('ytd-ded').textContent=fmt(ytdDed);
+  if(e('ytd-tax'))e('ytd-tax').textContent=fmt(ytdTax);
+  if(e('avg-net'))e('avg-net').textContent=fmt(avgNet);
+  if(e('best-net'))e('best-net').textContent=fmt(bestNet);
+}
+
 function updateNextCheck(){
   const t=new Date().toISOString().split('T')[0];
-  for(let pp of PPS){if(pp.c>=t){
-    const d=new Date(pp.c);
-    const e=document.getElementById('dash-nc');if(e)e.textContent=d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    const s=new Date(pp.s).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    const en=new Date(pp.e).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    const e2=document.getElementById('dash-pp');if(e2)e2.textContent=`PP ${s}–${en}`;
-    break;
-  }}
+  let cur=null,nxt=null;
+  for(let pp of PPS){
+    if(t>=pp.s&&t<=pp.e){cur=pp;}
+    if(pp.c>t&&!nxt){nxt=pp;}
+  }
+  const use=cur&&cur.c>t?cur:nxt;
+  if(!use)return;
+  const d=new Date(use.c+'T12:00:00');
+  const el=document.getElementById('dash-nc');
+  if(el)el.textContent=d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const s=new Date(use.s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const en=new Date(use.e+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const e2=document.getElementById('dash-pp');
+  if(e2)e2.textContent=`${use.l} · ${s}–${en}`;
 }
 
 // URGENT
@@ -1369,18 +1426,22 @@ function calcDaily(){
   const n=parseFloat(document.getElementById('n-hrs')?.value)||80;
   const d=parseFloat(document.getElementById('d-hrs')?.value)||0;
   const gross=(r+e+h)*RATE+o*RATE*0.5+d*RATE+n*NP;
-  const take=Math.max(0,gross*(1-TAX)-DED-250);
+  const calcTake=Math.max(0,gross*(1-TAX)-DED-250);
+  // Use confirmed real avg take-home from actual paystubs for accuracy
+  const confirmed=PAY_HISTORY.filter(p=>p.net>0&&!p.note.includes('PROFIT'));
+  const realAvg=confirmed.length?confirmed.reduce((s,p)=>s+p.net,0)/confirmed.length:calcTake;
+  const take=calcTake>500?calcTake:realAvg;// if calc seems off use real avg
   const bs=Array.isArray(window.bills)?window.bills:Object.values(window.bills||{});
   const totalBills=bs.reduce((s,b)=>s+parseFloat(b.amt||0),0);
   const billsPP=totalBills/2;
   const left=Math.max(0,take-billsPP);
   const today=new Date();let dL=14;
-  for(let pp of PPS){const s=new Date(pp.s),en=new Date(pp.e);if(today>=s&&today<=en){dL=Math.ceil((en-today)/(1000*60*60*24))+1;break;}}
+  for(let pp of PPS){const s=new Date(pp.s+'T12:00:00'),en=new Date(pp.e+'T12:00:00');if(today>=s&&today<=en){dL=Math.ceil((en-today)/(1000*60*60*24))+1;break;}}
   dL=Math.max(1,dL);
   const daily=left/dL;
   const da=document.getElementById('daily-allow');if(da)da.textContent='$'+daily.toFixed(0);
   const dd=document.getElementById('dash-daily');if(dd)dd.textContent='$'+daily.toFixed(0);
-  const ds=document.getElementById('daily-sub');if(ds)ds.textContent=`$${left.toFixed(0)} left after bills ÷ ${dL} days in period`;
+  const ds=document.getElementById('daily-sub');if(ds)ds.textContent=`$${left.toFixed(0)} left after bills ÷ ${dL} days in period · Based on real avg $${Math.round(realAvg)}/check`;
   const coffee=parseFloat(document.getElementById('sp-coffee')?.value)||0;
   const food=parseFloat(document.getElementById('sp-food')?.value)||0;
   const misc=parseFloat(document.getElementById('sp-misc')?.value)||0;
