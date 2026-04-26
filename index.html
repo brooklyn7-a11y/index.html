@@ -1151,11 +1151,11 @@ window.renderUrgent=function(){
 function dk(y,m,d){return`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
 function getPP(k){for(let p of PPS){if(k>=p.s&&k<=p.e)return p;}return null;}
 function sHrs(s){
-  if(!s||s.type==='off'||s.type==='vacb')return 0;
+  if(!s||s.type==='off')return 0;
+  // VACB = paid vacation block — counts at full hourly rate
   const[sh,sm]=s.start.split(':').map(Number);const[eh,em]=s.end.split(':').map(Number);
   let h=(eh*60+em-sh*60-sm)/60;if(h<0)h+=24;
   let total=Math.max(0,h-0.5);
-  // ADD double shift hours if present
   if(s.dbl){
     const[sh2,sm2]=s.dbl.start.split(':').map(Number);const[eh2,em2]=s.dbl.end.split(':').map(Number);
     let h2=(eh2*60+em2-sh2*60-sm2)/60;if(h2<0)h2+=24;
@@ -1189,7 +1189,8 @@ window.renderCal=function(){
       const bl=document.createElement('div');bl.className=`csb ${shift.type}`;
       const hrs=sHrs(shift);
       const lbs={reg:'REG',extra:'PICKUP',holiday:'HOL',short:'SHORT',swap:'SWAP',off:'GIVE',vacb:'VACB'};
-      bl.textContent=shift.type==='vacb'?'✈️ VACB':`${lbs[shift.type]} ${shift.start}–${shift.end}${hrs>0?` (${hrs}h)`:''}`;
+      bl.textContent=shift.type==='vacb'?`✈️ VACB ${shift.start}–${shift.end}${hrs>0?` (${hrs}h · $${(hrs*RATE).toFixed(0)})`:''}`:
+        `${lbs[shift.type]} ${shift.start}–${shift.end}${hrs>0?` (${hrs}h)`:''}`;
       cell.appendChild(bl);
       // DOUBLE SHIFT — second block in teal
       if(shift.dbl){
@@ -1223,13 +1224,13 @@ window.renderCal=function(){
 
 function renderPPS(){
   const strip=document.getElementById('pp-strip');strip.innerHTML='';
-  const rel=PPS.filter(p=>{const s=new Date(p.s),e=new Date(p.e);return s.getMonth()===cM||e.getMonth()===cM;}).slice(0,4);
+  const rel=PPS.filter(p=>{const s=new Date(p.s+'T12:00:00'),e=new Date(p.e+'T12:00:00');return s.getMonth()===cM||e.getMonth()===cM;}).slice(0,4);
   rel.forEach(p=>{
-    let hrs=0;for(let d=new Date(p.s);d<=new Date(p.e);d.setDate(d.getDate()+1)){const shift=window.shifts[d.toISOString().split('T')[0]];if(shift)hrs+=sHrs(shift);}
+    let hrs=0;for(let d=new Date(p.s+'T12:00:00');d<=new Date(p.e+'T12:00:00');d.setDate(d.getDate()+1)){const shift=window.shifts[d.toISOString().split('T')[0]];if(shift)hrs+=sHrs(shift);}
     const gross=hrs*RATE;const take=Math.max(0,gross*(1-TAX)-DED);
-    const chk=new Date(p.c).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    const s=new Date(p.s).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-    const e=new Date(p.e).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const chk=new Date(p.c+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const s=new Date(p.s+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const e=new Date(p.e+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
     const card=document.createElement('div');card.className=`ppc ${p.cls}`;
     card.innerHTML=`<div class="ppl">${p.l} · Pay Period</div><div class="ppd">${s} – ${e}</div><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:3px;">💰 Check: ${chk}</div><div style="display:flex;justify-content:space-between;align-items:flex-end;"><div><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);">HRS</div><div class="pph">${hrs.toFixed(1)}</div></div><div style="text-align:right;"><div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);">TAKE-HOME</div><div class="pppay">$${take.toFixed(0)}</div></div></div>`;
     strip.appendChild(card);
