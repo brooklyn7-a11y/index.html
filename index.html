@@ -474,14 +474,60 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 
 <!-- BUDGET -->
 <div id="page-budget" class="page">
-  <div class="sec">Daily Spend Budget</div>
+  <div class="sec">Rolling Cash Position · Next 14 Days</div>
+
+  <!-- ROLLING CASH FLOW -->
+  <div class="card" style="background:linear-gradient(135deg,rgba(0,229,160,0.08),rgba(64,196,255,0.05));border:1px solid rgba(0,229,160,0.2);">
+    <div class="card-title">💰 Before Next Check · What Your Money Looks Like Day by Day</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);text-transform:uppercase;margin-bottom:2px;">Current Cash On Hand</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--green);line-height:1;" id="cash-now">$--</div>
+          <input type="number" id="cash-input" placeholder="Enter balance" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:5px 8px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:100px;outline:none;" oninput="calcRolling()">
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'DM Mono',monospace;font-size:7px;color:var(--muted);text-transform:uppercase;margin-bottom:2px;">Next Check In</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--blue);line-height:1;" id="days-to-check">-- days</div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);" id="next-check-date">Loading...</div>
+      </div>
+    </div>
+    <div id="rolling-bars" style="margin-bottom:8px;"></div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;margin-top:6px;">
+      <span style="color:var(--muted);">Today</span>
+      <span id="rolling-lowest" style="color:var(--red);">Lowest point: $--</span>
+      <span style="color:var(--muted);" id="rolling-check-label">Next check →</span>
+    </div>
+  </div>
+
+  <!-- BILLS DUE THIS PERIOD -->
+  <div class="sec">Bills Coming Out Before Next Check</div>
+  <div id="upcoming-bills-list"></div>
+  <div class="card" style="background:var(--dim);">
+    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:11px;font-weight:600;color:var(--text);">Total Bills Before Next Check</span>
+      <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--red);" id="bills-before-check">$0</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:11px;font-weight:600;color:var(--text);">Cash After All Bills</span>
+      <span style="font-family:'DM Mono',monospace;font-size:11px;" id="cash-after-bills">$--</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:6px 0;">
+      <span style="font-size:11px;font-weight:600;color:var(--green);">Daily Spending Budget</span>
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--green);" id="daily-allow">$--</span>
+    </div>
+  </div>
+
+  <!-- DAILY SPEND TRACKER -->
+  <div class="sec">Daily Spend Tracker</div>
   <div class="dbc">
-    <div class="dlbl">💰 Daily Spending Allowance</div>
-    <div class="dbig" id="daily-allow">$--</div>
-    <div class="dsub" id="daily-sub">Calculating...</div>
+    <div class="dlbl">💰 You Can Spend Today</div>
+    <div class="dbig" id="daily-allow-big">$--</div>
+    <div class="dsub" id="daily-sub">Enter your current balance above to calculate</div>
   </div>
   <div class="card">
-    <div class="card-title">Daily Life Tracker</div>
+    <div class="card-title">Today's Spending</div>
     <div class="dsr">
       <div class="dsl">☕ Coffee / Store Runs</div>
       <div style="display:flex;align-items:center;gap:6px;">
@@ -513,13 +559,14 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
     </div>
   </div>
 
-  <div class="sec">Delta Monthly Income</div>
+  <!-- INCOME + BILLS OVERVIEW -->
+  <div class="sec">Monthly Income</div>
   <div class="sg">
-    <div class="sc g"><div class="sl">This Check (Est.)</div><div class="sv" id="bc-val">$940</div><div class="ss">Based on Pay Calc</div></div>
-    <div class="sc b"><div class="sl">Monthly (2 checks)</div><div class="sv" id="bm-val">$1,880</div><div class="ss">Delta only</div></div>
+    <div class="sc g"><div class="sl">This Check Est.</div><div class="sv" id="bc-val">$940</div><div class="ss">From Pay Calc</div></div>
+    <div class="sc b"><div class="sl">Monthly (2 checks)</div><div class="sv" id="bm-val">$1,880</div><div class="ss">Delta income</div></div>
   </div>
 
-  <div class="sec">Bills · Color = Urgency</div>
+  <div class="sec">All Bills · Color = Urgency</div>
   <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px;font-family:'DM Mono',monospace;font-size:8px;">
     <span style="color:var(--red);">🔴 ≤3 days</span>
     <span style="color:var(--orange);">🟠 ≤7 days</span>
@@ -562,34 +609,90 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
   </div>
 </div>
 
+
 <!-- DEBTS -->
 <div id="page-debts" class="page">
-  <div class="notice info" style="margin-bottom:12px;"><span class="ni2">💡</span><span><strong>Auto-deducted loans</strong> update each check. Tap any balance field to edit after payment lands.</span></div>
+  <div class="notice warn"><span class="ni2">🔥</span><span><strong>Cost of Debt:</strong> The number next to each loan is what you're paying in pure interest every month — money that buys you nothing. Attack highest APR first.</span></div>
 
-  <div class="sec">Delta Savings Plan Loans · Auto-Deducted</div>
+  <div class="sec">Payoff Priority · Debt Avalanche Method (Highest APR First)</div>
+  <div class="card">
+    <table class="tbl">
+      <tr class="tbl-row hdr"><td>Account</td><td style="text-align:right">Balance</td><td style="text-align:right">APR</td><td style="text-align:right">$/mo Interest</td><td style="text-align:right">Priority</td></tr>
+      <tr class="tbl-row" style="background:rgba(255,85,85,0.05);">
+        <td style="font-size:10px;font-weight:600;">Cap One ··8236</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;">$7</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--red);">28.99%</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--green);">~$0.17</td>
+        <td style="text-align:right;"><span class="badge bgr">$0 — ✅</span></td>
+      </tr>
+      <tr class="tbl-row" style="background:rgba(255,85,85,0.03);">
+        <td style="font-size:10px;font-weight:600;">Apple Card</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;">$0</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--red);">25.49%</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--green);">$0.00</td>
+        <td style="text-align:right;"><span class="badge bgr">$0 — ✅</span></td>
+      </tr>
+      <tr class="tbl-row">
+        <td style="font-size:10px;font-weight:600;">Bridgecrest</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;" id="av-brc-bal">$20,535</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--orange);">Unknown</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--orange);">Check portal</td>
+        <td style="text-align:right;"><span class="badge bo">GET APR</span></td>
+      </tr>
+      <tr class="tbl-row">
+        <td style="font-size:10px;font-weight:600;">NFCU Visa ··6424</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;">$167</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);">18.00%</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--orange);">~$2.51</td>
+        <td style="text-align:right;"><span class="badge bb">NEXT</span></td>
+      </tr>
+      <tr class="tbl-row">
+        <td style="font-size:10px;font-weight:600;">Affirm T31Y</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;">$442</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--blue);">15.99%</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">~$5.89</td>
+        <td style="text-align:right;"><span class="badge bp">3 LEFT</span></td>
+      </tr>
+      <tr class="tbl-row">
+        <td style="font-size:10px;font-weight:600;">NFCU Pledge A+B</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;">$7,319</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--green);">2.25%</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">~$13.72</td>
+        <td style="text-align:right;"><span class="badge bgr">BUILDER</span></td>
+      </tr>
+      <tr class="tbl-row sub" style="background:var(--dim);">
+        <td style="font-size:10px;">Total Monthly Interest</td>
+        <td colspan="3"></td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--red);">~$22.29+</td>
+      </tr>
+    </table>
+    <div class="notice info" style="margin-top:10px;font-size:10px;"><span class="ni2">💡</span><span>Get Bridgecrest APR from your portal — that number determines if it should be priority #1. Auto loans from 2023 typically run 15–25%.</span></div>
+  </div>
+
+  <div class="sec">Delta Savings Plan Loans · Auto-Deducted Each Check</div>
   <div class="card">
     <div style="padding:12px;border-bottom:1px solid var(--border);">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;">
         <div style="font-size:12px;font-weight:600;color:var(--text);">Loan 1 · Dec 2019 <span class="badge br">FINISHING</span></div>
-        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$99.03/check · auto</div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$99.03/check · auto · ~0% internal rate</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);" id="l1-disp">$1,313.06</div>
         <input type="number" id="l1-bal" value="1313.06" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:90px;outline:none;text-align:right;" oninput="updateLoan('l1',this.value,3235,'var(--red)',96)">
-        <span style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">edit ✏️</span>
+        <span style="font-size:8px;color:var(--muted);">edit ✏️</span>
       </div>
       <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="l1-bar" style="width:96%;background:var(--red)"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="l1-pct">96% done</span><span style="color:var(--green)">✓ GONE ~JUNE 2026 · +$242.78/check</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="l1-pct">96% done</span><span style="color:var(--green)">✓ GONE ~JUNE 2026 · +$242.78/check freed</span></div>
     </div>
     <div style="padding:12px;border-bottom:1px solid var(--border);">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;">
         <div style="font-size:12px;font-weight:600;color:var(--text);">Loan 2 · Sep 2024 <span class="badge bp">ACTIVE</span></div>
-        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$120.48/check · auto</div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$120.48/check · auto · Oct 2029</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);" id="l2-disp">$25,727.32</div>
         <input type="number" id="l2-bal" value="25727.32" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:100px;outline:none;text-align:right;" oninput="updateLoan('l2',this.value,31440,'var(--purple)',18)">
-        <span style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">edit ✏️</span>
+        <span style="font-size:8px;color:var(--muted);">edit ✏️</span>
       </div>
       <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="l2-bar" style="width:18%;background:var(--purple)"></div></div>
       <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="l2-pct">18% done</span><span>Oct 2029</span></div>
@@ -597,101 +700,107 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
     <div style="padding:12px;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;">
         <div style="font-size:12px;font-weight:600;color:var(--text);">Loan 3 · Nov 2025 <span class="badge bb">ACTIVE</span></div>
-        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$364.80/check · auto</div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$364.80/check · auto · Mar 2030</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);" id="l3-disp">$8,629.08</div>
         <input type="number" id="l3-bal" value="8629.08" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:100px;outline:none;text-align:right;" oninput="updateLoan('l3',this.value,9760,'var(--blue)',8)">
-        <span style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">edit ✏️</span>
+        <span style="font-size:8px;color:var(--muted);">edit ✏️</span>
       </div>
       <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="l3-bar" style="width:8%;background:var(--blue)"></div></div>
       <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="l3-pct">8% done</span><span>Mar 2030</span></div>
     </div>
   </div>
 
-  <div class="sec">Navy Federal Pledge Loans · Credit Builders</div>
+  <div class="sec">Navy Federal Pledge Loans · Credit Builders · 2.25% APR</div>
   <div class="card">
     <div style="padding:12px;border-bottom:1px solid var(--border);">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;">
-        <div style="font-size:12px;font-weight:600;color:var(--text);">Pledge A ··9413 · 2.25% <span class="badge bgr">BUILDER</span></div>
-        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$53/mo · Done ~Aug 2026</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);">Pledge A ··9413 <span class="badge bgr">BUILDER</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$53/mo · ~$1.68/mo interest · Done Aug 2026</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);" id="pa-disp">$843.00</div>
         <input type="number" id="pa-bal" value="843.00" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:90px;outline:none;text-align:right;" oninput="updateLoan('pa',this.value,1250,'var(--green)',70)">
-        <span style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">edit ✏️</span>
+        <span style="font-size:8px;color:var(--muted);">edit ✏️</span>
       </div>
       <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="pa-bar" style="width:70%;background:var(--green)"></div></div>
       <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="pa-pct">70% done</span><span style="color:var(--green)">Done Aug 2026 🎯</span></div>
     </div>
     <div style="padding:12px;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;">
-        <div style="font-size:12px;font-weight:600;color:var(--text);">Pledge B ··0596 · 2.25% <span class="badge bgr">BUILDER</span></div>
-        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$132/mo · Growing history</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);">Pledge B ··0596 <span class="badge bgr">BUILDER</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$132/mo · ~$12.29/mo interest · ~2030</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);" id="pb2-disp">$6,423.00</div>
         <input type="number" id="pb2-bal" value="6423.00" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:100px;outline:none;text-align:right;" oninput="updateLoan('pb2',this.value,7590,'var(--green)',13)">
-        <span style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">edit ✏️</span>
+        <span style="font-size:8px;color:var(--muted);">edit ✏️</span>
       </div>
       <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="pb2-bar" style="width:13%;background:var(--green)"></div></div>
       <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="pb2-pct">13% done</span><span>~2030</span></div>
     </div>
   </div>
 
-  <div class="sec">Affirm</div>
+  <div class="sec">Affirm T31Y · 15.99% APR · 3 Payments Left</div>
   <div class="card">
     <div style="padding:12px;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;">
-        <div style="font-size:12px;font-weight:600;color:var(--text);">Affirm J6UU <span class="badge bo">~3 LEFT</span></div>
-        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$157/mo · AutoPay ··5317</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);">Affirm T31Y-293R <span class="badge bo">~3 LEFT</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$114/mo · 15.99% APR · ~$5.89/mo interest</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);" id="af-disp">$308.00</div>
-        <input type="number" id="af-bal" value="308.00" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:90px;outline:none;text-align:right;" oninput="updateLoan('af',this.value,471,'var(--orange)',75)">
-        <span style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">edit ✏️</span>
+        <input type="number" id="af-bal" value="308.00" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:90px;outline:none;text-align:right;" oninput="updateLoan('af',this.value,654,'var(--orange)',75)">
+        <span style="font-size:8px;color:var(--muted);">edit ✏️</span>
       </div>
       <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="af-bar" style="width:75%;background:var(--orange)"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="af-pct">75% done</span><span style="color:var(--gold)">Done Jul 2026 🎯</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="af-pct">75% done</span><span style="color:var(--gold)">Done Jul 2026 🎯 · Total interest paid: $30.85</span></div>
     </div>
   </div>
 
-  <div class="sec">Auto Loan</div>
+  <div class="sec">Bridgecrest ··7101 · APR Unknown — Get From Portal</div>
   <div class="card">
     <div style="padding:12px;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px;">
-        <div style="font-size:12px;font-weight:600;color:var(--text);">Bridgecrest ··7101 <span class="badge bb">CURRENT</span></div>
-        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);">$825/mo · Due 8th</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);">Bridgecrest Auto Loan <span class="badge bb">CURRENT</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--orange);">$825/mo · Due 8th · APR: check portal ⚠️</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);" id="brc-disp">$20,535.00</div>
-        <input type="number" id="brc-bal" value="20535.00" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:100px;outline:none;text-align:right;" oninput="updateLoan('brc',this.value,28000,'var(--blue)',30)">
-        <span style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">edit ✏️</span>
+        <input type="number" id="brc-bal" value="20535.00" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:100px;outline:none;text-align:right;" oninput="updateLoan('brc',this.value,30720,'var(--blue)',33)">
+        <span style="font-size:8px;color:var(--muted);">edit ✏️</span>
       </div>
-      <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="brc-bar" style="width:30%;background:var(--blue)"></div></div>
-      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="brc-pct">30% done</span><span>~Feb 2029 · 7× lates aging out</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);">Enter APR %:</span>
+        <input type="number" id="brc-apr" placeholder="e.g. 22.5" style="background:var(--ibg);border:1px solid var(--border2);border-radius:5px;padding:3px 7px;color:var(--text);font-size:11px;font-family:'DM Mono',monospace;width:80px;outline:none;" oninput="calcBridgecrestCost()">
+        <span style="font-size:9px;font-family:'DM Mono',monospace;color:var(--orange);" id="brc-cost">Enter APR to see monthly interest cost</span>
+      </div>
+      <div class="pb" style="margin:4px 0 3px;"><div class="pf" id="brc-bar" style="width:33%;background:var(--blue)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);"><span id="brc-pct">33% done</span><span>~Feb 2029 · Goodwill letter sent Apr 28 ✅</span></div>
     </div>
   </div>
 
   <div class="sec">Other Debts · Add &amp; Track Payments</div>
   <div id="other-debts-list"></div>
   <div class="card">
-    <div class="card-title">Add a Debt · Edit Balance After Each Payment</div>
+    <div class="card-title">Add a Debt</div>
     <div class="ir">
       <div class="ig"><div class="il">Debt Name</div><input class="inp" type="text" id="od-name" placeholder="e.g. Credit Card"></div>
       <div class="ig"><div class="il">Current Balance ($)</div><input class="inp" type="number" id="od-bal" placeholder="0.00"></div>
     </div>
     <div class="ir">
       <div class="ig"><div class="il">Monthly Payment ($)</div><input class="inp" type="number" id="od-pmt" placeholder="0.00"></div>
-      <div class="ig"><div class="il">Est. Payoff Date</div><input class="inp" type="text" id="od-end" placeholder="e.g. Dec 2027"></div>
+      <div class="ig"><div class="il">APR (%)</div><input class="inp" type="number" id="od-apr" placeholder="e.g. 24.99"></div>
     </div>
     <div class="ir">
       <div class="ig"><div class="il">Original Balance ($)</div><input class="inp" type="number" id="od-orig" placeholder="Starting balance"></div>
-      <div class="ig"><div class="il">Interest Rate (%)</div><input class="inp" type="number" id="od-rate" placeholder="e.g. 24.99"></div>
+      <div class="ig"><div class="il">Est. Payoff Date</div><input class="inp" type="text" id="od-end" placeholder="e.g. Dec 2027"></div>
     </div>
     <button class="btn btn-g" onclick="addOtherDebt()" style="width:100%;margin-top:3px;">+ Add Debt</button>
   </div>
 </div>
+
 
 <!-- VACATION — hidden from nav but still functional in background -->
 <div id="page-vac" class="page" style="display:none!important;">
@@ -807,7 +916,68 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
     <div style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:6px;">16 months perfect · High $2,033 Sep-Apr 2026 → paid down ✅ · CLI: call 1-888-842-6328 · $2K → $5K soft pull</div>
   </div>
 
-  <div class="sec">Active Installment Accounts · All Current</div>
+  <div class="sec">⚡ Score Mechanics · Statement Close vs Report Date vs Due Date</div>
+  <div class="card">
+    <div class="card-title">The Timing Layer — What Bureaus Actually See</div>
+    <div class="notice info" style="margin-bottom:10px;font-size:10px;"><span class="ni2">💡</span><span>Bureaus see your balance on the <strong>statement close date</strong> — not your current balance and not your due date. Pay BEFORE close to show $0.</span></div>
+    <table class="tbl">
+      <tr class="tbl-row hdr"><td>Card</td><td style="text-align:center">Closes</td><td style="text-align:center">Reports ~</td><td style="text-align:center">Due Date</td><td style="text-align:center">Pay By</td><td style="text-align:right">Bureau Sees</td></tr>
+      <tr class="tbl-row">
+        <td style="font-size:10px;font-weight:600;">Cap One ··8236</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);">21st</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);">~23rd</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);">16th</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--red);font-weight:700;">20th ⚠️</td>
+        <td style="text-align:right;" id="c1-report-util"><span class="badge bgr">$7 / 0%</span></td>
+      </tr>
+      <tr class="tbl-row">
+        <td style="font-size:10px;font-weight:600;">Apple Card</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);">Last day</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);">~2nd</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);">Last day</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--green);font-weight:700;">29th ✅</td>
+        <td style="text-align:right;"><span class="badge bgr">$0 / 0%</span></td>
+      </tr>
+      <tr class="tbl-row">
+        <td style="font-size:10px;font-weight:600;">NFCU Visa ··6424</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);">23rd</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);">~25th</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);">20th</td>
+        <td style="text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--orange);font-weight:700;">22nd ⚠️</td>
+        <td style="text-align:right;" id="nf-report-util"><span class="badge bb">$167 / 8%</span></td>
+      </tr>
+    </table>
+    <div style="padding:10px;background:var(--dim);border-radius:7px;margin-top:10px;">
+      <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;">📋 Monthly Checklist — Score Optimization</div>
+      <div style="font-size:10px;color:var(--text2);line-height:1.8;">
+        <div>✅ <strong>By 20th</strong> — Pay Cap One to $0 (closes 21st)</div>
+        <div>✅ <strong>By 22nd</strong> — Pay NFCU Visa to $0 or under $200 (closes 23rd)</div>
+        <div>✅ <strong>By 29th</strong> — Pay Apple Card to $0 (closes last day)</div>
+        <div>⏰ <strong>NEVER</strong> — Let balance report above 10% on any card</div>
+        <div>⏰ <strong>NEVER</strong> — Wait until due date — that's too late for score purposes</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">Utilization at Report Time · What Counts Toward Your Score</div>
+  <div class="card">
+    <div class="card-title">Combined Utilization · All 3 Cards · $4,300 Total Limit</div>
+    <div style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:4px;">
+        <span>Current Combined</span><span id="combined-util-pct">0%</span>
+      </div>
+      <div class="pb" style="height:8px;"><div class="pf" id="combined-util-bar" style="width:0%;background:var(--green)"></div></div>
+    </div>
+    <table class="tbl">
+      <tr class="tbl-row hdr"><td>Range</td><td style="text-align:right">Score Impact</td></tr>
+      <tr class="tbl-row"><td style="font-size:10px;">0% utilization</td><td style="text-align:right;"><span class="badge bgr">PERFECT +50 pts</span></td></tr>
+      <tr class="tbl-row"><td style="font-size:10px;">1–9%</td><td style="text-align:right;"><span class="badge bgr">EXCELLENT</span></td></tr>
+      <tr class="tbl-row"><td style="font-size:10px;">10–29%</td><td style="text-align:right;"><span class="badge bb">GOOD</span></td></tr>
+      <tr class="tbl-row"><td style="font-size:10px;">30–49%</td><td style="text-align:right;"><span class="badge bo">FAIR — starts hurting</span></td></tr>
+      <tr class="tbl-row"><td style="font-size:10px;">50%+</td><td style="text-align:right;"><span class="badge br">BAD — significant damage</span></td></tr>
+      <tr class="tbl-row"><td style="font-size:10px;">98% (Mar 2026)</td><td style="text-align:right;"><span class="badge br">WAS HERE — now fixed ✅</span></td></tr>
+    </table>
+  </div>
   <div class="card">
     <table class="tbl">
       <tr class="tbl-row hdr"><td>Account</td><td style="text-align:right">Balance</td><td style="text-align:right">Payment</td><td style="text-align:right">Status</td></tr>
@@ -1087,7 +1257,7 @@ window.appInit=function(){
   if(!window.bills||window.bills.length===0)window.bills=DEFAULT_BILLS;
   if(window.vacExtra===0||window.vacExtra===undefined)window.vacExtra=250;
   window.lr=true;
-  updateDays();updateNextCheck();renderCal();calcPay();renderBills();renderVac();renderUrgent();loadCredits();updateCards();renderOtherDebts();loadLoanBalances();calcYTD();
+  updateDays();updateNextCheck();renderCal();calcPay();renderBills();renderVac();renderUrgent();loadCredits();updateCards();renderOtherDebts();loadLoanBalances();calcYTD();calcRolling();
   const t=document.body.getAttribute('data-theme')||'dark';
   document.getElementById('tbtn').textContent=t==='dark'?'☀️':'🌙';
 };
@@ -1452,6 +1622,111 @@ function setS(r,e,h,o,n,d){
 function showJune(){document.getElementById('june-note').style.display='flex';}
 
 // DAILY BUDGET
+// ===== ROLLING CASH FLOW =====
+function calcRolling(){
+  const cash=parseFloat(document.getElementById('cash-input')?.value)||0;
+  const cashNow=document.getElementById('cash-now');
+  if(cashNow)cashNow.textContent='$'+cash.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  // Find next check date and days remaining
+  const today=new Date();const todayStr=today.toISOString().split('T')[0];
+  let nextCheckDate=null,daysLeft=14;
+  for(let pp of PPS){
+    if(pp.c>todayStr){nextCheckDate=new Date(pp.c+'T12:00:00');break;}
+  }
+  if(nextCheckDate){
+    daysLeft=Math.ceil((nextCheckDate-today)/(1000*60*60*24));
+    const e=document.getElementById('days-to-check');if(e)e.textContent=daysLeft+' days';
+    const e2=document.getElementById('next-check-date');if(e2)e2.textContent='Check '+nextCheckDate.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const e3=document.getElementById('rolling-check-label');if(e3)e3.textContent='Next check '+nextCheckDate.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  }
+
+  // Find bills due before next check
+  const bs=Array.isArray(window.bills)?window.bills:Object.values(window.bills||{});
+  const todayDay=today.getDate();
+  const nextCheckDay=nextCheckDate?nextCheckDate.getDate():todayDay+daysLeft;
+  const nextCheckMonth=nextCheckDate?nextCheckDate.getMonth():today.getMonth();
+
+  let billsBeforeCheck=[];let totalBillsComing=0;
+  bs.forEach(b=>{
+    if(!b.due||window.paidBills&&window.paidBills[b.id])return;
+    const paid=window.paidBills&&window.paidBills[b.id];
+    if(paid)return;
+    // Check if bill is due between today and next check
+    const billDue=b.due;
+    let isDue=false;
+    if(nextCheckMonth===today.getMonth()){
+      isDue=billDue>=todayDay&&billDue<=nextCheckDay;
+    } else {
+      isDue=billDue>=todayDay||(nextCheckMonth>today.getMonth()&&billDue<=nextCheckDay);
+    }
+    if(isDue){billsBeforeCheck.push(b);totalBillsComing+=parseFloat(b.amt||0);}
+  });
+
+  // Render upcoming bills
+  const ubl=document.getElementById('upcoming-bills-list');
+  if(ubl){
+    ubl.innerHTML='';
+    if(billsBeforeCheck.length===0){
+      ubl.innerHTML='<div style="font-size:11px;color:var(--muted);padding:8px 0 12px;">No bills due before next check 🎉</div>';
+    } else {
+      billsBeforeCheck.sort((a,b)=>a.due-b.due).forEach(b=>{
+        const div=document.createElement('div');
+        div.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:8px 11px;border-radius:7px;margin-bottom:5px;background:rgba(255,85,85,0.06);border:1px solid rgba(255,85,85,0.2);';
+        div.innerHTML=`<div><div style="font-size:11px;font-weight:600;color:var(--text);">${b.icon||'💸'} ${b.name}</div><div style="font-size:8px;color:var(--muted);font-family:'DM Mono',monospace;">Due ${b.due}th</div></div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--red);">-$${parseFloat(b.amt).toFixed(2)}</div>`;
+        ubl.appendChild(div);
+      });
+    }
+  }
+
+  const cashAfter=cash-totalBillsComing;
+  const e4=document.getElementById('bills-before-check');if(e4)e4.textContent='$'+totalBillsComing.toFixed(2);
+  const e5=document.getElementById('cash-after-bills');if(e5){e5.textContent='$'+cashAfter.toFixed(2);e5.style.color=cashAfter>=0?'var(--green)':'var(--red)';}
+
+  const dailyBudget=daysLeft>0?Math.max(0,cashAfter/daysLeft):0;
+  const e6=document.getElementById('daily-allow');if(e6)e6.textContent='$'+dailyBudget.toFixed(0);
+  const e7=document.getElementById('daily-allow-big');if(e7)e7.textContent='$'+dailyBudget.toFixed(0);
+  const e8=document.getElementById('dash-daily');if(e8)e8.textContent='$'+dailyBudget.toFixed(0);
+  const ds=document.getElementById('daily-sub');if(ds)ds.textContent=`$${cashAfter.toFixed(0)} after bills ÷ ${daysLeft} days = $${dailyBudget.toFixed(0)}/day`;
+
+  // Rolling bars visualization
+  const bars=document.getElementById('rolling-bars');
+  if(bars&&daysLeft>0){
+    bars.innerHTML='';
+    let runningCash=cash;
+    let lowest=cash;
+    const barContainer=document.createElement('div');
+    barContainer.style.cssText='display:flex;gap:2px;align-items:flex-end;height:40px;';
+    const dailySpend=parseFloat(document.getElementById('sp-coffee')?.value||0)+parseFloat(document.getElementById('sp-food')?.value||0)+parseFloat(document.getElementById('sp-misc')?.value||0);
+
+    for(let d=0;d<Math.min(daysLeft,14);d++){
+      const dayDate=new Date(today);dayDate.setDate(today.getDate()+d);
+      const dayDay=dayDate.getDate();
+      // Subtract bills due on this day
+      bs.forEach(b=>{if(b.due===dayDay&&!(window.paidBills&&window.paidBills[b.id]))runningCash-=parseFloat(b.amt||0);});
+      runningCash-=dailySpend;
+      if(runningCash<lowest)lowest=runningCash;
+      const bar=document.createElement('div');
+      const height=Math.max(4,Math.min(40,Math.abs(runningCash/cash*40)));
+      bar.style.cssText=`flex:1;border-radius:2px 2px 0 0;min-height:4px;height:${height}px;background:${runningCash>=0?'var(--green)':'var(--red)'};opacity:0.8;`;
+      bar.title=`Day ${d+1}: $${runningCash.toFixed(0)}`;
+      barContainer.appendChild(bar);
+    }
+    bars.appendChild(barContainer);
+    const e9=document.getElementById('rolling-lowest');if(e9)e9.textContent=`Lowest point: $${lowest.toFixed(0)}`;
+  }
+  calcDaily();
+}
+
+function calcBridgecrestCost(){
+  const apr=parseFloat(document.getElementById('brc-apr')?.value)||0;
+  const bal=parseFloat(document.getElementById('brc-bal')?.value)||20535;
+  if(!apr)return;
+  const monthly=(bal*apr/100/12);
+  const e=document.getElementById('brc-cost');
+  if(e)e.textContent=`$${monthly.toFixed(2)}/month in pure interest · $${(monthly*12).toFixed(0)}/year just in interest`;
+}
+
 function calcDaily(){
   const r=parseFloat(document.getElementById('r-hrs')?.value)||80;
   const e=parseFloat(document.getElementById('e-hrs')?.value)||0;
@@ -1603,6 +1878,13 @@ window.updateCards=function(){
   // Save to Firebase
   const cards={c1,ap,nf};
   if(window.fbSave&&window.lr)window.fbSave('simmsimma/cards',cards);
+  // Combined utilization — $4,300 total limit
+  const totalBal=c1+ap+nf;const totalLim=4300;
+  const combPct=Math.min(100,(totalBal/totalLim)*100);
+  const cb=document.getElementById('combined-util-bar');if(cb){cb.style.width=combPct.toFixed(0)+'%';cb.style.background=combPct<10?'var(--green)':combPct<30?'var(--blue)':combPct<50?'var(--orange)':'var(--red)';}
+  const cp=document.getElementById('combined-util-pct');if(cp)cp.textContent=combPct.toFixed(1)+'% ($'+totalBal.toLocaleString()+' / $4,300)';
+  const c1r=document.getElementById('c1-report-util');if(c1r){const u=(c1/1800*100).toFixed(0);c1r.innerHTML='<span class="badge '+(u<10?'bgr':u<30?'bb':'br')+'">$'+c1+' / '+u+'%</span>';}
+  const nfr=document.getElementById('nf-report-util');if(nfr){const u=(nf/2000*100).toFixed(0);nfr.innerHTML='<span class="badge '+(u<10?'bgr':u<30?'bb':'br')+'">$'+nf+' / '+u+'%</span>';}
 };
 
 // CLOSE MODAL
